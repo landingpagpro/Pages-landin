@@ -8,15 +8,85 @@ import {
   generateDescriptionFromImage,
   type GenerateDescInput,
 } from "./lib/generateDescription.ts";
+import {
+  extractFirstImageData,
+  fetchPublishedPageBySlug,
+  isValidSlug,
+  renderNotFoundLandingHtml,
+  renderPublishedLandingHtml,
+} from "./lib/renderLandingPage.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = Number(process.env.PORT) || 3000;
 
+function getExpressOrigin(req: Request): string {
+  const proto = String(req.headers["x-forwarded-proto"] || req.protocol || "http")
+    .split(",")[0]
+    .trim();
+  const host = String(req.headers["x-forwarded-host"] || req.get("host") || "")
+    .split(",")[0]
+    .trim();
+  return host ? `${proto}://${host}` : `http://localhost:${PORT}`;
+}
+
+async function handleRenderPublishedPage(req: Request, res: Response, rawSlug: string): Promise<void> {
+  const slug = rawSlug.trim().toLowerCase();
+  if (!isValidSlug(slug)) {
+    res.status(404).type("html").send(renderNotFoundLandingHtml("ar"));
+    return;
+  }
+
+  try {
+    const page = await fetchPublishedPageBySlug(slug);
+    if (!page) {
+      res.status(404).type("html").send(renderNotFoundLandingHtml("ar"));
+      return;
+    }
+    const html = renderPublishedLandingHtml(page, getExpressOrigin(req));
+    res.status(200).setHeader("Cache-Control", "public, max-age=30, s-maxage=60").type("html").send(html);
+  } catch (err) {
+    console.error("Failed to render /p/:slug:", err);
+    res.status(500).type("html").send(renderNotFoundLandingHtml("ar"));
+  }
+}
+
 async function startServer(): Promise<void> {
   const app = express();
   app.use(express.json({ limit: "12mb" }));
+
+  app.get("/p/:slug", async (req: Request, res: Response) => {
+    await handleRenderPublishedPage(req, res, String(req.params.slug || ""));
+  });
+
+  app.get("/api/p", async (req: Request, res: Response) => {
+    await handleRenderPublishedPage(req, res, String(req.query.slug || ""));
+  });
+
+  app.get("/api/p-image", async (req: Request, res: Response) => {
+    const slug = String(req.query.slug || "").trim().toLowerCase();
+    if (!isValidSlug(slug)) {
+      res.status(404).send("Not found");
+      return;
+    }
+    try {
+      const page = await fetchPublishedPageBySlug(slug);
+      if (!page) {
+        res.status(404).send("Not found");
+        return;
+      }
+      const img = extractFirstImageData(page);
+      if (!img) {
+        res.status(404).send("No image");
+        return;
+      }
+      res.status(200).setHeader("Cache-Control", "public, max-age=3600").type(img.mime).send(img.buffer);
+    } catch (err) {
+      console.error("Failed to serve /api/p-image:", err);
+      res.status(500).send("Error");
+    }
+  });
 
   app.post("/api/generate-description", async (req: Request, res: Response) => {
     try {

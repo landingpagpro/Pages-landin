@@ -1,0 +1,157 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net (Default-Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Hardened Global Helpers
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isValidSlugId(slug) {
+      return slug is string && slug.size() >= 3 && slug.size() <= 80 && slug.matches('^[a-z0-9-]+$');
+    }
+
+    function isValidUid(uid) {
+      return uid is string && uid.size() >= 1 && uid.size() <= 128 && uid.matches('^[a-zA-Z0-9_-]+$');
+    }
+
+    function isOptionalHex(val) {
+      return val is string && (val == '' || val.matches('^#[0-9a-fA-F]{6}$'));
+    }
+
+    function isValidCustomColors(cc) {
+      return cc is map &&
+        cc.keys().hasAll(['primary', 'bg', 'text', 'headingLarge', 'headingSmall']) &&
+        cc.keys().hasOnly(['primary', 'bg', 'text', 'headingLarge', 'headingSmall']) &&
+        isOptionalHex(cc.primary) &&
+        isOptionalHex(cc.bg) &&
+        isOptionalHex(cc.text) &&
+        isOptionalHex(cc.headingLarge) &&
+        isOptionalHex(cc.headingSmall);
+    }
+
+    function isValidEnabledContacts(ec) {
+      return ec is map &&
+        ec.keys().hasAll(['website', 'whatsapp', 'instagram', 'email']) &&
+        ec.keys().hasOnly(['website', 'whatsapp', 'instagram', 'email']) &&
+        ec.website is bool &&
+        ec.whatsapp is bool &&
+        ec.instagram is bool &&
+        ec.email is bool;
+    }
+
+    function isValidImagesList(imgs) {
+      return imgs is list &&
+        imgs.size() <= 6 &&
+        (imgs.size() == 0 || (imgs[0] is string && imgs[0].size() <= 280000));
+    }
+
+    function isValidReviewsList(revs) {
+      return revs is list &&
+        revs.size() <= 20 &&
+        (revs.size() == 0 || (
+          revs[0] is map &&
+          revs[0].keys().hasAll(['name', 'stars', 'text']) &&
+          revs[0].keys().hasOnly(['name', 'stars', 'text']) &&
+          revs[0].name is string && revs[0].name.size() <= 80 &&
+          revs[0].stars is number && revs[0].stars >= 1 && revs[0].stars <= 5 &&
+          revs[0].text is string && revs[0].text.size() <= 500
+        ));
+    }
+
+    function isValidPublishedPage(data, slug) {
+      return data.keys().hasAll([
+          'slug', 'ownerId', 'lang', 'theme', 'productName',
+          'description', 'descriptionHtml', 'price', 'currency',
+          'images', 'imageSize', 'fontSize', 'scale', 'reviews',
+          'customColors', 'enabledContacts', 'website', 'whatsapp',
+          'instagram', 'email', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'slug', 'ownerId', 'lang', 'theme', 'productName',
+          'description', 'descriptionHtml', 'price', 'currency',
+          'images', 'imageSize', 'fontSize', 'scale', 'reviews',
+          'customColors', 'enabledContacts', 'website', 'whatsapp',
+          'instagram', 'email', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidSlugId(data.slug) &&
+        data.slug == slug &&
+        isValidUid(data.ownerId) &&
+        data.lang in ['en', 'ar', 'fr'] &&
+        data.theme is string && data.theme.size() >= 1 && data.theme.size() <= 40 && data.theme.matches('^[a-z0-9-]+$') &&
+        data.productName is string && data.productName.size() >= 1 && data.productName.size() <= 140 &&
+        data.description is string && data.description.size() <= 6000 &&
+        data.descriptionHtml is string && data.descriptionHtml.size() <= 250000 &&
+        data.price is string && data.price.size() >= 1 && data.price.size() <= 32 &&
+        data.currency in ['USD', 'EUR', 'GBP', 'SAR', 'AED', 'MAD'] &&
+        isValidImagesList(data.images) &&
+        data.imageSize in ['full', 'large', 'medium', 'small'] &&
+        data.fontSize in ['20', '24', '28'] &&
+        data.scale is number && data.scale >= 75 && data.scale <= 130 &&
+        isValidReviewsList(data.reviews) &&
+        isValidCustomColors(data.customColors) &&
+        isValidEnabledContacts(data.enabledContacts) &&
+        data.website is string && data.website.size() <= 300 &&
+        data.whatsapp is string && data.whatsapp.size() <= 60 &&
+        data.instagram is string && data.instagram.size() <= 120 &&
+        data.email is string && data.email.size() <= 160 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    match /published_pages/{slug} {
+      // Visitors from Facebook / TikTok / Instagram ads can fetch a known slug directly
+      allow get: if isValidSlugId(slug);
+
+      // Authenticated sellers can list only their own published pages
+      allow list: if isSignedIn() && isVerified() && existing().ownerId == request.auth.uid;
+
+      // Sellers can create a new landing page slug they own
+      allow create: if isSignedIn() &&
+        isVerified() &&
+        isValidSlugId(slug) &&
+        isValidPublishedPage(incoming(), slug) &&
+        incoming().ownerId == request.auth.uid &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+
+      // Sellers can update only their own existing landing page
+      allow update: if isSignedIn() &&
+        isVerified() &&
+        isValidSlugId(slug) &&
+        isValidPublishedPage(incoming(), slug) &&
+        existing().ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'lang', 'theme', 'productName', 'description', 'descriptionHtml',
+          'price', 'currency', 'images', 'imageSize', 'fontSize', 'scale',
+          'reviews', 'customColors', 'enabledContacts', 'website', 'whatsapp',
+          'instagram', 'email', 'updatedAt'
+        ]);
+
+      // Sellers can delete only their own published landing page
+      allow delete: if isSignedIn() &&
+        isVerified() &&
+        isValidSlugId(slug) &&
+        existing().ownerId == request.auth.uid;
+    }
+  }
+}

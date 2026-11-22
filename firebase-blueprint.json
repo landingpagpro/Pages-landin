@@ -1,0 +1,160 @@
+{
+  "entities": {
+    "PublishedPage": {
+      "title": "Published Landing Page",
+      "description": "Public product landing page published at /p/{slug} for Facebook, TikTok, and social media ads.",
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string",
+          "description": "URL-safe short slug identifier for the landing page.",
+          "minLength": 3,
+          "maxLength": 80,
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the seller who owns this landing page.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "lang": {
+          "type": "string",
+          "description": "Landing page display language.",
+          "enum": ["en", "ar", "fr"],
+          "maxLength": 4
+        },
+        "theme": {
+          "type": "string",
+          "description": "Selected visual theme key.",
+          "minLength": 1,
+          "maxLength": 40,
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "productName": {
+          "type": "string",
+          "description": "Product title displayed on the landing page and OpenGraph meta tags.",
+          "minLength": 1,
+          "maxLength": 140
+        },
+        "description": {
+          "type": "string",
+          "description": "Plain text summary of the product.",
+          "maxLength": 6000
+        },
+        "descriptionHtml": {
+          "type": "string",
+          "description": "Sanitized rich description HTML.",
+          "maxLength": 250000
+        },
+        "price": {
+          "type": "string",
+          "description": "Product price string.",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "currency": {
+          "type": "string",
+          "description": "Currency code.",
+          "enum": ["USD", "EUR", "GBP", "SAR", "AED", "MAD"],
+          "maxLength": 6
+        },
+        "images": {
+          "type": "array",
+          "description": "Compressed product images (up to 6 images)."
+        },
+        "imageSize": {
+          "type": "string",
+          "description": "Gallery image width preset.",
+          "enum": ["full", "large", "medium", "small"],
+          "maxLength": 12
+        },
+        "fontSize": {
+          "type": "string",
+          "description": "Base title font size in px.",
+          "enum": ["20", "24", "28"],
+          "maxLength": 4
+        },
+        "scale": {
+          "type": "number",
+          "description": "Text and image scale percentage (75-130)."
+        },
+        "reviews": {
+          "type": "array",
+          "description": "Customer reviews list (up to 20 reviews)."
+        },
+        "customColors": {
+          "type": "object",
+          "description": "Optional custom hex color overrides."
+        },
+        "enabledContacts": {
+          "type": "object",
+          "description": "Enabled storefront contact channel flags."
+        },
+        "website": {
+          "type": "string",
+          "description": "Public storefront website URL (only stored if enabled).",
+          "maxLength": 300
+        },
+        "whatsapp": {
+          "type": "string",
+          "description": "Public storefront WhatsApp number (only stored if enabled).",
+          "maxLength": 60
+        },
+        "instagram": {
+          "type": "string",
+          "description": "Public storefront Instagram handle (only stored if enabled).",
+          "maxLength": 120
+        },
+        "email": {
+          "type": "string",
+          "description": "Public storefront support email (only stored if enabled).",
+          "maxLength": 160
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server last update timestamp."
+        }
+      },
+      "required": [
+        "slug",
+        "ownerId",
+        "lang",
+        "theme",
+        "productName",
+        "description",
+        "descriptionHtml",
+        "price",
+        "currency",
+        "images",
+        "imageSize",
+        "fontSize",
+        "scale",
+        "reviews",
+        "customColors",
+        "enabledContacts",
+        "website",
+        "whatsapp",
+        "instagram",
+        "email",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/published_pages/{slug}": {
+      "schema": {
+        "$ref": "#/entities/PublishedPage"
+      },
+      "description": "Published product landing pages keyed by short URL slug."
+    }
+  }
+}

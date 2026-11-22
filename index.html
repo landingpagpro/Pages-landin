@@ -4,28 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Landing Page Pro — Landing Page Builder</title>
-  <meta name="description" content="Fast, lightweight single-file Landing Page Builder with Arabic RTL, English, and French support, live square preview, instant #landing links, and draft auto-save." />
-  <script>
-    (function () {
-      try {
-        var hash = window.location.hash || "";
-        if (hash.indexOf("#landing=") === 0) {
-          var encodedPayload = hash.slice("#landing=".length);
-          if (encodedPayload) {
-            var decodedHTML = decodeURIComponent(escape(atob(decodeURIComponent(encodedPayload))));
-            if (decodedHTML && decodedHTML.indexOf("</html>") !== -1) {
-              document.open();
-              document.write(decodedHTML);
-              document.close();
-              return;
-            }
-          }
-        }
-      } catch (err) {
-        /* Invalid or truncated #landing= payload: fall through to normal Landing Page Pro app */
-      }
-    })();
-  </script>
+  <meta name="description" content="Fast, professional Landing Page Builder with Arabic RTL, English, and French support, AI web-search copywriting, custom colors, and free short ad links for Facebook, TikTok, and Instagram." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&display=swap" />
+  <script type="module" src="/src/cloudLinks.ts"></script>
   <style>
     :root {
       --bg: #f6f5fb;
@@ -972,8 +955,8 @@
       padding: 0;
       margin: 0;
       min-height: 100%;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Arabic', Tahoma, Arial, sans-serif;
-      font-weight: 600;
+      font-family: 'Cairo', system-ui, -apple-system, 'Segoe UI', Roboto, Tahoma, Arial, sans-serif;
+      font-weight: 700;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -984,7 +967,7 @@
       justify-content: center;
       gap: 8px;
       font-weight: 900;
-      font-size: 17px;
+      font-size: 18px;
       letter-spacing: -0.01em;
     }
 
@@ -1049,9 +1032,9 @@
     }
 
     .lp-desc {
-      line-height: 1.8;
+      line-height: 1.9;
       margin: 0 0 16px 0;
-      font-weight: 600;
+      font-weight: 700;
       white-space: normal;
       word-break: break-word;
       text-align: center;
@@ -1059,12 +1042,12 @@
 
     .lp-desc strong,
     .lp-desc b {
-      font-weight: 800;
+      font-weight: 900;
     }
 
     .lp-desc p,
     .lp-desc div {
-      margin: 0 0 8px 0;
+      margin: 0 0 10px 0;
     }
 
     .lp-desc p:last-child,
@@ -1109,8 +1092,8 @@
     }
 
     .lp-delivery-label {
-      font-size: 13px;
-      font-weight: 800;
+      font-size: 14px;
+      font-weight: 900;
       display: block;
       margin-top: 3px;
     }
@@ -1118,14 +1101,14 @@
     .lp-cta-jump {
       display: block;
       width: 100%;
-      padding: 14px 18px;
+      padding: 15px 18px;
       border-radius: 12px;
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 900;
       text-align: center;
       text-decoration: none;
       margin-bottom: 22px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
     }
 
     .lp-order-box {
@@ -1136,7 +1119,7 @@
 
     .lp-order-heading {
       margin: 0 0 14px 0;
-      font-size: 21px;
+      font-size: 22px;
       font-weight: 900;
       text-align: center;
     }
@@ -1147,26 +1130,26 @@
 
     .lp-form-field label {
       display: block;
-      font-size: 14px;
-      font-weight: 800;
+      font-size: 15px;
+      font-weight: 900;
       margin-bottom: 4px;
     }
 
     .lp-form-field input {
       width: 100%;
-      padding: 11px 12px;
+      padding: 12px 13px;
       border-radius: 8px;
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 16px;
+      font-weight: 700;
     }
 
     .lp-order-submit {
       width: 100%;
       margin-top: 8px;
-      padding: 13px 18px;
+      padding: 14px 18px;
       border: none;
       border-radius: 10px;
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 900;
       cursor: pointer;
     }
@@ -1178,8 +1161,8 @@
       background: #f0fdf4;
       border: 1px solid #86efac;
       color: #111111;
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 15px;
+      font-weight: 800;
       display: none;
     }
 
@@ -1189,7 +1172,7 @@
 
     .lp-section-title {
       margin: 0 0 12px 0;
-      font-size: 19px;
+      font-size: 21px;
       font-weight: 900;
       text-align: center;
     }
@@ -1206,20 +1189,21 @@
     }
 
     .lp-review-stars {
-      font-size: 16px;
+      font-size: 17px;
+      font-weight: 900;
       margin-bottom: 4px;
     }
 
     .lp-review-author {
-      font-weight: 800;
-      font-size: 14px;
+      font-weight: 900;
+      font-size: 15px;
     }
 
     .lp-review-body {
       margin: 4px 0 0 0;
-      font-size: 15px;
-      font-weight: 600;
-      line-height: 1.65;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.75;
     }
 
     .lp-contact-footer {
@@ -1232,8 +1216,8 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 14px;
-      font-size: 15px;
-      font-weight: 700;
+      font-size: 16px;
+      font-weight: 800;
     }
 
     .lp-contact-items a {
@@ -1243,6 +1227,105 @@
 
     .lp-contact-items a:hover {
       text-decoration: underline;
+    }
+
+    /* Free Ad Link Publisher UI */
+    .ad-auth-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 9px 11px;
+      border-radius: 10px;
+      background: #faf5ff;
+      border: 1px solid #e9d5ff;
+      margin-bottom: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #111111;
+    }
+
+    .ad-slug-prefix-box {
+      display: flex;
+      align-items: center;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f9fafb;
+      direction: ltr;
+    }
+
+    .ad-slug-prefix {
+      padding: 9px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #4b5563;
+      background: #f3f4f6;
+      border-right: 1px solid #d1d5db;
+      white-space: nowrap;
+      max-width: 52%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ad-slug-prefix-box input {
+      border: none;
+      border-radius: 0;
+      background: #ffffff;
+      flex: 1;
+      min-width: 110px;
+      font-weight: 700;
+    }
+
+    .ad-slug-prefix-box input:focus-visible {
+      outline: none;
+    }
+
+    .ad-badges-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .ad-ready-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .ad-publish-msg {
+      display: none;
+      margin-top: 8px;
+      padding: 9px 11px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .ad-publish-msg.open {
+      display: block;
+    }
+
+    .ad-publish-msg.ok {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      color: #166534;
+    }
+
+    .ad-publish-msg.err {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
     }
 
     @media (max-width: 960px) {
@@ -1517,24 +1600,54 @@
         </div>
       </div>
 
-      <!-- Instant Link & Domain Link & Export -->
+      <!-- Free Ad Link & Domain Link & Export -->
       <div class="card">
-        <h2 class="card-title" data-i18n="sectionLinks">Publish & Links</h2>
+        <h2 class="card-title" data-i18n="sectionLinks">Publish Free Ad Link</h2>
+
+        <div class="ad-auth-strip" id="adAuthStrip">
+          <span id="adAuthUserText" data-i18n="adConnectGoogle">Sign in with Google to publish & manage free ad links</span>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button type="button" id="adSignInBtn" class="btn btn-grad btn-sm" data-i18n="adBtnGoogleSignIn">Google Sign In</button>
+            <button type="button" id="adSignOutBtn" class="btn btn-sm" style="display:none;" data-i18n="adSignOut">Sign Out</button>
+          </div>
+        </div>
 
         <div class="field-group">
-          <label class="field-label" for="instantLinkInput" data-i18n="labelInstantLink">
-            Instant Link (#landing=)
+          <label class="field-label" for="adSlugInput" data-i18n="labelSlug">
+            Short Ad Link Name (URL Slug)
+          </label>
+          <div class="ad-slug-prefix-box">
+            <span class="ad-slug-prefix" id="adSlugPrefixSpan">/p/</span>
+            <input type="text" id="adSlugInput" data-i18n-placeholder="phSlug" placeholder="smart-earbuds" />
+          </div>
+        </div>
+
+        <div class="field-group" style="margin-top: 10px;">
+          <button type="button" id="publishFreeLinkBtn" class="btn btn-grad" style="width: 100%; font-weight: 800;" data-i18n="btnPublishAdLink">
+            🚀 Publish Free Ad Link
+          </button>
+        </div>
+
+        <div class="field-group" style="margin-top: 10px;">
+          <label class="field-label" for="freeAdLinkInput" data-i18n="labelFreeAdLink">
+            Free Ad Link (Ready for Facebook, TikTok & Instagram)
           </label>
           <div class="link-row">
-            <input type="text" id="instantLinkInput" readonly />
-            <button type="button" id="copyInstantLinkBtn" class="btn btn-sm" data-i18n="btnCopyInstant">Copy Instant Link</button>
-            <a id="openInstantLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-grad btn-sm" data-i18n="btnOpenInstant">
-              Open Instant Link
+            <input type="text" id="freeAdLinkInput" readonly />
+            <button type="button" id="copyFreeAdLinkBtn" class="btn btn-sm" data-i18n="btnCopyAdLink">Copy Ad Link</button>
+            <a id="openFreeAdLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-grad btn-sm" data-i18n="btnOpenAdLink">
+              Open Ad Page
             </a>
           </div>
-          <p class="helper-note" id="instantLinkFeedback" data-i18n="hintInstantLink">
-            Full landing page embedded in URL (#landing=). Never expires.
+          <div id="freeAdStatusMsg" class="ad-publish-msg" aria-live="polite"></div>
+          <p class="helper-note" data-i18n="hintFreeAdLink">
+            Clean short URL hosted free for social media ads on every phone and browser.
           </p>
+          <div class="ad-badges-row">
+            <span class="ad-ready-badge">✓ <span data-i18n="adBadgeFb">Facebook / TikTok / IG Ads</span></span>
+            <span class="ad-ready-badge">✓ <span data-i18n="adBadgeOg">Ad Link Preview</span></span>
+            <span class="ad-ready-badge">✓ <span data-i18n="adBadgeCod">Cash on Delivery</span></span>
+          </div>
         </div>
 
         <div class="field-group" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #f3f4f6;">
@@ -1680,11 +1793,30 @@
           labelWhatsapp: "WhatsApp",
           labelEmail: "Email",
           labelInstagram: "Instagram",
-          sectionLinks: "Publish & Links",
-          labelInstantLink: "Instant Link (#landing=)",
-          btnCopyInstant: "Copy Instant Link",
-          btnOpenInstant: "Open Instant Link",
-          hintInstantLink: "Full landing page embedded in URL (#landing=). Never expires.",
+          sectionLinks: "Free Ad Link & Export",
+          adConnectGoogle: "Sign in with Google to publish & manage free ad links",
+          adBtnGoogleSignIn: "Google Sign In",
+          adConnectedAs: "Signed in:",
+          adSignOut: "Sign Out",
+          labelSlug: "Short Ad Link Name (URL Slug)",
+          phSlug: "smart-earbuds",
+          btnPublishAdLink: "🚀 Publish Free Ad Link",
+          btnUpdateAdLink: "🔄 Update Free Ad Link",
+          labelFreeAdLink: "Free Ad Link (Ready for Facebook, TikTok & Instagram)",
+          btnCopyAdLink: "Copy Ad Link",
+          btnOpenAdLink: "Open Ad Page",
+          hintFreeAdLink: "Clean short URL hosted free for social media ads on every phone and browser.",
+          adBadgeFb: "Facebook / TikTok / IG Ads",
+          adBadgeOg: "Ad Link Preview",
+          adBadgeCod: "Cash on Delivery",
+          adPublishing: "Publishing your free ad link...",
+          adPublishedOk: "Published! Your free ad link is live and ready for ads:",
+          adSlugTaken: "This short link name is already used. Please pick another slug name.",
+          adAuthRequired: "Please complete Google Sign-In to publish your free ad link.",
+          adDomainNotAllowed: "Add this domain in Firebase Console > Authentication > Authorized domains:",
+          adMediaTrimmedNote: "Note: Local video files cannot fit in a cloud link (use YouTube/MP4 URL via 🔗 Link). Text and main photos were published cleanly.",
+          adPublishError: "Could not publish link. Please try again.",
+          adLoadToEdit: "Edit",
           labelDomain: "My Domain (e.g. https://mystore.com)",
           labelDomainLink: "Domain Link (/product.html)",
           btnCopyDomain: "Copy Link",
@@ -1701,8 +1833,8 @@
           imagePrefix: "Image",
           noImages: "No images uploaded yet. Click \"Upload Product Image\" above.",
           copied: "Copied!",
-          savedToast: "Saved!",
-          noSavedLinks: "No saved links yet. Your landing pages are auto-saved here as you build.",
+          savedToast: "Published!",
+          noSavedLinks: "No published ad links yet. Click \"Publish Free Ad Link\" to create your first short link.",
           copyBtn: "Copy",
           openBtn: "Open",
           deleteBtn: "Delete",
@@ -1731,9 +1863,9 @@
           aiErrorKey: "Gemini API key is missing or invalid in Settings > Secrets."
         },
         ar: {
-          btnSaveHeader: "💾 حفظ الرابط",
-          btnSavedLinksHeader: "الروابط المحفوظة",
-          modalSavedTitle: "الروابط المحفوظة",
+          btnSaveHeader: "🚀 نشر الرابط المجاني",
+          btnSavedLinksHeader: "روابطي المنشورة",
+          modalSavedTitle: "روابطي المجانية المنشورة",
           btnDeleteAll: "حذف جميع الروابط المحفوظة",
           sectionProduct: "تفاصيل المنتج",
           labelProductName: "اسم المنتج",
@@ -1767,11 +1899,30 @@
           labelWhatsapp: "الواتساب",
           labelEmail: "البريد الإلكتروني",
           labelInstagram: "إنستغرام",
-          sectionLinks: "النشر والروابط",
-          labelInstantLink: "الرابط الفوري (#landing=)",
-          btnCopyInstant: "نسخ الرابط الفوري",
-          btnOpenInstant: "فتح الرابط الفوري",
-          hintInstantLink: "صفحة الهبوط كاملة مدمجة داخل الرابط (#landing=). يعمل دائماً.",
+          sectionLinks: "الرابط المجاني للإعلانات",
+          adConnectGoogle: "اربط حساب جوجل لنشر وإدارة روابط البيع المجانية",
+          adBtnGoogleSignIn: "دخول بجوجل",
+          adConnectedAs: "الحساب:",
+          adSignOut: "خروج",
+          labelSlug: "الاسم المختصر للرابط (Slug)",
+          phSlug: "cerave-lotion",
+          btnPublishAdLink: "🚀 نشر الرابط المجاني للإعلانات",
+          btnUpdateAdLink: "🔄 تحديث الرابط المجاني",
+          labelFreeAdLink: "الرابط المجاني الاحترافي (جاهز لإعلانات فيسبوك، تيك توك، وإنستغرام)",
+          btnCopyAdLink: "نسخ رابط الإعلان",
+          btnOpenAdLink: "معاينة الرابط",
+          hintFreeAdLink: "رابط قصير ومجاني 100% يعمل مباشرة عند أي زبون من إعلانات فيسبوك أو باقي المنصات.",
+          adBadgeFb: "مناسب لإعلانات فيسبوك وتيك توك",
+          adBadgeOg: "صورة وعنوان للإعلان",
+          adBadgeCod: "الدفع عند الاستلام",
+          adPublishing: "جاري نشر الرابط المجاني...",
+          adPublishedOk: "تم النشر بنجاح! رابطك الاحترافي جاهز لوضعِه في إعلانات فيسبوك:",
+          adSlugTaken: "هذا الاسم مستخدم مسبقاً، يرجى كتابة اسم مختصر آخر.",
+          adAuthRequired: "يرجى تسجيل الدخول بحساب جوجل لإكمال نشر الرابط المجاني.",
+          adDomainNotAllowed: "للدومين المخصص: أضف هذا الدومين في Firebase Console > Authentication > Authorized domains:",
+          adMediaTrimmedNote: "ملاحظة: ملفات الفيديو المرفوعة مباشرة كبيرة على الرابط المجاني (استعمل رابط يوتيوب أو MP4 عبر زر 🔗 رابط). تم نشر النصوص والصور بنجاح.",
+          adPublishError: "تعذر نشر الرابط، يرجى المحاولة مرة أخرى.",
+          adLoadToEdit: "تعديل",
           labelDomain: "الدومين الخاص بي (مثال: https://mystore.com)",
           labelDomainLink: "رابط الدومين (/product.html)",
           btnCopyDomain: "نسخ الرابط",
@@ -1781,15 +1932,15 @@
           btnYesDelete: "نعم، احذف الكل",
           btnCancel: "إلغاء",
           btnClose: "إغلاق",
-          ready: "Ready",
+          ready: "جاهز",
           updating: "جاري التحديث...",
           deviceMobile: "الهاتف",
           deviceComputer: "الحاسوب",
           imagePrefix: "صورة",
           noImages: "لم يتم رفع صور بعد. اضغط على \"ارفع صورة المنتج\" بالأعلى.",
           copied: "تم النسخ!",
-          savedToast: "تم الحفظ!",
-          noSavedLinks: "لا توجد روابط محفوظة بعد. يتم حفظ روابطك تلقائياً أثناء العمل.",
+          savedToast: "تم النشر!",
+          noSavedLinks: "لا توجد روابط منشورة بعد. اضغط على \"نشر الرابط المجاني للإعلانات\" لإنشاء أول رابط قصير.",
           copyBtn: "نسخ",
           openBtn: "فتح",
           deleteBtn: "حذف",
@@ -1818,9 +1969,9 @@
           aiErrorKey: "مفتاح Gemini API غير موجود أو غير صالح في Settings > Secrets."
         },
         fr: {
-          btnSaveHeader: "💾 Enregistrer le lien",
-          btnSavedLinksHeader: "Liens enregistrés",
-          modalSavedTitle: "Liens enregistrés",
+          btnSaveHeader: "🚀 Publier le lien gratuit",
+          btnSavedLinksHeader: "Mes liens publiés",
+          modalSavedTitle: "Mes liens publicitaires publiés",
           btnDeleteAll: "Supprimer tous les liens",
           sectionProduct: "Détails du produit",
           labelProductName: "Nom du produit",
@@ -1854,11 +2005,30 @@
           labelWhatsapp: "WhatsApp",
           labelEmail: "E-mail",
           labelInstagram: "Instagram",
-          sectionLinks: "Publication et liens",
-          labelInstantLink: "Lien instantané (#landing=)",
-          btnCopyInstant: "Copier le lien instantané",
-          btnOpenInstant: "Ouvrir le lien instantané",
-          hintInstantLink: "Page complète intégrée dans l'URL (#landing=). Valable à vie.",
+          sectionLinks: "Lien publicitaire gratuit",
+          adConnectGoogle: "Connectez Google pour publier et gérer vos liens publicitaires gratuits",
+          adBtnGoogleSignIn: "Connexion Google",
+          adConnectedAs: "Connecté :",
+          adSignOut: "Déconnexion",
+          labelSlug: "Nom court du lien (Slug)",
+          phSlug: "ecouteurs-pro",
+          btnPublishAdLink: "🚀 Publier le lien gratuit",
+          btnUpdateAdLink: "🔄 Mettre à jour le lien",
+          labelFreeAdLink: "Lien gratuit (Prêt pour Facebook, TikTok & Instagram Ads)",
+          btnCopyAdLink: "Copier le lien",
+          btnOpenAdLink: "Ouvrir la page",
+          hintFreeAdLink: "URL courte et gratuite hébergée pour vos publicités sur tous les appareils.",
+          adBadgeFb: "Facebook / TikTok / IG Ads",
+          adBadgeOg: "Aperçu publicitaire",
+          adBadgeCod: "Paiement à la livraison",
+          adPublishing: "Publication de votre lien gratuit...",
+          adPublishedOk: "Publié ! Votre lien publicitaire est prêt :",
+          adSlugTaken: "Ce slug est déjà utilisé. Choisissez un autre nom court.",
+          adAuthRequired: "Veuillez vous connecter avec Google pour publier ce lien.",
+          adDomainNotAllowed: "Ajoutez ce domaine dans Firebase Console > Authentication > Authorized domains :",
+          adMediaTrimmedNote: "Note : Les vidéos locales ne peuvent pas être hébergées (utilisez un lien YouTube/MP4 via 🔗). Texte et photos publiés.",
+          adPublishError: "Impossible de publier le lien. Veuillez réessayer.",
+          adLoadToEdit: "Modifier",
           labelDomain: "Mon domaine (ex. https://maboutique.com)",
           labelDomainLink: "Lien de domaine (/product.html)",
           btnCopyDomain: "Copier le lien",
@@ -1868,15 +2038,15 @@
           btnYesDelete: "Oui, tout supprimer",
           btnCancel: "Annuler",
           btnClose: "Fermer",
-          ready: "Ready",
+          ready: "Prêt",
           updating: "Mise à jour...",
           deviceMobile: "Mobile",
           deviceComputer: "Ordinateur",
           imagePrefix: "Image",
           noImages: "Aucune image importée. Cliquez sur « Importer une image » ci-dessus.",
           copied: "Copié !",
-          savedToast: "Enregistré !",
-          noSavedLinks: "Aucun lien enregistré. Vos pages sont sauvegardées automatiquement.",
+          savedToast: "Publié !",
+          noSavedLinks: "Aucun lien publié pour le moment. Cliquez sur « Publier le lien gratuit ».",
           copyBtn: "Copier",
           openBtn: "Ouvrir",
           deleteBtn: "Supprimer",
@@ -2376,11 +2546,14 @@
           email: true
         },
         domain: "https://mystore.com",
+        slug: "",
         previewDevice: "computer",
         viewMode: "split"
       };
 
-      var currentInstantLink = "";
+      var currentFreeAdLink = "";
+      var isSlugPublishedLive = false;
+      var userEditedSlug = false;
       var rebuildTimer = null;
       var savedDescRange = null;
       var latestUploadedAiImage = "";
@@ -2451,10 +2624,16 @@
       var contactEmailInput = document.getElementById("contactEmailInput");
       var contactInstagramInput = document.getElementById("contactInstagramInput");
 
-      var instantLinkInput = document.getElementById("instantLinkInput");
-      var copyInstantLinkBtn = document.getElementById("copyInstantLinkBtn");
-      var openInstantLinkBtn = document.getElementById("openInstantLinkBtn");
-      var instantLinkFeedback = document.getElementById("instantLinkFeedback");
+      var adAuthUserText = document.getElementById("adAuthUserText");
+      var adSignInBtn = document.getElementById("adSignInBtn");
+      var adSignOutBtn = document.getElementById("adSignOutBtn");
+      var adSlugPrefixSpan = document.getElementById("adSlugPrefixSpan");
+      var adSlugInput = document.getElementById("adSlugInput");
+      var publishFreeLinkBtn = document.getElementById("publishFreeLinkBtn");
+      var freeAdLinkInput = document.getElementById("freeAdLinkInput");
+      var copyFreeAdLinkBtn = document.getElementById("copyFreeAdLinkBtn");
+      var openFreeAdLinkBtn = document.getElementById("openFreeAdLinkBtn");
+      var freeAdStatusMsg = document.getElementById("freeAdStatusMsg");
 
       var customDomainInput = document.getElementById("customDomainInput");
       var domainLinkInput = document.getElementById("domainLinkInput");
@@ -2837,8 +3016,8 @@
         var priceText = formatPriceOnly();
         var imgWidth = getImageWidthPercent();
         var titlePx = getScaledFontPx();
-        var pricePx = Math.max(19, Math.round(24 * (titlePx / 28)));
-        var descPx = Math.max(16, Math.round(titlePx * 0.68));
+        var pricePx = Math.max(20, Math.round(25 * (titlePx / 28)));
+        var descPx = Math.max(17, Math.round(titlePx * 0.72));
         var reviews = getEffectiveReviews();
         var enabled = state.enabledContacts || { website: false, whatsapp: false, instagram: true, email: true };
         var websiteRaw = enabled.website ? (state.website || "").trim() : "";
@@ -2889,7 +3068,7 @@
         var contactHtml = "";
         if (websiteHref || whatsappHref || email || instagramHandle) {
           contactHtml += '<footer class="lp-contact-footer" style="border-top:1px solid ' + th.footerBorder + ';color:' + th.footerText + ';">';
-          contactHtml += '<h2 class="lp-section-title" style="font-size:16px;color:' + th.footerHeadingColor + ';">' + escapeHtml(lp.contactTitle) + "</h2>";
+          contactHtml += '<h2 class="lp-section-title" style="font-size:17px;color:' + th.footerHeadingColor + ';">' + escapeHtml(lp.contactTitle) + "</h2>";
           contactHtml += '<div class="lp-contact-items" style="color:' + th.footerText + ';">';
           if (websiteHref) {
             contactHtml += '<span>' + escapeHtml(lp.websiteLabel) + ': <a style="color:' + th.footerLink + ';text-decoration:none;" href="' + escapeHtml(websiteHref) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(websiteDisplay || websiteHref) + "</a></span>";
@@ -2929,8 +3108,8 @@
         if (isGradientTheme) {
           mainProductSectionHtml =
             '<div class="lp-product-card" style="background:' + th.cardBg + ';border:' + th.cardBorder + ';text-shadow:' + th.cardTextShadow + ';">' +
-              '<h1 class="lp-title" style="font-size:' + titlePx + 'px;color:' + th.productNameColor + ';font-weight:800;">' + escapeHtml(productName) + "</h1>" +
-              '<div class="lp-price-text" style="font-size:' + pricePx + 'px;color:' + th.priceColor + ';font-weight:800;">' + escapeHtml(priceText) + "</div>" +
+              '<h1 class="lp-title" style="font-size:' + titlePx + 'px;color:' + th.productNameColor + ';font-weight:900;">' + escapeHtml(productName) + "</h1>" +
+              '<div class="lp-price-text" style="font-size:' + pricePx + 'px;color:' + th.priceColor + ';font-weight:900;">' + escapeHtml(priceText) + "</div>" +
               deliveryGridHtml +
             "</div>" +
             '<div class="lp-showcase-card" style="background:' + th.showcaseBg + ';border:1px solid ' + th.formBorder + ';color:' + th.descColor + ';">' +
@@ -2941,8 +3120,8 @@
           mainProductSectionHtml =
             '<div class="lp-product-card" style="background:' + th.cardBg + ';border:' + th.cardBorder + ';text-shadow:' + th.cardTextShadow + ';' + cardExtraStyle + '">' +
               galleryHtml +
-              '<h1 class="lp-title" style="font-size:' + titlePx + 'px;color:' + th.productNameColor + ';font-weight:800;">' + escapeHtml(productName) + "</h1>" +
-              '<div class="lp-price-text" style="font-size:' + pricePx + 'px;color:' + th.priceColor + ';font-weight:800;">' + escapeHtml(priceText) + "</div>" +
+              '<h1 class="lp-title" style="font-size:' + titlePx + 'px;color:' + th.productNameColor + ';font-weight:900;">' + escapeHtml(productName) + "</h1>" +
+              '<div class="lp-price-text" style="font-size:' + pricePx + 'px;color:' + th.priceColor + ';font-weight:900;">' + escapeHtml(priceText) + "</div>" +
               deliveryGridHtml +
             "</div>" +
             '<div class="lp-desc" style="font-size:' + descPx + 'px;color:' + th.descColor + ';">' + descHtmlContent + "</div>";
@@ -2952,7 +3131,7 @@
           '<div class="lp-doc" dir="' + lp.dir + '" style="background:' + th.pageBg + ';color:' + th.descColor + ';">' +
             '<div class="lp-header" style="background:' + th.headerBg + ';border-bottom:1px solid ' + th.headerBorder + ';color:' + th.headerLogoColor + ';">' +
               getThemeHeaderIconSvg(themeKey, th.headerLogoColor) +
-              "<span>Landing Page Pro</span>" +
+              "<span>" + escapeHtml(productName) + "</span>" +
             "</div>" +
             ornamentHtml +
             '<div class="lp-container">' +
@@ -2986,11 +3165,11 @@
         var exportCss =
           "*{box-sizing:border-box}" +
           "html{scroll-behavior:smooth}" +
-          "body{margin:0;padding:0;background:" + th.pageBg + ";color:" + th.descColor + ";font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans Arabic',Tahoma,Arial,sans-serif;font-weight:600;line-height:1.7;-webkit-font-smoothing:antialiased}" +
+          "body{margin:0;padding:0;background:" + th.pageBg + ";color:" + th.descColor + ";font-family:'Cairo',system-ui,-apple-system,'Segoe UI',Roboto,Tahoma,Arial,sans-serif;font-weight:700;line-height:1.85;-webkit-font-smoothing:antialiased}" +
           ".lp-doc{min-height:100vh}" +
-          ".lp-header{padding:14px 18px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:900;font-size:17px}" +
+          ".lp-header{padding:14px 18px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:900;font-size:18px}" +
           ".lp-ornament{display:flex;justify-content:center;padding:12px 18px 0}" +
-          ".lp-container{max-width:760px;margin:0 auto;padding:22px 18px 40px}" +
+          ".lp-container{max-width:760px;margin:0 auto;padding:22px 18px 42px}" +
           ".lp-product-card{border-radius:16px;padding:24px 18px;margin-bottom:18px;text-align:center}" +
           ".lp-showcase-card{border-radius:16px;padding:20px;margin-bottom:18px;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,0.05)}" +
           ".lp-title{margin:0 0 8px 0;font-weight:900;line-height:1.3;text-align:center}" +
@@ -2998,32 +3177,32 @@
           ".lp-center{text-align:center}" +
           ".lp-gallery{display:flex;flex-direction:column;align-items:center;gap:14px;margin:12px 0 16px}" +
           ".lp-gallery img{display:block;height:auto;border-radius:12px;object-fit:cover}" +
-          ".lp-desc{line-height:1.8;margin:0 0 18px 0;font-weight:600;white-space:normal;word-break:break-word;text-align:center}" +
-          ".lp-desc strong,.lp-desc b{font-weight:800}" +
-          ".lp-desc p,.lp-desc div{margin:0 0 8px 0}" +
+          ".lp-desc{line-height:1.9;margin:0 0 18px 0;font-weight:700;white-space:normal;word-break:break-word;text-align:center}" +
+          ".lp-desc strong,.lp-desc b{font-weight:900}" +
+          ".lp-desc p,.lp-desc div{margin:0 0 10px 0}" +
           ".lp-desc img,.lp-desc video{display:block;max-width:100%;height:auto;border-radius:12px;margin:12px auto}" +
           ".lp-desc iframe{display:block;max-width:100%;aspect-ratio:16/9;height:auto;border-radius:12px;margin:12px auto}" +
           ".lp-delivery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}" +
           ".lp-delivery-box{border-radius:10px;padding:12px 10px;text-align:center}" +
           ".lp-delivery-box.is-pill{border-radius:999px;padding:9px 10px}" +
-          ".lp-delivery-label{font-size:13px;font-weight:800;display:block;margin-top:4px}" +
-          ".lp-cta-jump{display:block;width:100%;padding:14px 18px;border-radius:12px;font-size:16px;font-weight:900;text-align:center;text-decoration:none;margin-bottom:24px;box-shadow:0 4px 14px rgba(0,0,0,0.08)}" +
+          ".lp-delivery-label{font-size:14px;font-weight:900;display:block;margin-top:4px}" +
+          ".lp-cta-jump{display:block;width:100%;padding:15px 18px;border-radius:12px;font-size:17px;font-weight:900;text-align:center;text-decoration:none;margin-bottom:24px;box-shadow:0 4px 14px rgba(0,0,0,0.1)}" +
           ".lp-order-box{border-radius:16px;padding:22px 18px;margin-bottom:28px}" +
-          ".lp-order-heading{margin:0 0 16px 0;font-size:21px;font-weight:900;text-align:center}" +
+          ".lp-order-heading{margin:0 0 16px 0;font-size:22px;font-weight:900;text-align:center}" +
           ".lp-form-field{margin-bottom:12px}" +
-          ".lp-form-field label{display:block;font-size:14px;font-weight:800;margin-bottom:5px}" +
-          ".lp-form-field input{width:100%;padding:11px 12px;border-radius:8px;font-size:15px;font-weight:600}" +
-          ".lp-order-submit{width:100%;margin-top:8px;padding:14px 18px;border:none;border-radius:10px;font-size:16px;font-weight:900;cursor:pointer}" +
-          ".lp-order-confirm{margin-top:12px;padding:12px;border-radius:8px;background:#f0fdf4;border:1px solid #86efac;color:#111111;font-size:14px;font-weight:700;display:none}" +
+          ".lp-form-field label{display:block;font-size:15px;font-weight:900;margin-bottom:5px}" +
+          ".lp-form-field input{width:100%;padding:12px 13px;border-radius:8px;font-size:16px;font-weight:700;font-family:inherit}" +
+          ".lp-order-submit{width:100%;margin-top:8px;padding:14px 18px;border:none;border-radius:10px;font-size:17px;font-weight:900;cursor:pointer;font-family:inherit}" +
+          ".lp-order-confirm{margin-top:12px;padding:12px;border-radius:8px;background:#f0fdf4;border:1px solid #86efac;color:#111111;font-size:15px;font-weight:800;display:none}" +
           ".lp-reviews-section{margin-bottom:28px}" +
-          ".lp-section-title{margin:0 0 14px 0;font-size:20px;font-weight:900;text-align:center}" +
+          ".lp-section-title{margin:0 0 14px 0;font-size:21px;font-weight:900;text-align:center}" +
           ".lp-reviews-list{display:grid;grid-template-columns:1fr;gap:10px}" +
           ".lp-review-card{border-radius:10px;padding:14px}" +
-          ".lp-review-stars{font-size:16px;margin-bottom:4px}" +
-          ".lp-review-author{font-weight:800;font-size:14px}" +
-          ".lp-review-body{margin:5px 0 0 0;font-size:15px;font-weight:600;line-height:1.65}" +
+          ".lp-review-stars{font-size:17px;font-weight:900;margin-bottom:4px}" +
+          ".lp-review-author{font-weight:900;font-size:15px}" +
+          ".lp-review-body{margin:5px 0 0 0;font-size:16px;font-weight:700;line-height:1.75}" +
           ".lp-contact-footer{padding-top:18px;text-align:center}" +
-          ".lp-contact-items{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;font-size:15px;font-weight:700}" +
+          ".lp-contact-items{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;font-size:16px;font-weight:800}" +
           "@media(max-width:640px){.lp-delivery-grid{grid-template-columns:1fr}}";
 
         var orderHandlerScript =
@@ -3053,6 +3232,9 @@
             '<meta charset="UTF-8" />' +
             '<meta name="viewport" content="width=device-width, initial-scale=1.0" />' +
             "<title>" + escapeHtml(productName) + "</title>" +
+            '<link rel="preconnect" href="https://fonts.googleapis.com" />' +
+            '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />' +
+            '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&display=swap" />' +
             "<style>" + exportCss + "</style>" +
           "</head>" +
           "<body>" +
@@ -3154,20 +3336,52 @@
         }
       }
 
-      function rebuildInstantLinkAndAutoSave() {
-        var landingHTML = generateStandaloneLandingHTML();
-        var encoded = encodeURIComponent(btoa(unescape(encodeURIComponent(landingHTML))));
-        currentInstantLink = window.location.origin + window.location.pathname + "#landing=" + encoded;
+      function getDefaultSlugForState() {
+        var raw = (state.slug || state.productName || "").toLowerCase().trim();
+        var clean = raw.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 64);
+        if (clean.length >= 3) return clean;
+        return state.slug && state.slug.length >= 3 ? state.slug : "product-offer";
+      }
 
-        instantLinkInput.value = currentInstantLink;
-        openInstantLinkBtn.href = currentInstantLink;
+      function getFreeAdLinkUrl() {
+        var s = getDefaultSlugForState();
+        return window.location.origin + "/p/" + encodeURIComponent(s);
+      }
+
+      function showFreeAdStatus(msg, isError) {
+        if (!msg) {
+          freeAdStatusMsg.className = "ad-publish-msg";
+          freeAdStatusMsg.textContent = "";
+          return;
+        }
+        freeAdStatusMsg.className = "ad-publish-msg open " + (isError ? "err" : "ok");
+        freeAdStatusMsg.textContent = msg;
+      }
+
+      function syncFreeAdLinkUI() {
+        var slugVal = getDefaultSlugForState();
+        if (!userEditedSlug && adSlugInput) {
+          adSlugInput.value = slugVal;
+        }
+        if (adSlugPrefixSpan) {
+          adSlugPrefixSpan.textContent = window.location.origin + "/p/";
+        }
+        currentFreeAdLink = window.location.origin + "/p/" + encodeURIComponent(adSlugInput.value.trim() || slugVal);
+        freeAdLinkInput.value = currentFreeAdLink;
+        openFreeAdLinkBtn.href = currentFreeAdLink;
+        publishFreeLinkBtn.textContent = isSlugPublishedLive
+          ? BUILDER_I18N[state.lang].btnUpdateAdLink
+          : BUILDER_I18N[state.lang].btnPublishAdLink;
+      }
+
+      function saveDraftAndSyncLinks() {
+        syncFreeAdLinkUI();
 
         var domainLink = getCleanDomainLink();
         domainLinkInput.value = domainLink;
         openDomainLinkBtn.href = domainLink;
 
         saveDraft();
-        upsertSavedLink(getEffectiveProductName(), currentInstantLink);
 
         builderStatusBadge.classList.remove("updating");
         builderStatusBadge.textContent = BUILDER_I18N[state.lang].ready;
@@ -3182,8 +3396,8 @@
           clearTimeout(rebuildTimer);
         }
         rebuildTimer = setTimeout(function () {
-          rebuildInstantLinkAndAutoSave();
-        }, 450);
+          saveDraftAndSyncLinks();
+        }, 350);
       }
 
       function updateControlActiveStates() {
@@ -3276,6 +3490,13 @@
         }
 
         builderStatusBadge.textContent = builderStatusBadge.classList.contains("updating") ? t.updating : t.ready;
+        if (window.LPCloud) {
+          var curUser = window.LPCloud.getCurrentUser();
+          if (curUser) {
+            adAuthUserText.textContent = t.adConnectedAs + " " + (curUser.displayName || curUser.email);
+          }
+        }
+        syncFreeAdLinkUI();
         updateControlActiveStates();
         renderImageManager();
         renderReviewsEditor();
@@ -3391,12 +3612,23 @@
         document.body.removeChild(ta);
       }
 
+      var cloudSavedLinks = [];
+
+      function getAllDisplayLinks() {
+        var cloudList = cloudSavedLinks || [];
+        if (cloudList.length > 0) return cloudList;
+        var localList = getSavedLinks();
+        return localList.filter(function (x) {
+          return x && typeof x.link === "string" && x.link.indexOf("#landing=") === -1;
+        });
+      }
+
       function renderSavedLinksModal() {
         var t = BUILDER_I18N[state.lang];
-        var list = getSavedLinks();
+        var list = getAllDisplayLinks();
         savedCountBadge.textContent = String(list.length);
         deleteAllConfirmWrap.style.display = "none";
-        deleteAllSavedBtn.style.display = list.length > 0 ? "inline-flex" : "none";
+        deleteAllSavedBtn.style.display = (list.length > 0 && cloudSavedLinks.length === 0) ? "inline-flex" : "none";
 
         if (list.length === 0) {
           savedLinksModalBody.innerHTML = '<p class="helper-note">' + escapeHtml(t.noSavedLinks) + "</p>";
@@ -3406,21 +3638,193 @@
         var html = "";
         for (var i = 0; i < list.length; i++) {
           var item = list[i];
+          var dateStr = item.updatedAtMs
+            ? new Date(item.updatedAtMs).toLocaleString()
+            : (item.date || "");
+          var titleText = item.productName || item.name || item.slug || "Product";
           html +=
             '<div class="saved-link-item">' +
               '<div class="saved-link-top">' +
-                '<span class="saved-link-name">' + escapeHtml(item.name) + "</span>" +
-                '<span class="saved-link-date">' + escapeHtml(item.date) + "</span>" +
+                '<span class="saved-link-name">' + escapeHtml(titleText) + "</span>" +
+                '<span class="saved-link-date">' + escapeHtml(dateStr) + "</span>" +
               "</div>" +
               '<div class="saved-link-url">' + escapeHtml(item.link) + "</div>" +
               '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
                 '<button type="button" class="btn btn-sm" data-saved-copy="' + i + '">' + escapeHtml(t.copyBtn) + "</button>" +
                 '<a href="' + escapeHtml(item.link) + '" target="_blank" rel="noopener noreferrer" class="btn btn-grad btn-sm">' + escapeHtml(t.openBtn) + "</a>" +
+                (item.slug ? '<button type="button" class="btn btn-sm" data-saved-load="' + escapeHtml(item.slug) + '">' + escapeHtml(t.adLoadToEdit) + "</button>" : "") +
                 '<button type="button" class="btn btn-danger btn-sm" data-saved-delete="' + i + '">' + escapeHtml(t.deleteBtn) + "</button>" +
               "</div>" +
             "</div>";
         }
         savedLinksModalBody.innerHTML = html;
+      }
+
+      function refreshCloudLinks() {
+        if (!window.LPCloud || !window.LPCloud.getCurrentUser()) {
+          cloudSavedLinks = [];
+          renderSavedLinksModal();
+          return;
+        }
+        window.LPCloud.listMyPublishedPages().then(function (items) {
+          cloudSavedLinks = items || [];
+          renderSavedLinksModal();
+        }).catch(function () {
+          /* Ignore background list refresh failure */
+        });
+      }
+
+      function applyLoadedCloudPage(data, slug) {
+        if (!data || typeof data !== "object") return;
+        if (data.lang === "en" || data.lang === "ar" || data.lang === "fr") state.lang = data.lang;
+        if (typeof data.theme === "string" && LP_THEMES[data.theme]) state.theme = data.theme;
+        if (data.customColors && typeof data.customColors === "object") {
+          state.customColors = {
+            primary: isValidHexColor(data.customColors.primary) ? data.customColors.primary : null,
+            bg: isValidHexColor(data.customColors.bg) ? data.customColors.bg : null,
+            text: isValidHexColor(data.customColors.text) ? data.customColors.text : null,
+            headingLarge: isValidHexColor(data.customColors.headingLarge) ? data.customColors.headingLarge : null,
+            headingSmall: isValidHexColor(data.customColors.headingSmall) ? data.customColors.headingSmall : null
+          };
+        }
+        state.productName = String(data.productName || "");
+        state.description = String(data.description || "");
+        state.descriptionHtml = sanitizeRichDescriptionHtml(String(data.descriptionHtml || ""));
+        state.price = String(data.price || "129");
+        state.currency = String(data.currency || "USD");
+        state.images = Array.isArray(data.images) ? data.images : [];
+        state.imageSize = String(data.imageSize || "large");
+        state.fontSize = String(data.fontSize || "28");
+        state.scale = Number(data.scale) || 100;
+        state.reviews = Array.isArray(data.reviews) ? data.reviews : null;
+        state.website = String(data.website || "");
+        state.whatsapp = String(data.whatsapp || "");
+        state.instagram = String(data.instagram || "");
+        state.email = String(data.email || "");
+        if (data.enabledContacts && typeof data.enabledContacts === "object") {
+          state.enabledContacts = {
+            website: Boolean(data.enabledContacts.website),
+            whatsapp: Boolean(data.enabledContacts.whatsapp),
+            instagram: data.enabledContacts.instagram !== false,
+            email: data.enabledContacts.email !== false
+          };
+        }
+        state.slug = slug;
+        adSlugInput.value = slug;
+        userEditedSlug = true;
+        isSlugPublishedLive = true;
+
+        productNameInput.value = state.productName;
+        productDescEditor.innerHTML = state.descriptionHtml || escapeHtml(state.description).replace(/\n/g, "<br>");
+        productPriceInput.value = state.price;
+        productCurrencySelect.value = state.currency;
+        contactWebsiteInput.value = state.website;
+        contactWhatsappInput.value = state.whatsapp;
+        contactInstagramInput.value = state.instagram;
+        contactEmailInput.value = state.email;
+
+        syncThemePickerButtons();
+        syncColorBarInputs();
+        syncContactChannelCards();
+        applyLanguageUI();
+        renderLivePreview();
+        saveDraftAndSyncLinks();
+        savedLinksModal.classList.remove("open");
+      }
+
+      function handlePublishFreeAdLink(triggerBtn) {
+        var t = BUILDER_I18N[state.lang];
+        if (!window.LPCloud) {
+          showFreeAdStatus(t.adPublishError, true);
+          return;
+        }
+
+        function doPublish() {
+          if (triggerBtn) triggerBtn.disabled = true;
+          publishFreeLinkBtn.disabled = true;
+          showFreeAdStatus("⏳ " + t.adPublishing, false);
+
+          var desiredSlug = (adSlugInput.value || "").trim() || getDefaultSlugForState();
+          var payload = {
+            lang: state.lang,
+            theme: state.theme,
+            productName: getEffectiveProductName(),
+            description: getEffectiveDescription(),
+            descriptionHtml: state.descriptionHtml || "",
+            price: String(state.price || "129"),
+            currency: state.currency || "USD",
+            images: Array.isArray(state.images) ? state.images : [],
+            imageSize: state.imageSize || "large",
+            fontSize: String(state.fontSize || "28"),
+            scale: Number(state.scale) || 100,
+            reviews: getEffectiveReviews(),
+            customColors: state.customColors,
+            enabledContacts: state.enabledContacts,
+            website: state.website || "",
+            whatsapp: state.whatsapp || "",
+            instagram: state.instagram || "",
+            email: state.email || ""
+          };
+
+          window.LPCloud.publishLandingPage(desiredSlug, payload)
+            .then(function (res) {
+              state.slug = res.slug;
+              adSlugInput.value = res.slug;
+              userEditedSlug = true;
+              isSlugPublishedLive = true;
+              currentFreeAdLink = res.url;
+              freeAdLinkInput.value = res.url;
+              openFreeAdLinkBtn.href = res.url;
+              upsertSavedLink(getEffectiveProductName(), res.url);
+              saveDraftAndSyncLinks();
+              refreshCloudLinks();
+
+              var okMsg = "✅ " + t.adPublishedOk + " " + res.url;
+              if (res.trimmedMedia) {
+                okMsg += " — " + t.adMediaTrimmedNote;
+              }
+              showFreeAdStatus(okMsg, false);
+
+              if (triggerBtn === saveLinkHeaderBtn) {
+                saveLinkHeaderBtn.textContent = "✅ " + t.savedToast;
+                setTimeout(function () {
+                  saveLinkHeaderBtn.textContent = BUILDER_I18N[state.lang].btnSaveHeader;
+                }, 1600);
+              }
+            })
+            .catch(function (err) {
+              var msg = err && err.message ? err.message : "";
+              if (msg === "SLUG_TAKEN") {
+                showFreeAdStatus("⚠️ " + t.adSlugTaken, true);
+              } else if (msg === "AUTH_REQUIRED") {
+                showFreeAdStatus("⚠️ " + t.adAuthRequired, true);
+              } else {
+                showFreeAdStatus("⚠️ " + t.adPublishError, true);
+              }
+            })
+            .finally(function () {
+              if (triggerBtn) triggerBtn.disabled = false;
+              publishFreeLinkBtn.disabled = false;
+              syncFreeAdLinkUI();
+            });
+        }
+
+        if (!window.LPCloud.getCurrentUser()) {
+          window.LPCloud.signInGoogle()
+            .then(function () {
+              doPublish();
+            })
+            .catch(function (err) {
+              var code = err && err.code ? String(err.code) : "";
+              if (code === "auth/unauthorized-domain") {
+                showFreeAdStatus("⚠️ " + t.adDomainNotAllowed + " " + window.location.hostname, true);
+              } else {
+                showFreeAdStatus("⚠️ " + t.adAuthRequired, true);
+              }
+            });
+        } else {
+          doPublish();
+        }
       }
 
       /* Event Bindings */
@@ -3439,14 +3843,45 @@
 
       saveLinkHeaderBtn.addEventListener("click", function () {
         if (rebuildTimer) clearTimeout(rebuildTimer);
-        rebuildInstantLinkAndAutoSave();
-        saveLinkHeaderBtn.textContent = "💾 " + BUILDER_I18N[state.lang].savedToast;
-        setTimeout(function () {
-          saveLinkHeaderBtn.textContent = BUILDER_I18N[state.lang].btnSaveHeader;
-        }, 1400);
+        saveDraftAndSyncLinks();
+        handlePublishFreeAdLink(saveLinkHeaderBtn);
+      });
+
+      publishFreeLinkBtn.addEventListener("click", function () {
+        if (rebuildTimer) clearTimeout(rebuildTimer);
+        saveDraftAndSyncLinks();
+        handlePublishFreeAdLink(publishFreeLinkBtn);
+      });
+
+      adSignInBtn.addEventListener("click", function () {
+        var t = BUILDER_I18N[state.lang];
+        if (!window.LPCloud) return;
+        window.LPCloud.signInGoogle().catch(function (err) {
+          var code = err && err.code ? String(err.code) : "";
+          if (code === "auth/unauthorized-domain") {
+            showFreeAdStatus("⚠️ " + t.adDomainNotAllowed + " " + window.location.hostname, true);
+          } else {
+            showFreeAdStatus("⚠️ " + t.adAuthRequired, true);
+          }
+        });
+      });
+
+      adSignOutBtn.addEventListener("click", function () {
+        if (!window.LPCloud) return;
+        window.LPCloud.signOutUser();
+      });
+
+      adSlugInput.addEventListener("input", function () {
+        var cleaned = adSlugInput.value.toLowerCase().replace(/[^a-z0-9-]+/g, "-");
+        adSlugInput.value = cleaned;
+        userEditedSlug = cleaned.trim().length > 0;
+        state.slug = cleaned.replace(/^-+|-+$/g, "");
+        isSlugPublishedLive = false;
+        saveDraftAndSyncLinks();
       });
 
       openSavedLinksBtn.addEventListener("click", function () {
+        refreshCloudLinks();
         renderSavedLinksModal();
         savedLinksModal.classList.add("open");
       });
@@ -3471,7 +3906,7 @@
 
         var copyIdx = target.getAttribute("data-saved-copy");
         if (copyIdx !== null) {
-          var list = getSavedLinks();
+          var list = getAllDisplayLinks();
           var item = list[Number(copyIdx)];
           if (item && item.link) {
             copyTextToClipboard(item.link, target, BUILDER_I18N[state.lang].copyBtn);
@@ -3479,12 +3914,33 @@
           return;
         }
 
+        var loadSlug = target.getAttribute("data-saved-load");
+        if (loadSlug && window.LPCloud) {
+          var matched = (cloudSavedLinks || []).find(function (c) { return c.slug === loadSlug; });
+          if (matched && matched.data) {
+            applyLoadedCloudPage(matched.data, loadSlug);
+          } else {
+            window.LPCloud.loadPublishedPage(loadSlug).then(function (d) {
+              if (d) applyLoadedCloudPage(d, loadSlug);
+            });
+          }
+          return;
+        }
+
         var delIdx = target.getAttribute("data-saved-delete");
         if (delIdx !== null) {
-          var updated = getSavedLinks();
-          updated.splice(Number(delIdx), 1);
-          setSavedLinks(updated);
-          renderSavedLinksModal();
+          var all = getAllDisplayLinks();
+          var delItem = all[Number(delIdx)];
+          if (delItem && delItem.slug && cloudSavedLinks.length > 0 && window.LPCloud) {
+            window.LPCloud.deletePublishedPage(delItem.slug).then(function () {
+              cloudSavedLinks = cloudSavedLinks.filter(function (c) { return c.slug !== delItem.slug; });
+              renderSavedLinksModal();
+            });
+          } else {
+            var updated = getSavedLinks().filter(function (x) { return x && x.link !== (delItem && delItem.link); });
+            setSavedLinks(updated);
+            renderSavedLinksModal();
+          }
         }
       });
 
@@ -4120,12 +4576,12 @@
         saveDraft();
       });
 
-      copyInstantLinkBtn.addEventListener("click", function () {
+      copyFreeAdLinkBtn.addEventListener("click", function () {
         if (rebuildTimer) {
           clearTimeout(rebuildTimer);
-          rebuildInstantLinkAndAutoSave();
+          saveDraftAndSyncLinks();
         }
-        copyTextToClipboard(currentInstantLink, copyInstantLinkBtn, BUILDER_I18N[state.lang].btnCopyInstant);
+        copyTextToClipboard(currentFreeAdLink, copyFreeAdLinkBtn, BUILDER_I18N[state.lang].btnCopyAdLink);
       });
 
       copyDomainLinkBtn.addEventListener("click", function () {
@@ -4156,23 +4612,6 @@
         else state.viewMode = "split";
         updateControlActiveStates();
         saveDraft();
-      });
-
-      window.addEventListener("hashchange", function () {
-        try {
-          var h = window.location.hash || "";
-          if (h.indexOf("#landing=") === 0) {
-            var p = h.slice("#landing=".length);
-            var decoded = decodeURIComponent(escape(atob(decodeURIComponent(p))));
-            if (decoded && decoded.indexOf("</html>") !== -1) {
-              document.open();
-              document.write(decoded);
-              document.close();
-            }
-          }
-        } catch (err) {
-          /* Ignore invalid hash */
-        }
       });
 
       function syncThemePickerButtons() {
@@ -4271,6 +4710,10 @@
                 };
               }
               if (typeof parsed.domain === "string") state.domain = parsed.domain;
+              if (typeof parsed.slug === "string" && parsed.slug) {
+                state.slug = parsed.slug;
+                userEditedSlug = true;
+              }
               if (parsed.previewDevice === "mobile" || parsed.previewDevice === "computer") {
                 state.previewDevice = parsed.previewDevice;
               }
@@ -4299,14 +4742,48 @@
         contactEmailInput.value = state.email;
         contactInstagramInput.value = state.instagram;
         customDomainInput.value = state.domain;
+        if (state.slug) {
+          adSlugInput.value = state.slug;
+        }
+
+        // Purge legacy #landing= links from localStorage so only short clean links remain
+        try {
+          var legacyClean = getSavedLinks().filter(function (x) {
+            return x && typeof x.link === "string" && x.link.indexOf("#landing=") === -1;
+          });
+          setSavedLinks(legacyClean);
+        } catch (e) {}
+
+        function bindCloudBridge() {
+          if (!window.LPCloud) {
+            setTimeout(bindCloudBridge, 120);
+            return;
+          }
+          window.LPCloud.initAuthListener(function (user) {
+            var t = BUILDER_I18N[state.lang];
+            if (user) {
+              adAuthUserText.textContent = t.adConnectedAs + " " + (user.displayName || user.email);
+              adSignInBtn.style.display = "none";
+              adSignOutBtn.style.display = "inline-flex";
+              refreshCloudLinks();
+            } else {
+              adAuthUserText.textContent = t.adConnectGoogle;
+              adSignInBtn.style.display = "inline-flex";
+              adSignOutBtn.style.display = "none";
+              cloudSavedLinks = [];
+              savedCountBadge.textContent = String(getAllDisplayLinks().length);
+            }
+          });
+        }
 
         syncThemePickerButtons();
         syncColorBarInputs();
         syncContactChannelCards();
-        savedCountBadge.textContent = String(getSavedLinks().length);
+        savedCountBadge.textContent = String(getAllDisplayLinks().length);
         applyLanguageUI();
         renderLivePreview();
-        rebuildInstantLinkAndAutoSave();
+        saveDraftAndSyncLinks();
+        bindCloudBridge();
       }
 
       initFromDraft();

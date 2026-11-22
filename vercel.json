@@ -1,4 +1,10 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/p/:slug",
+      "destination": "/api/p?slug=:slug"
+    }
+  ]
 }

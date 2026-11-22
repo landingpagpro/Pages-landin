@@ -2365,6 +2365,10 @@
       var currentInstantLink = "";
       var rebuildTimer = null;
       var savedDescRange = null;
+      var latestUploadedAiImage = "";
+      var lastAiAnalyzedImage = "";
+      var lastAiProductName = "";
+      var userTypedProductName = false;
 
       /* DOM Elements */
       var themePicker = document.getElementById("themePicker");
@@ -3482,6 +3486,7 @@
 
       productNameInput.addEventListener("input", function () {
         state.productName = productNameInput.value;
+        userTypedProductName = productNameInput.value.trim().length > 0;
         scheduleRebuild();
       });
 
@@ -3637,6 +3642,9 @@
             img.alt = getEffectiveProductName();
             imgNodes.push(img);
           }
+          if (dataUrls.length > 0) {
+            latestUploadedAiImage = dataUrls[dataUrls.length - 1];
+          }
           insertMediaNodesIntoDesc(imgNodes);
         }).catch(function () {
           /* Ignore unreadable image */
@@ -3754,15 +3762,32 @@
         return frag;
       }
 
-      function findProductImageForAi() {
-        if (state.images && state.images.length > 0 && /^data:image\//i.test(state.images[0])) {
-          return state.images[0];
-        }
+      function isImageStillPresent(src) {
+        if (!src || !/^data:image\//i.test(src)) return false;
+        if (state.images && state.images.indexOf(src) !== -1) return true;
         var inlineImgs = productDescEditor.querySelectorAll("img");
         for (var i = 0; i < inlineImgs.length; i++) {
+          if (inlineImgs[i].getAttribute("src") === src) return true;
+        }
+        return false;
+      }
+
+      function findProductImageForAi() {
+        if (latestUploadedAiImage && isImageStillPresent(latestUploadedAiImage)) {
+          return latestUploadedAiImage;
+        }
+        var inlineImgs = productDescEditor.querySelectorAll("img");
+        for (var i = inlineImgs.length - 1; i >= 0; i--) {
           var src = inlineImgs[i].getAttribute("src") || "";
           if (/^data:image\//i.test(src)) {
             return src;
+          }
+        }
+        if (state.images && state.images.length > 0) {
+          for (var j = state.images.length - 1; j >= 0; j--) {
+            if (/^data:image\//i.test(state.images[j])) {
+              return state.images[j];
+            }
           }
         }
         return "";
@@ -3773,13 +3798,17 @@
         descAiBtn.disabled = true;
         showAiStatus("⏳ " + t.aiSearching, false, []);
 
+        var isNewImage = imageDataUrl !== lastAiAnalyzedImage;
+        var currentTitle = (productNameInput.value || "").trim();
+        var titleHint = (userTypedProductName && (!isNewImage || currentTitle !== lastAiProductName)) ? currentTitle : "";
+
         fetch("/api/generate-description", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             imageDataUrl: imageDataUrl,
             lang: state.lang,
-            productName: (productNameInput.value || "").trim()
+            productName: titleHint
           })
         })
           .then(function (res) {
@@ -3800,10 +3829,19 @@
               return;
             }
 
-            if (result.data.productName && !productNameInput.value.trim()) {
-              productNameInput.value = result.data.productName;
-              state.productName = result.data.productName;
+            if (result.data.productName) {
+              var shouldOverwriteTitle =
+                !productNameInput.value.trim() ||
+                !userTypedProductName ||
+                (isNewImage && productNameInput.value.trim() === lastAiProductName);
+              if (shouldOverwriteTitle) {
+                productNameInput.value = result.data.productName;
+                state.productName = result.data.productName;
+                userTypedProductName = false;
+              }
+              lastAiProductName = result.data.productName;
             }
+            lastAiAnalyzedImage = imageDataUrl;
 
             var existingMedia = [];
             var mediaEls = productDescEditor.querySelectorAll("img,video,iframe");
@@ -3849,7 +3887,8 @@
         var files = descAiImageInput.files;
         if (!files || files.length === 0) return;
         compressImageFile(files[0]).then(function (dataUrl) {
-          state.images = [dataUrl].concat(state.images || []);
+          latestUploadedAiImage = dataUrl;
+          state.images = (state.images || []).concat([dataUrl]);
           renderImageManager();
           scheduleRebuild();
           runAiDescriptionForImage(dataUrl);
@@ -3881,6 +3920,9 @@
           promises.push(compressImageFile(files[i]));
         }
         Promise.all(promises).then(function (dataUrls) {
+          if (dataUrls.length > 0) {
+            latestUploadedAiImage = dataUrls[dataUrls.length - 1];
+          }
           state.images = state.images.concat(dataUrls);
           renderImageManager();
           scheduleRebuild();

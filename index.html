@@ -546,15 +546,21 @@
       min-height: 128px;
       max-height: 360px;
       overflow-y: auto;
-      padding: 10px 12px;
-      font-size: 14px;
-      line-height: 1.65;
-      color: #111111;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.75;
+      color: #000000;
       background: #ffffff;
       border: 1px solid #d1d5db;
       border-radius: 8px;
       outline: none;
       word-break: break-word;
+    }
+
+    .desc-rich-editor strong,
+    .desc-rich-editor b {
+      font-weight: 800;
     }
 
     .desc-rich-editor:focus {
@@ -966,6 +972,9 @@
       padding: 0;
       margin: 0;
       min-height: 100%;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Arabic', Tahoma, Arial, sans-serif;
+      font-weight: 600;
+      -webkit-font-smoothing: antialiased;
     }
 
     .lp-header {
@@ -974,8 +983,8 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      font-weight: 800;
-      font-size: 16px;
+      font-weight: 900;
+      font-size: 17px;
       letter-spacing: -0.01em;
     }
 
@@ -1008,14 +1017,14 @@
 
     .lp-title {
       margin: 0 0 8px 0;
-      font-weight: 800;
-      line-height: 1.25;
+      font-weight: 900;
+      line-height: 1.3;
       text-align: center;
     }
 
     .lp-price-text {
       margin: 0 0 14px 0;
-      font-weight: 800;
+      font-weight: 900;
       line-height: 1.25;
       text-align: center;
     }
@@ -1040,11 +1049,17 @@
     }
 
     .lp-desc {
-      line-height: 1.7;
+      line-height: 1.8;
       margin: 0 0 16px 0;
+      font-weight: 600;
       white-space: normal;
       word-break: break-word;
       text-align: center;
+    }
+
+    .lp-desc strong,
+    .lp-desc b {
+      font-weight: 800;
     }
 
     .lp-desc p,
@@ -1094,8 +1109,8 @@
     }
 
     .lp-delivery-label {
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 13px;
+      font-weight: 800;
       display: block;
       margin-top: 3px;
     }
@@ -1106,7 +1121,7 @@
       padding: 14px 18px;
       border-radius: 12px;
       font-size: 16px;
-      font-weight: 800;
+      font-weight: 900;
       text-align: center;
       text-decoration: none;
       margin-bottom: 22px;
@@ -1121,8 +1136,8 @@
 
     .lp-order-heading {
       margin: 0 0 14px 0;
-      font-size: 20px;
-      font-weight: 800;
+      font-size: 21px;
+      font-weight: 900;
       text-align: center;
     }
 
@@ -1132,16 +1147,17 @@
 
     .lp-form-field label {
       display: block;
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 14px;
+      font-weight: 800;
       margin-bottom: 4px;
     }
 
     .lp-form-field input {
       width: 100%;
-      padding: 10px 12px;
+      padding: 11px 12px;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 15px;
+      font-weight: 600;
     }
 
     .lp-order-submit {
@@ -1151,7 +1167,7 @@
       border: none;
       border-radius: 10px;
       font-size: 16px;
-      font-weight: 800;
+      font-weight: 900;
       cursor: pointer;
     }
 
@@ -1163,7 +1179,7 @@
       border: 1px solid #86efac;
       color: #111111;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       display: none;
     }
 
@@ -1173,8 +1189,8 @@
 
     .lp-section-title {
       margin: 0 0 12px 0;
-      font-size: 18px;
-      font-weight: 800;
+      font-size: 19px;
+      font-weight: 900;
       text-align: center;
     }
 
@@ -1190,18 +1206,20 @@
     }
 
     .lp-review-stars {
-      font-size: 14px;
+      font-size: 16px;
       margin-bottom: 4px;
     }
 
     .lp-review-author {
-      font-weight: 700;
-      font-size: 13px;
+      font-weight: 800;
+      font-size: 14px;
     }
 
     .lp-review-body {
       margin: 4px 0 0 0;
-      font-size: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.65;
     }
 
     .lp-contact-footer {
@@ -1214,8 +1232,8 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 14px;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 15px;
+      font-weight: 700;
     }
 
     .lp-contact-items a {
@@ -2819,8 +2837,8 @@
         var priceText = formatPriceOnly();
         var imgWidth = getImageWidthPercent();
         var titlePx = getScaledFontPx();
-        var pricePx = Math.max(18, Math.round(24 * (titlePx / 28)));
-        var descPx = Math.max(14, Math.round(titlePx * 0.62));
+        var pricePx = Math.max(19, Math.round(24 * (titlePx / 28)));
+        var descPx = Math.max(16, Math.round(titlePx * 0.68));
         var reviews = getEffectiveReviews();
         var enabled = state.enabledContacts || { website: false, whatsapp: false, instagram: true, email: true };
         var websiteRaw = enabled.website ? (state.website || "").trim() : "";
@@ -2968,43 +2986,44 @@
         var exportCss =
           "*{box-sizing:border-box}" +
           "html{scroll-behavior:smooth}" +
-          "body{margin:0;padding:0;background:" + th.pageBg + ";color:" + th.descColor + ";font-family:system-ui,-apple-system,'Segoe UI',Roboto,Tahoma,Arial,sans-serif;line-height:1.6}" +
+          "body{margin:0;padding:0;background:" + th.pageBg + ";color:" + th.descColor + ";font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans Arabic',Tahoma,Arial,sans-serif;font-weight:600;line-height:1.7;-webkit-font-smoothing:antialiased}" +
           ".lp-doc{min-height:100vh}" +
-          ".lp-header{padding:14px 18px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:800;font-size:16px}" +
+          ".lp-header{padding:14px 18px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:900;font-size:17px}" +
           ".lp-ornament{display:flex;justify-content:center;padding:12px 18px 0}" +
           ".lp-container{max-width:760px;margin:0 auto;padding:22px 18px 40px}" +
           ".lp-product-card{border-radius:16px;padding:24px 18px;margin-bottom:18px;text-align:center}" +
           ".lp-showcase-card{border-radius:16px;padding:20px;margin-bottom:18px;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,0.05)}" +
-          ".lp-title{margin:0 0 8px 0;font-weight:800;line-height:1.25;text-align:center}" +
-          ".lp-price-text{margin:0 0 16px 0;font-weight:800;line-height:1.25;text-align:center}" +
+          ".lp-title{margin:0 0 8px 0;font-weight:900;line-height:1.3;text-align:center}" +
+          ".lp-price-text{margin:0 0 16px 0;font-weight:900;line-height:1.25;text-align:center}" +
           ".lp-center{text-align:center}" +
           ".lp-gallery{display:flex;flex-direction:column;align-items:center;gap:14px;margin:12px 0 16px}" +
           ".lp-gallery img{display:block;height:auto;border-radius:12px;object-fit:cover}" +
-          ".lp-desc{line-height:1.75;margin:0 0 18px 0;white-space:normal;word-break:break-word;text-align:center}" +
+          ".lp-desc{line-height:1.8;margin:0 0 18px 0;font-weight:600;white-space:normal;word-break:break-word;text-align:center}" +
+          ".lp-desc strong,.lp-desc b{font-weight:800}" +
           ".lp-desc p,.lp-desc div{margin:0 0 8px 0}" +
           ".lp-desc img,.lp-desc video{display:block;max-width:100%;height:auto;border-radius:12px;margin:12px auto}" +
           ".lp-desc iframe{display:block;max-width:100%;aspect-ratio:16/9;height:auto;border-radius:12px;margin:12px auto}" +
           ".lp-delivery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}" +
           ".lp-delivery-box{border-radius:10px;padding:12px 10px;text-align:center}" +
           ".lp-delivery-box.is-pill{border-radius:999px;padding:9px 10px}" +
-          ".lp-delivery-label{font-size:13px;font-weight:700;display:block;margin-top:4px}" +
-          ".lp-cta-jump{display:block;width:100%;padding:14px 18px;border-radius:12px;font-size:16px;font-weight:800;text-align:center;text-decoration:none;margin-bottom:24px;box-shadow:0 4px 14px rgba(0,0,0,0.08)}" +
+          ".lp-delivery-label{font-size:13px;font-weight:800;display:block;margin-top:4px}" +
+          ".lp-cta-jump{display:block;width:100%;padding:14px 18px;border-radius:12px;font-size:16px;font-weight:900;text-align:center;text-decoration:none;margin-bottom:24px;box-shadow:0 4px 14px rgba(0,0,0,0.08)}" +
           ".lp-order-box{border-radius:16px;padding:22px 18px;margin-bottom:28px}" +
-          ".lp-order-heading{margin:0 0 16px 0;font-size:21px;font-weight:800;text-align:center}" +
+          ".lp-order-heading{margin:0 0 16px 0;font-size:21px;font-weight:900;text-align:center}" +
           ".lp-form-field{margin-bottom:12px}" +
-          ".lp-form-field label{display:block;font-size:13px;font-weight:700;margin-bottom:5px}" +
-          ".lp-form-field input{width:100%;padding:11px 12px;border-radius:8px;font-size:14px}" +
-          ".lp-order-submit{width:100%;margin-top:8px;padding:14px 18px;border:none;border-radius:10px;font-size:16px;font-weight:800;cursor:pointer}" +
-          ".lp-order-confirm{margin-top:12px;padding:12px;border-radius:8px;background:#f0fdf4;border:1px solid #86efac;color:#111111;font-size:14px;font-weight:600;display:none}" +
+          ".lp-form-field label{display:block;font-size:14px;font-weight:800;margin-bottom:5px}" +
+          ".lp-form-field input{width:100%;padding:11px 12px;border-radius:8px;font-size:15px;font-weight:600}" +
+          ".lp-order-submit{width:100%;margin-top:8px;padding:14px 18px;border:none;border-radius:10px;font-size:16px;font-weight:900;cursor:pointer}" +
+          ".lp-order-confirm{margin-top:12px;padding:12px;border-radius:8px;background:#f0fdf4;border:1px solid #86efac;color:#111111;font-size:14px;font-weight:700;display:none}" +
           ".lp-reviews-section{margin-bottom:28px}" +
-          ".lp-section-title{margin:0 0 14px 0;font-size:19px;font-weight:800;text-align:center}" +
+          ".lp-section-title{margin:0 0 14px 0;font-size:20px;font-weight:900;text-align:center}" +
           ".lp-reviews-list{display:grid;grid-template-columns:1fr;gap:10px}" +
           ".lp-review-card{border-radius:10px;padding:14px}" +
-          ".lp-review-stars{font-size:15px;margin-bottom:4px}" +
-          ".lp-review-author{font-weight:700;font-size:13px}" +
-          ".lp-review-body{margin:5px 0 0 0;font-size:14px}" +
+          ".lp-review-stars{font-size:16px;margin-bottom:4px}" +
+          ".lp-review-author{font-weight:800;font-size:14px}" +
+          ".lp-review-body{margin:5px 0 0 0;font-size:15px;font-weight:600;line-height:1.65}" +
           ".lp-contact-footer{padding-top:18px;text-align:center}" +
-          ".lp-contact-items{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;font-size:14px;font-weight:600}" +
+          ".lp-contact-items{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;font-size:15px;font-weight:700}" +
           "@media(max-width:640px){.lp-delivery-grid{grid-template-columns:1fr}}";
 
         var orderHandlerScript =

@@ -1,0 +1,6 @@
+{
+  "name": "Herbarium",
+  "description": "Identify plants from a photo and receive detailed botanical care instructions, health diagnostics, and watering schedules.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

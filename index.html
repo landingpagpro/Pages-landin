@@ -1706,8 +1706,11 @@
           btnDescAi: "AI Description",
           aiSearching: "Analyzing product photo and searching the web...",
           aiDone: "Description generated from web research!",
+          aiDoneVision: "Description generated from product photo analysis!",
           aiSourcesLabel: "Web sources:",
-          aiErrorGeneric: "Could not generate AI description. Please try again."
+          aiErrorGeneric: "Could not generate AI description. Please try again.",
+          aiErrorQuota: "API quota reached (429). Check Settings > Secrets or try again shortly.",
+          aiErrorKey: "Gemini API key is missing or invalid in Settings > Secrets."
         },
         ar: {
           btnSaveHeader: "💾 حفظ الرابط",
@@ -1790,8 +1793,11 @@
           btnDescAi: "توليد بالذكاء الاصطناعي",
           aiSearching: "جاري تحليل صورة المنتج والبحث في الويب...",
           aiDone: "تم توليد الوصف الاحترافي بناءً على بحث الويب!",
+          aiDoneVision: "تم توليد الوصف الاحترافي من تحليل صورة المنتج!",
           aiSourcesLabel: "مصادر الويب:",
-          aiErrorGeneric: "تعذر توليد الوصف، يرجى المحاولة مرة أخرى."
+          aiErrorGeneric: "تعذر توليد الوصف، يرجى المحاولة مرة أخرى.",
+          aiErrorQuota: "تم تجاوز حصة مفتاح Gemini API الحالية. تأكد من الحصة أو اختر مفتاحاً مفعلاً في Settings > Secrets.",
+          aiErrorKey: "مفتاح Gemini API غير موجود أو غير صالح في Settings > Secrets."
         },
         fr: {
           btnSaveHeader: "💾 Enregistrer le lien",
@@ -1874,8 +1880,11 @@
           btnDescAi: "Générer par IA",
           aiSearching: "Analyse de la photo et recherche sur le web...",
           aiDone: "Description professionnelle générée depuis le web !",
+          aiDoneVision: "Description professionnelle générée depuis l'image !",
           aiSourcesLabel: "Sources web :",
-          aiErrorGeneric: "Impossible de générer la description. Veuillez réessayer."
+          aiErrorGeneric: "Impossible de générer la description. Veuillez réessayer.",
+          aiErrorQuota: "Quota API atteint (429). Vérifiez Settings > Secrets ou réessayez plus tard.",
+          aiErrorKey: "Clé Gemini API manquante ou invalide dans Settings > Secrets."
         }
       };
 
@@ -3782,7 +3791,11 @@
           })
           .then(function (result) {
             if (!result.ok || !result.data || !result.data.description) {
-              var errMsg = (result.data && result.data.message) ? result.data.message : t.aiErrorGeneric;
+              var code = result.data && result.data.error ? result.data.error : "";
+              var errMsg = t.aiErrorGeneric;
+              if (code === "QUOTA_EXCEEDED") errMsg = t.aiErrorQuota;
+              else if (code === "MISSING_API_KEY" || code === "INVALID_API_KEY") errMsg = t.aiErrorKey;
+              else if (result.data && result.data.message) errMsg = result.data.message;
               showAiStatus("⚠️ " + errMsg, true, []);
               return;
             }
@@ -3811,7 +3824,8 @@
             }
 
             syncDescriptionFromEditor(false);
-            showAiStatus("✅ " + t.aiDone, false, result.data.sources || []);
+            var doneMsg = result.data.usedWebSearch === false ? t.aiDoneVision : t.aiDone;
+            showAiStatus("✅ " + doneMsg, false, result.data.sources || []);
           })
           .catch(function () {
             showAiStatus("⚠️ " + t.aiErrorGeneric, true, []);

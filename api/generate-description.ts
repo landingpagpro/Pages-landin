@@ -71,10 +71,14 @@ export default async function handler(req: VercelNodeRequest, res: ServerRespons
       return;
     }
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("Vercel AI description generation error:", msg);
-    sendJson(res, 500, {
+    const status =
+      typeof (err as { status?: unknown })?.status === "number"
+        ? ((err as { status: number }).status)
+        : 500;
+    console.error("Vercel AI description generation error:", status, msg);
+    sendJson(res, status >= 400 && status < 600 ? status : 500, {
       error: "GENERATION_FAILED",
-      message: "Failed to analyze the product image and search the web. Please try again.",
+      message: msg || "Failed to analyze the product image and search the web. Please try again.",
     });
   }
 }

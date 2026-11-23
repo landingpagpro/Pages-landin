@@ -20,6 +20,7 @@ export interface GenerateDescResult {
   description: string;
   sources: GroundingSource[];
   usedWebSearch: boolean;
+  usedSimilarProducts?: boolean;
 }
 
 interface WebSearchItem {
@@ -133,18 +134,20 @@ function buildDirectSearchPrompts(lang: SupportedLang, hintName: string): { syst
   const systemInstruction = [
     "You are an expert e-commerce product researcher and conversion copywriter.",
     "The uploaded photo is the primary source of truth. Carefully inspect the product in the photo, then use Google Search to search across e-commerce platforms and the web (Google, AliExpress, Alibaba, Pinterest, Amazon, and official brand stores) to find matching product listings and real descriptions.",
+    "If the exact product or brand cannot be found online (for example, unbranded, local, custom, or rare products), immediately search for closely similar products in the same category, style, material, and function, and synthesize a persuasive description from those similar products combined with the visual details in the photo.",
+    "Never refuse or apologize that the exact product was not found.",
     `Write the entire output strictly in ${languageLabel}. Never mix languages (only keep exact brand/model names if standard).`,
     "Synthesize a compelling, accurate landing page description based on the real product descriptions found on the web. Do not include markdown URLs, citation brackets like [1], or HTML tags.",
   ].join(" ");
 
   const userPrompt = [
-    `Identify the exact product visible in this image and search the web (Google, AliExpress, Alibaba, Pinterest, Amazon, and retail stores) for matching product descriptions and real specifications.${productHint}`,
+    `Identify the product visible in this image and search the web (Google, AliExpress, Alibaba, Pinterest, Amazon, and retail stores) for matching product descriptions and real specifications. If the exact product is not found, search for closely similar products in the same category and generate a professional commercial description inspired by them and what is visible in the photo.${productHint}`,
     `Write everything strictly in ${languageLabel} using this exact format:`,
     "PRODUCT_NAME: <concise, accurate commercial product name>",
     "DESCRIPTION:",
     "<1-2 compelling opening lines explaining what the product is and its main benefit>",
     "",
-    "<4-6 concise bullet points starting with • where each bullet has a **bold label** and real specs/benefits from the web listings>",
+    "<4-6 concise bullet points starting with • where each bullet has a **bold label** and real specs/benefits from the web listings or similar category products>",
     "",
     "<1 short persuasive closing line highlighting quality and readiness to order>",
   ].join("\n");
@@ -183,7 +186,11 @@ function getUpstreamErrorDetails(err: unknown): { status: number; code: string; 
   return { status, code, rawMsg };
 }
 
-async function fetchBingRssResults(query: string, keywords: string[]): Promise<WebSearchItem[]> {
+async function fetchBingRssResults(
+  query: string,
+  keywords: string[],
+  minMatchesOverride?: number
+): Promise<WebSearchItem[]> {
   const cleanQuery = query.trim();
   if (!cleanQuery) return [];
 
@@ -224,7 +231,10 @@ async function fetchBingRssResults(query: string, keywords: string[]): Promise<W
       if (keywords.length > 0) {
         const haystack = `${title} ${snippet} ${safeUrl}`.toLowerCase();
         const matchesCount = keywords.filter((kw) => haystack.includes(kw)).length;
-        const minNeeded = keywords.length >= 2 ? 2 : 1;
+        const minNeeded =
+          typeof minMatchesOverride === "number"
+            ? minMatchesOverride
+            : (keywords.length >= 2 ? 2 : 1);
         if (matchesCount < minNeeded) continue;
       }
 
@@ -238,52 +248,85 @@ async function fetchBingRssResults(query: string, keywords: string[]): Promise<W
   }
 }
 
-async function searchWebForProduct(productQuery: string): Promise<WebSearchItem[]> {
+function extractSearchKeywords(queryText: string): string[] {
   const stopWords = new Set(["the", "and", "for", "with", "new", "pro", "hot", "sale", "best", "free", "shipping", "product"]);
-  const keywords = productQuery
+  return queryText
     .toLowerCase()
     .replace(/[^a-z0-9\u0600-\u06ff\s]/gi, " ")
     .split(/\s+/)
     .filter((w) => w.length >= 3 && !stopWords.has(w))
     .slice(0, 6);
+}
 
-  const queries = [
-    productQuery,
-    `${productQuery} product features description`,
-    `${productQuery} amazon aliexpress alibaba pinterest`,
-  ];
-
-  const batches = await Promise.all(queries.map((q) => fetchBingRssResults(q, keywords)));
+function mergeWebBatches(batches: WebSearchItem[][], limit = 6): WebSearchItem[] {
   const merged: WebSearchItem[] = [];
   const seenUrls = new Set<string>();
-
   for (const batch of batches) {
     for (const item of batch) {
       if (!seenUrls.has(item.url)) {
         seenUrls.add(item.url);
         merged.push(item);
       }
-      if (merged.length >= 6) break;
+      if (merged.length >= limit) break;
     }
-    if (merged.length >= 6) break;
+    if (merged.length >= limit) break;
+  }
+  return merged;
+}
+
+async function searchWebForProduct(
+  productQuery: string,
+  similarQuery?: string
+): Promise<{ items: WebSearchItem[]; usedSimilarProducts: boolean }> {
+  const exactTrimmed = (productQuery || "").trim();
+  if (exactTrimmed) {
+    const exactKeywords = extractSearchKeywords(exactTrimmed);
+    const exactQueries = [
+      exactTrimmed,
+      `${exactTrimmed} product features description`,
+      `${exactTrimmed} amazon aliexpress alibaba pinterest`,
+    ];
+    const exactBatches = await Promise.all(exactQueries.map((q) => fetchBingRssResults(q, exactKeywords)));
+    const exactMerged = mergeWebBatches(exactBatches, 6);
+    if (exactMerged.length > 0) {
+      return { items: exactMerged, usedSimilarProducts: false };
+    }
   }
 
-  return merged;
+  const fallbackQuery = (similarQuery || exactTrimmed || "").trim();
+  if (fallbackQuery) {
+    const similarKeywords = extractSearchKeywords(fallbackQuery);
+    const similarQueries = [
+      fallbackQuery,
+      `${fallbackQuery} aliexpress alibaba amazon`,
+      `${fallbackQuery} features benefits description`,
+    ];
+    const similarBatches = await Promise.all(
+      similarQueries.map((q) => fetchBingRssResults(q, similarKeywords, 1))
+    );
+    const similarMerged = mergeWebBatches(similarBatches, 6);
+    if (similarMerged.length > 0) {
+      return { items: similarMerged, usedSimilarProducts: true };
+    }
+  }
+
+  return { items: [], usedSimilarProducts: Boolean(fallbackQuery) };
 }
 
 async function identifyProductFromImage(
   ai: GoogleGenAI,
   imagePart: { inlineData: { mimeType: string; data: string } },
   hintName: string
-): Promise<{ productName: string; searchQuery: string }> {
+): Promise<{ productName: string; searchQuery: string; similarQuery: string }> {
   const modelsToTry = ["gemini-3.1-flash-lite", "gemini-4-hydrogen"];
   const prompt = [
     "Look closely at this product photo.",
     hintName ? `Optional user note: "${hintName}" (trust what you visually see in the photo above all).` : "",
-    "Identify the exact commercial product, brand, model, or product type.",
-    "Return ONLY two lines in this exact format:",
+    "Identify the commercial product, brand, model, or product type — and also identify the broader category for closely similar products.",
+    "Return ONLY three lines in this exact format:",
     "NAME: <concise product name>",
     "SEARCH_QUERY: <3 to 7 clean English keywords to search this exact product on Google, AliExpress, Alibaba, Pinterest, and Amazon>",
+    "SIMILAR_QUERY: <3 to 5 broader English category/type keywords to find closely similar products if this exact item is not listed online>",
   ]
     .filter(Boolean)
     .join("\n");
@@ -297,17 +340,23 @@ async function identifyProductFromImage(
       const text = (resp.text || "").trim();
       const nameMatch = text.match(/^NAME\s*:\s*(.+)$/im);
       const queryMatch = text.match(/^SEARCH_QUERY\s*:\s*(.+)$/im);
+      const similarMatch = text.match(/^SIMILAR_QUERY\s*:\s*(.+)$/im);
       const productName = nameMatch && nameMatch[1] ? nameMatch[1].trim() : "";
       const searchQuery = queryMatch && queryMatch[1] ? queryMatch[1].trim() : productName;
-      if (searchQuery) {
-        return { productName: productName || searchQuery, searchQuery };
+      const similarQuery = similarMatch && similarMatch[1] ? similarMatch[1].trim() : searchQuery;
+      if (searchQuery || similarQuery) {
+        return {
+          productName: productName || searchQuery || similarQuery,
+          searchQuery: searchQuery || similarQuery,
+          similarQuery: similarQuery || searchQuery,
+        };
       }
     } catch {
       /* Try next model */
     }
   }
 
-  return { productName: hintName, searchQuery: hintName };
+  return { productName: hintName, searchQuery: hintName, similarQuery: hintName };
 }
 
 export async function generateDescriptionFromImage(input: GenerateDescInput): Promise<GenerateDescResult> {
@@ -387,10 +436,14 @@ export async function generateDescriptionFromImage(input: GenerateDescInput): Pr
     }
   }
 
-  // Step 2: 2-Stage Visual Identification + Multi-Source Web Search (Google/Bing, AliExpress, Alibaba, Pinterest, Amazon)
+  // Step 2: 2-Stage Visual Identification + Exact Web Search + Similar-Products Fallback
   try {
     const identified = await identifyProductFromImage(ai, imagePart, hintName);
-    const webItems = identified.searchQuery ? await searchWebForProduct(identified.searchQuery) : [];
+    const searchRes = (identified.searchQuery || identified.similarQuery)
+      ? await searchWebForProduct(identified.searchQuery, identified.similarQuery)
+      : { items: [], usedSimilarProducts: true };
+    const webItems = searchRes.items;
+    const usedSimilarProducts = searchRes.usedSimilarProducts;
 
     const languageLabel =
       lang === "ar" ? "Arabic (العربية الفصحى التسويقية الواضحة)" : lang === "fr" ? "French (Français)" : "English";
@@ -401,11 +454,15 @@ export async function generateDescriptionFromImage(input: GenerateDescInput): Pr
           .join("\n\n")
       : "";
 
+    const contextInstruction = webContext
+      ? (usedSimilarProducts
+          ? `Exact listings for this specific item were not found online, so below are real web listings for closely similar products in the same category:\n\n${webContext}\n\nSynthesize a professional e-commerce landing page description modeled after these similar products (their proven selling points, benefits, and specifications) while staying completely accurate to the design, colors, and features visible in the user's photo.`
+          : `Below are real product listings and descriptions found on the web for this product:\n\n${webContext}\n\nSynthesize a professional e-commerce landing page description using the real specs, materials, and benefits found in these web listings alongside what is visible in the photo.`)
+      : "If the exact product is not listed online, analyze its category, design, materials, and visual details in the photo and write an accurate, persuasive commercial description modeled after top-selling similar products in the same category. Never state that the product was not found.";
+
     const synthesisPrompt = [
       `Analyze this product photo${identified.productName ? ` (identified as: ${identified.productName})` : ""}.`,
-      webContext
-        ? `Below are real product listings and descriptions found on the web for this product:\n\n${webContext}\n\nSynthesize a professional e-commerce landing page description using the real specs, materials, and benefits found in these web listings alongside what is visible in the photo.`
-        : "Inspect all details visible in the photo and write an accurate, persuasive commercial description.",
+      contextInstruction,
       `Write everything strictly in ${languageLabel} using this exact format:`,
       "PRODUCT_NAME: <concise, accurate commercial product name>",
       "DESCRIPTION:",
@@ -419,6 +476,7 @@ export async function generateDescriptionFromImage(input: GenerateDescInput): Pr
     const synthSystem = [
       "You are an expert e-commerce product researcher and conversion copywriter.",
       `Write the entire output strictly in ${languageLabel}. Never mix languages (except standard brand/model names).`,
+      "Never apologize or say the product could not be found; always produce a strong commercial description from exact matches or similar category products.",
       "Do not include markdown links, URLs, bracketed citations like [1], or HTML tags.",
     ].join(" ");
 
@@ -437,6 +495,7 @@ export async function generateDescriptionFromImage(input: GenerateDescInput): Pr
             description: parsed.description,
             sources: webItems.map((w) => ({ title: w.title, url: w.url })),
             usedWebSearch: webItems.length > 0,
+            usedSimilarProducts,
           };
         }
       } catch (err: unknown) {

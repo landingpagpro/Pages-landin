@@ -1,8 +1,33 @@
 {
   "entities": {
+    "PageLock": {
+      "title": "Page Ownership Lock",
+      "description": "Write-only ownership lock storing the creator secret key for a published page slug.",
+      "type": "object",
+      "properties": {
+        "ownerKey": {
+          "type": "string",
+          "description": "Random client-generated secret key authorizing updates to the matching published page.",
+          "minLength": 16,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server last update timestamp."
+        }
+      },
+      "required": ["ownerKey", "createdAt", "updatedAt"]
+    },
     "PublishedPage": {
       "title": "Published Landing Page",
-      "description": "Public product landing page published at /p/{slug} for Facebook, TikTok, and social media ads.",
+      "description": "Public product landing page published at /p/{slug}.",
       "type": "object",
       "properties": {
         "slug": {
@@ -11,13 +36,6 @@
           "minLength": 3,
           "maxLength": 80,
           "pattern": "^[a-z0-9-]+$"
-        },
-        "ownerId": {
-          "type": "string",
-          "description": "Firebase Auth UID of the seller who owns this landing page.",
-          "minLength": 1,
-          "maxLength": 128,
-          "pattern": "^[a-zA-Z0-9_-]+$"
         },
         "lang": {
           "type": "string",
@@ -125,7 +143,6 @@
       },
       "required": [
         "slug",
-        "ownerId",
         "lang",
         "theme",
         "productName",
@@ -150,6 +167,12 @@
     }
   },
   "firestore": {
+    "/page_locks/{slug}": {
+      "schema": {
+        "$ref": "#/entities/PageLock"
+      },
+      "description": "Private non-readable ownership locks protecting published landing page slugs against unauthorized overwrites."
+    },
     "/published_pages/{slug}": {
       "schema": {
         "$ref": "#/entities/PublishedPage"

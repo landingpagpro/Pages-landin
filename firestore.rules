@@ -15,24 +15,31 @@ service cloud.firestore {
       return resource.data;
     }
 
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isVerified() {
-      return isSignedIn() && request.auth.token.email_verified == true;
-    }
-
     function isValidSlugId(slug) {
       return slug is string && slug.size() >= 3 && slug.size() <= 80 && slug.matches('^[a-z0-9-]+$');
     }
 
-    function isValidUid(uid) {
-      return uid is string && uid.size() >= 1 && uid.size() <= 128 && uid.matches('^[a-zA-Z0-9_-]+$');
+    function isValidSecret(val) {
+      return val is string && val.size() >= 20 && val.size() <= 128 && val.matches('^[a-zA-Z0-9_-]+$');
+    }
+
+    function isValidNonce(val) {
+      return val is string && val.size() >= 8 && val.size() <= 64 && val.matches('^[a-zA-Z0-9_-]+$');
     }
 
     function isOptionalHex(val) {
       return val is string && (val == '' || val.matches('^#[0-9a-fA-F]{6}$'));
+    }
+
+    function isValidPageLock(data) {
+      return data.keys().hasAll(['secret', 'nonce', 'nonceProof', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['secret', 'nonce', 'nonceProof', 'createdAt', 'updatedAt']) &&
+        isValidSecret(data.secret) &&
+        isValidNonce(data.nonce) &&
+        data.nonceProof is bytes &&
+        data.nonceProof.size() == 32 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
     }
 
     function isValidCustomColors(cc) {
@@ -77,14 +84,14 @@ service cloud.firestore {
 
     function isValidPublishedPage(data, slug) {
       return data.keys().hasAll([
-          'slug', 'ownerId', 'lang', 'theme', 'productName',
+          'slug', 'lang', 'theme', 'productName',
           'description', 'descriptionHtml', 'price', 'currency',
           'images', 'imageSize', 'fontSize', 'scale', 'reviews',
           'customColors', 'enabledContacts', 'website', 'whatsapp',
           'instagram', 'email', 'createdAt', 'updatedAt'
         ]) &&
         data.keys().hasOnly([
-          'slug', 'ownerId', 'lang', 'theme', 'productName',
+          'slug', 'lang', 'theme', 'productName',
           'description', 'descriptionHtml', 'price', 'currency',
           'images', 'imageSize', 'fontSize', 'scale', 'reviews',
           'customColors', 'enabledContacts', 'website', 'whatsapp',
@@ -92,7 +99,6 @@ service cloud.firestore {
         ]) &&
         isValidSlugId(data.slug) &&
         data.slug == slug &&
-        isValidUid(data.ownerId) &&
         data.lang in ['en', 'ar', 'fr'] &&
         data.theme is string && data.theme.size() >= 1 && data.theme.size() <= 40 && data.theme.matches('^[a-z0-9-]+$') &&
         data.productName is string && data.productName.size() >= 1 && data.productName.size() <= 140 &&
@@ -115,43 +121,48 @@ service cloud.firestore {
         data.updatedAt is timestamp;
     }
 
-    match /published_pages/{slug} {
-      // Visitors from Facebook / TikTok / Instagram ads can fetch a known slug directly
-      allow get: if isValidSlugId(slug);
+    // Write-only cryptographic ownership locks (never readable/listable/deletable)
+    match /page_locks/{slug} {
+      allow read, list, delete: if false;
 
-      // Authenticated sellers can list only their own published pages
-      allow list: if isSignedIn() && isVerified() && existing().ownerId == request.auth.uid;
-
-      // Sellers can create a new landing page slug they own
-      allow create: if isSignedIn() &&
-        isVerified() &&
-        isValidSlugId(slug) &&
-        isValidPublishedPage(incoming(), slug) &&
-        incoming().ownerId == request.auth.uid &&
+      allow create: if isValidSlugId(slug) &&
+        isValidPageLock(incoming()) &&
+        incoming().nonceProof == hashing.sha256((incoming().nonce + ':' + incoming().secret).toUtf8()) &&
         incoming().createdAt == request.time &&
         incoming().updatedAt == request.time;
 
-      // Sellers can update only their own existing landing page
-      allow update: if isSignedIn() &&
-        isVerified() &&
-        isValidSlugId(slug) &&
+      allow update: if isValidSlugId(slug) &&
+        isValidPageLock(incoming()) &&
+        incoming().secret == existing().secret &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().nonce != existing().nonce &&
+        incoming().nonceProof == hashing.sha256((incoming().nonce + ':' + existing().secret).toUtf8()) &&
+        incoming().updatedAt == request.time &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['nonce', 'nonceProof', 'updatedAt']);
+    }
+
+    // Public single-document fetch for /p/{slug}; batch-locked create/update
+    match /published_pages/{slug} {
+      allow get: if isValidSlugId(slug);
+      allow list, delete: if false;
+
+      allow create: if isValidSlugId(slug) &&
         isValidPublishedPage(incoming(), slug) &&
-        existing().ownerId == request.auth.uid &&
-        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        getAfter(/databases/$(database)/documents/page_locks/$(slug)).data.updatedAt == request.time;
+
+      allow update: if isValidSlugId(slug) &&
+        isValidPublishedPage(incoming(), slug) &&
         incoming().createdAt == existing().createdAt &&
         incoming().updatedAt == request.time &&
+        getAfter(/databases/$(database)/documents/page_locks/$(slug)).data.updatedAt == request.time &&
         incoming().diff(existing()).affectedKeys().hasOnly([
           'lang', 'theme', 'productName', 'description', 'descriptionHtml',
           'price', 'currency', 'images', 'imageSize', 'fontSize', 'scale',
           'reviews', 'customColors', 'enabledContacts', 'website', 'whatsapp',
           'instagram', 'email', 'updatedAt'
         ]);
-
-      // Sellers can delete only their own published landing page
-      allow delete: if isSignedIn() &&
-        isVerified() &&
-        isValidSlugId(slug) &&
-        existing().ownerId == request.auth.uid;
     }
   }
 }

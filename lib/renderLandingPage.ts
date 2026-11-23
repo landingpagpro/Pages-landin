@@ -775,6 +775,14 @@ function sanitizeDescriptionHtmlForSsr(rawHtml: string, imgWidth: number, imgBor
     return `<iframe src="${escapeHtml(src)}" frameborder="0" allowfullscreen="allowfullscreen" style="display:block;width:${imgWidth}%;max-width:100%;aspect-ratio:16/9;height:auto;border-radius:12px;margin:12px auto;border:${imgBorder};"></iframe>`;
   });
 
+  clean = clean.replace(
+    /<(div|p|ul|ol|li)\b([^>]*)\balign\s*=\s*(?:"(left|center|right|justify)"|'(left|center|right|justify)'|(left|center|right|justify))([^>]*)>/gi,
+    (_m, tag: string, before: string, a1: string, a2: string, a3: string, after: string) => {
+      const alignVal = (a1 || a2 || a3 || "").toLowerCase();
+      return `<${tag}${before} style="text-align:${alignVal};"${after}>`;
+    },
+  );
+
   return clean;
 }
 
@@ -1072,6 +1080,8 @@ body{margin:0;padding:0;background:${th.pageBg};color:${th.descColor};font-famil
 .lp-desc{line-height:1.9;margin:0 0 18px 0;font-weight:700;white-space:normal;word-break:break-word;text-align:center}
 .lp-desc strong,.lp-desc b{font-weight:900}
 .lp-desc p,.lp-desc div{margin:0 0 10px 0}
+.lp-desc ul,.lp-desc ol{margin:8px 0 12px 0;padding:0 18px;list-style-position:inside;text-align:inherit}
+.lp-desc li{margin-bottom:5px;text-align:inherit}
 .lp-desc img,.lp-desc video{display:block;max-width:100%;height:auto;border-radius:12px;margin:12px auto}
 .lp-desc iframe{display:block;max-width:100%;aspect-ratio:16/9;height:auto;border-radius:12px;margin:12px auto}
 .lp-delivery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}

@@ -1,24 +1,13 @@
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import {
-  getAuth,
-  GoogleAuthProvider,
-  onAuthStateChanged,
-  signInWithPopup,
-  signOut,
-  type User,
-} from "firebase/auth";
-import {
-  collection,
-  deleteDoc,
+  Bytes,
   doc,
   getDoc,
   getDocFromServer,
-  getDocs,
   getFirestore,
-  query,
   serverTimestamp,
-  setDoc,
-  where,
+  writeBatch,
 } from "firebase/firestore";
 import firebaseConfig from "../firebase-applet-config.json";
 
@@ -85,14 +74,7 @@ async function testConnection(): Promise<void> {
 }
 void testConnection();
 
-export interface CloudUserSummary {
-  uid: string;
-  displayName: string;
-  email: string;
-  emailVerified: boolean;
-}
-
-export interface PublishPayloadInput {
+export interface FreeLinkPayloadInput {
   lang: "en" | "ar" | "fr";
   theme: string;
   productName: string;
@@ -124,44 +106,107 @@ export interface PublishPayloadInput {
   email: string;
 }
 
-export interface PublishedLinkItem {
-  slug: string;
-  productName: string;
-  price: string;
-  currency: string;
-  link: string;
-  updatedAtMs: number;
-  data: Record<string, unknown>;
+const SECRETS_STORAGE_KEY = "lp_page_lock_secrets";
+
+function getStoredSecretsMap(): Record<string, string> {
+  try {
+    const raw = localStorage.getItem(SECRETS_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === "object" ? (parsed as Record<string, string>) : {};
+  } catch {
+    return {};
+  }
 }
 
-export function normalizeSlug(raw: string): string {
-  const cleaned = String(raw || "")
+function saveStoredSecret(slug: string, secret: string): void {
+  try {
+    const map = getStoredSecretsMap();
+    map[slug] = secret;
+    localStorage.setItem(SECRETS_STORAGE_KEY, JSON.stringify(map));
+  } catch {
+    // Ignore storage quota errors
+  }
+}
+
+function generateRandomToken(len: number): string {
+  const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
+  const arr = new Uint8Array(len);
+  crypto.getRandomValues(arr);
+  let out = "";
+  for (let i = 0; i < arr.length; i++) {
+    out += chars[arr[i] % chars.length];
+  }
+  return out;
+}
+
+function generateRandomLowerSlugSuffix(len: number): string {
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  const arr = new Uint8Array(len);
+  crypto.getRandomValues(arr);
+  let out = "";
+  for (let i = 0; i < arr.length; i++) {
+    out += chars[arr[i] % chars.length];
+  }
+  return out;
+}
+
+const ARABIC_CHAR_MAP: Record<string, string> = {
+  "ا": "a", "أ": "a", "إ": "a", "آ": "a", "ٱ": "a",
+  "ب": "b", "ت": "t", "ث": "th", "ج": "j", "ح": "h", "خ": "kh",
+  "د": "d", "ذ": "dh", "ر": "r", "ز": "z", "س": "s", "ش": "sh",
+  "ص": "s", "ض": "d", "ط": "t", "ظ": "z", "ع": "a", "غ": "gh",
+  "ف": "f", "ق": "q", "ك": "k", "ل": "l", "م": "m", "ن": "n",
+  "ه": "h", "ة": "a", "و": "o", "ؤ": "o", "ي": "i", "ى": "a", "ئ": "i",
+  "پ": "p", "چ": "ch", "ڤ": "v", "گ": "g", "ڨ": "g", "ڭ": "g",
+  "٠": "0", "١": "1", "٢": "2", "٣": "3", "٤": "4",
+  "٥": "5", "٦": "6", "٧": "7", "٨": "8", "٩": "9",
+};
+
+export function slugifyProductName(productName?: string): string {
+  const raw = String(productName || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\u064B-\u065F\u0670\u0640]/g, "");
+
+  let mapped = "";
+  for (let i = 0; i < raw.length; i++) {
+    const ch = raw[i];
+    mapped += ARABIC_CHAR_MAP[ch] ?? ch;
+  }
+
+  return mapped
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
-    .slice(0, 64);
-  if (cleaned.length >= 3) return cleaned;
-  const suffix = Math.random().toString(36).slice(2, 7);
-  return cleaned ? `${cleaned}-${suffix}` : `product-${suffix}`;
+    .slice(0, 48)
+    .replace(/-+$/g, "");
 }
 
-function toCloudUser(user: User | null): CloudUserSummary | null {
-  if (!user) return null;
-  return {
-    uid: user.uid,
-    displayName: user.displayName || user.email || "User",
-    email: user.email || "",
-    emailVerified: Boolean(user.emailVerified),
-  };
+export function createAutoSlug(productName?: string, withSuffix = true): string {
+  const base = slugifyProductName(productName);
+  if (!withSuffix && base.length >= 3) {
+    return base;
+  }
+  const suffix = generateRandomLowerSlugSuffix(5);
+  return base ? `${base}-${suffix}` : `product-${suffix}`;
+}
+
+async function computeNonceProofBytes(nonce: string, secret: string): Promise<Bytes> {
+  const encoded = new TextEncoder().encode(`${nonce}:${secret}`);
+  const digest = await crypto.subtle.digest("SHA-256", encoded);
+  return Bytes.fromUint8Array(new Uint8Array(digest));
 }
 
 function stripInlineVideoDataUrls(html: string): { cleanedHtml: string; removedVideoData: boolean } {
   let removedVideoData = false;
-  const cleanedHtml = String(html || "").replace(/<video\b[^>]*\bsrc\s*=\s*(?:"data:video\/[^"]*"|'data:video\/[^']*')[^>]*>(?:[\s\S]*?<\/video>)?/gi, () => {
-    removedVideoData = true;
-    return "";
-  });
+  const cleanedHtml = String(html || "").replace(
+    /<video\b[^>]*\bsrc\s*=\s*(?:"data:video\/[^"]*"|'data:video\/[^']*')[^>]*>(?:[\s\S]*?<\/video>)?/gi,
+    () => {
+      removedVideoData = true;
+      return "";
+    },
+  );
   return { cleanedHtml, removedVideoData };
 }
 
@@ -169,49 +214,24 @@ function clampHex(val: string | null | undefined): string {
   return typeof val === "string" && /^#[0-9a-fA-F]{6}$/.test(val.trim()) ? val.trim().toUpperCase() : "";
 }
 
-async function signInGoogle(): Promise<CloudUserSummary> {
-  const provider = new GoogleAuthProvider();
-  const cred = await signInWithPopup(auth, provider);
-  const summary = toCloudUser(cred.user);
-  if (!summary) throw new Error("AUTH_FAILED");
-  return summary;
+function sanitizeSlugStrict(raw: string, productName?: string): string {
+  const cleaned = String(raw || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 72)
+    .replace(/-+$/g, "");
+  return cleaned.length >= 3 ? cleaned : createAutoSlug(productName, false);
 }
 
-async function signOutUser(): Promise<void> {
-  await signOut(auth);
-}
-
-function initAuthListener(callback: (user: CloudUserSummary | null) => void): () => void {
-  return onAuthStateChanged(auth, (user) => {
-    callback(toCloudUser(user));
-  });
-}
-
-async function publishLandingPage(
-  rawSlug: string,
-  input: PublishPayloadInput,
+async function syncFreeLink(
+  requestedSlug: string,
+  input: FreeLinkPayloadInput,
 ): Promise<{ slug: string; url: string; trimmedMedia: boolean }> {
-  const currentUser = auth.currentUser;
-  if (!currentUser) {
-    throw new Error("AUTH_REQUIRED");
-  }
-
-  const slug = normalizeSlug(rawSlug || input.productName);
-  const docPath = `published_pages/${slug}`;
-  const docRef = doc(db, "published_pages", slug);
-
-  let existingSnap;
-  try {
-    existingSnap = await getDoc(docRef);
-  } catch (err) {
-    handleFirestoreError(err, OperationType.GET, docPath);
-  }
-
-  const isExisting = existingSnap.exists();
-  const existingData = isExisting ? existingSnap.data() : null;
-  if (isExisting && existingData && existingData.ownerId !== currentUser.uid) {
-    throw new Error("SLUG_TAKEN");
-  }
+  let slug = sanitizeSlugStrict(requestedSlug || createAutoSlug(input.productName, false), input.productName);
+  const secrets = getStoredSecretsMap();
+  let secret = secrets[slug];
 
   const { cleanedHtml, removedVideoData } = stripInlineVideoDataUrls(input.descriptionHtml);
   let safeHtml = cleanedHtml.slice(0, 245000);
@@ -248,12 +268,9 @@ async function publishLandingPage(
     email: input.enabledContacts?.email !== false,
   };
 
-  // Shrink total payload under Firestore 1MB limit gracefully if many heavy inline images exist
   let workingImages = safeImages.slice();
-  const buildDocPayload = (imgs: string[], htmlStr: string) => ({
-    slug,
-    ownerId: currentUser.uid,
-    lang: input.lang === "ar" || input.lang === "fr" ? input.lang : "en",
+  const buildMutableFields = (imgs: string[], htmlStr: string) => ({
+    lang: (input.lang === "ar" || input.lang === "fr" ? input.lang : "en") as "en" | "ar" | "fr",
     theme: allowedTheme,
     productName: (String(input.productName || "").trim() || "Product").slice(0, 140),
     description: String(input.description || "").trim().slice(0, 6000),
@@ -277,26 +294,110 @@ async function publishLandingPage(
     whatsapp: en.whatsapp ? String(input.whatsapp || "").trim().slice(0, 60) : "",
     instagram: en.instagram ? String(input.instagram || "").trim().slice(0, 120) : "",
     email: en.email ? String(input.email || "").trim().slice(0, 160) : "",
-    createdAt: isExisting && existingData?.createdAt ? existingData.createdAt : serverTimestamp(),
-    updatedAt: serverTimestamp(),
   });
 
-  let payload = buildDocPayload(workingImages, safeHtml);
-  while (new Blob([JSON.stringify(payload)]).size > 880000 && workingImages.length > 1) {
+  let mutableFields = buildMutableFields(workingImages, safeHtml);
+  while (new Blob([JSON.stringify(mutableFields)]).size > 860000 && workingImages.length > 1) {
     workingImages.pop();
     trimmedMedia = true;
-    payload = buildDocPayload(workingImages, safeHtml);
+    mutableFields = buildMutableFields(workingImages, safeHtml);
   }
-  if (new Blob([JSON.stringify(payload)]).size > 900000) {
+  if (new Blob([JSON.stringify(mutableFields)]).size > 880000) {
     safeHtml = safeHtml.replace(/<img\b[^>]*>/gi, "").slice(0, 245000);
     trimmedMedia = true;
-    payload = buildDocPayload(workingImages, safeHtml);
+    mutableFields = buildMutableFields(workingImages, safeHtml);
   }
 
+  let pageSnap;
   try {
-    await setDoc(docRef, payload);
+    pageSnap = await getDoc(doc(db, "published_pages", slug));
   } catch (err) {
-    handleFirestoreError(err, isExisting ? OperationType.UPDATE : OperationType.CREATE, docPath);
+    handleFirestoreError(err, OperationType.GET, `published_pages/${slug}`);
+  }
+
+  let isExisting = pageSnap.exists();
+
+  // If this slug exists in Firestore and this browser does not hold its secret, allocate a fresh unique slug transparently
+  if (isExisting && !secret) {
+    slug = createAutoSlug(input.productName);
+    isExisting = false;
+  }
+
+  const pageRef = doc(db, "published_pages", slug);
+  const lockRef = doc(db, "page_locks", slug);
+  const nonce = generateRandomToken(20);
+
+  if (!isExisting) {
+    secret = generateRandomToken(32);
+    const nonceProof = await computeNonceProofBytes(nonce, secret);
+    const batch = writeBatch(db);
+    batch.set(lockRef, {
+      secret,
+      nonce,
+      nonceProof,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+    batch.set(pageRef, {
+      slug,
+      ...mutableFields,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+
+    try {
+      await batch.commit();
+    } catch (err) {
+      handleFirestoreError(err, OperationType.CREATE, `published_pages/${slug}`);
+    }
+    saveStoredSecret(slug, secret);
+  } else {
+    const nonceProof = await computeNonceProofBytes(nonce, secret);
+    const batch = writeBatch(db);
+    batch.update(lockRef, {
+      nonce,
+      nonceProof,
+      updatedAt: serverTimestamp(),
+    });
+    batch.update(pageRef, {
+      ...mutableFields,
+      updatedAt: serverTimestamp(),
+    });
+
+    try {
+      await batch.commit();
+    } catch (err) {
+      // If lock secret didn't match (e.g., stale lock), fall back gracefully to a fresh slug
+      const fallbackSlug = createAutoSlug(input.productName);
+      const fallbackSecret = generateRandomToken(32);
+      const fallbackNonce = generateRandomToken(20);
+      const fallbackProof = await computeNonceProofBytes(fallbackNonce, fallbackSecret);
+      const retryBatch = writeBatch(db);
+      retryBatch.set(doc(db, "page_locks", fallbackSlug), {
+        secret: fallbackSecret,
+        nonce: fallbackNonce,
+        nonceProof: fallbackProof,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+      retryBatch.set(doc(db, "published_pages", fallbackSlug), {
+        slug: fallbackSlug,
+        ...mutableFields,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+      try {
+        await retryBatch.commit();
+      } catch (retryErr) {
+        handleFirestoreError(retryErr, OperationType.WRITE, `published_pages/${fallbackSlug}`);
+      }
+      saveStoredSecret(fallbackSlug, fallbackSecret);
+      return {
+        slug: fallbackSlug,
+        url: `${window.location.origin}/p/${encodeURIComponent(fallbackSlug)}`,
+        trimmedMedia,
+      };
+    }
   }
 
   return {
@@ -304,37 +405,6 @@ async function publishLandingPage(
     url: `${window.location.origin}/p/${encodeURIComponent(slug)}`,
     trimmedMedia,
   };
-}
-
-async function listMyPublishedPages(): Promise<PublishedLinkItem[]> {
-  const currentUser = auth.currentUser;
-  if (!currentUser) return [];
-
-  const colPath = "published_pages";
-  try {
-    const q = query(collection(db, colPath), where("ownerId", "==", currentUser.uid));
-    const snap = await getDocs(q);
-    const items: PublishedLinkItem[] = [];
-    snap.forEach((d) => {
-      const data = d.data();
-      const ts = data.updatedAt as { toMillis?: () => number } | undefined;
-      const updatedAtMs = ts && typeof ts.toMillis === "function" ? ts.toMillis() : Date.now();
-      const slug = typeof data.slug === "string" ? data.slug : d.id;
-      items.push({
-        slug,
-        productName: String(data.productName || slug),
-        price: String(data.price || ""),
-        currency: String(data.currency || "USD"),
-        link: `${window.location.origin}/p/${encodeURIComponent(slug)}`,
-        updatedAtMs,
-        data,
-      });
-    });
-    items.sort((a, b) => b.updatedAtMs - a.updatedAtMs);
-    return items;
-  } catch (err) {
-    handleFirestoreError(err, OperationType.LIST, colPath);
-  }
 }
 
 async function loadPublishedPage(slug: string): Promise<Record<string, unknown> | null> {
@@ -347,41 +417,22 @@ async function loadPublishedPage(slug: string): Promise<Record<string, unknown> 
   }
 }
 
-async function deletePublishedPage(slug: string): Promise<void> {
-  const path = `published_pages/${slug}`;
-  try {
-    await deleteDoc(doc(db, "published_pages", slug));
-  } catch (err) {
-    handleFirestoreError(err, OperationType.DELETE, path);
-  }
-}
-
 declare global {
   interface Window {
     LPCloud?: {
-      getCurrentUser: () => CloudUserSummary | null;
-      initAuthListener: typeof initAuthListener;
-      signInGoogle: typeof signInGoogle;
-      signOutUser: typeof signOutUser;
-      normalizeSlug: typeof normalizeSlug;
-      publishLandingPage: typeof publishLandingPage;
-      listMyPublishedPages: typeof listMyPublishedPages;
+      slugifyProductName: typeof slugifyProductName;
+      createAutoSlug: typeof createAutoSlug;
+      syncFreeLink: typeof syncFreeLink;
       loadPublishedPage: typeof loadPublishedPage;
-      deletePublishedPage: typeof deletePublishedPage;
       projectId: string;
     };
   }
 }
 
 window.LPCloud = {
-  getCurrentUser: () => toCloudUser(auth.currentUser),
-  initAuthListener,
-  signInGoogle,
-  signOutUser,
-  normalizeSlug,
-  publishLandingPage,
-  listMyPublishedPages,
+  slugifyProductName,
+  createAutoSlug,
+  syncFreeLink,
   loadPublishedPage,
-  deletePublishedPage,
   projectId: firebaseConfig.projectId,
 };

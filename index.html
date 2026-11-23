@@ -452,6 +452,52 @@
       cursor: wait;
     }
 
+    .desc-tool-btn.active {
+      background: var(--grad);
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    .desc-format-bar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+      padding: 6px 8px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #f9fafb;
+    }
+
+    .desc-format-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .desc-format-sep {
+      width: 1px;
+      height: 20px;
+      background: #d1d5db;
+      margin: 0 2px;
+    }
+
+    .desc-tool-icon-btn {
+      min-width: 32px;
+      height: 30px;
+      padding: 0 7px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .desc-tool-icon-btn svg {
+      width: 15px;
+      height: 15px;
+      display: block;
+      pointer-events: none;
+    }
+
     .desc-ai-status {
       display: none;
       margin-bottom: 8px;
@@ -576,6 +622,17 @@
       border-radius: 10px;
       border: 1px solid #e5e7eb;
       margin: 10px auto;
+    }
+
+    .desc-rich-editor ul,
+    .desc-rich-editor ol {
+      margin: 8px 0 12px 0;
+      padding: 0 16px;
+      list-style-position: inside;
+    }
+
+    .desc-rich-editor li {
+      margin-bottom: 4px;
     }
 
     .grid-2 {
@@ -948,6 +1005,63 @@
       margin-bottom: 8px;
     }
 
+    .domain-guide-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .domain-guide-step {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 12px 14px;
+      background: #f9fafb;
+    }
+
+    .domain-guide-step-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #111111;
+      margin: 0 0 4px 0;
+    }
+
+    .domain-guide-step-desc {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin: 0;
+      line-height: 1.65;
+    }
+
+    .domain-guide-code {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      font-size: 12px;
+      font-weight: 700;
+      color: #6d28d9;
+      direction: ltr;
+      word-break: break-all;
+    }
+
+    .domain-guide-tip {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #faf5ff;
+      border: 1px solid #e9d5ff;
+      font-size: 12px;
+      font-weight: 700;
+      color: #5b21b6;
+      line-height: 1.6;
+    }
+
     /* Live Landing Page Preview Styles (scoped under .lp-doc) */
     .lp-doc {
       background: #ffffff;
@@ -1053,6 +1167,19 @@
     .lp-desc p:last-child,
     .lp-desc div:last-child {
       margin-bottom: 0;
+    }
+
+    .lp-desc ul,
+    .lp-desc ol {
+      margin: 8px 0 12px 0;
+      padding: 0 18px;
+      list-style-position: inside;
+      text-align: inherit;
+    }
+
+    .lp-desc li {
+      margin-bottom: 5px;
+      text-align: inherit;
     }
 
     .lp-desc img,
@@ -1229,79 +1356,7 @@
       text-decoration: underline;
     }
 
-    /* Free Ad Link Publisher UI */
-    .ad-auth-strip {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding: 9px 11px;
-      border-radius: 10px;
-      background: #faf5ff;
-      border: 1px solid #e9d5ff;
-      margin-bottom: 12px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #111111;
-    }
-
-    .ad-slug-prefix-box {
-      display: flex;
-      align-items: center;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      overflow: hidden;
-      background: #f9fafb;
-      direction: ltr;
-    }
-
-    .ad-slug-prefix {
-      padding: 9px 10px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #4b5563;
-      background: #f3f4f6;
-      border-right: 1px solid #d1d5db;
-      white-space: nowrap;
-      max-width: 52%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .ad-slug-prefix-box input {
-      border: none;
-      border-radius: 0;
-      background: #ffffff;
-      flex: 1;
-      min-width: 110px;
-      font-weight: 700;
-    }
-
-    .ad-slug-prefix-box input:focus-visible {
-      outline: none;
-    }
-
-    .ad-badges-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 10px;
-    }
-
-    .ad-ready-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 8px;
-      border-radius: 6px;
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      color: #166534;
-      font-size: 11px;
-      font-weight: 800;
-    }
-
+    /* Free Link Status Message */
     .ad-publish-msg {
       display: none;
       margin-top: 8px;
@@ -1447,6 +1502,63 @@
               </button>
               <button type="button" id="descToggleVidUrlBtn" class="desc-tool-btn" title="Video URL">
                 🔗 <span data-i18n="btnDescVidUrl">Link</span>
+              </button>
+            </div>
+          </div>
+          <div class="desc-format-bar" id="descFormatBar">
+            <div class="desc-format-group" id="descFontSizeGroup" role="group" aria-label="Font Size">
+              <button type="button" class="desc-tool-btn desc-tool-icon-btn desc-fs-btn" data-desc-fs="14" title="14px">14</button>
+              <button type="button" class="desc-tool-btn desc-tool-icon-btn desc-fs-btn" data-desc-fs="16" title="16px">16</button>
+              <button type="button" class="desc-tool-btn desc-tool-icon-btn desc-fs-btn" data-desc-fs="18" title="18px">18</button>
+              <button type="button" class="desc-tool-btn desc-tool-icon-btn desc-fs-btn" data-desc-fs="20" title="20px">20</button>
+            </div>
+            <span class="desc-format-sep" aria-hidden="true"></span>
+            <div class="desc-format-group" role="group" aria-label="Lists">
+              <button type="button" id="descListUlBtn" class="desc-tool-btn desc-tool-icon-btn" title="Bullet list" aria-label="Bullet list">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+                  <circle cx="4.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"></circle>
+                  <circle cx="4.5" cy="12" r="1.5" fill="currentColor" stroke="none"></circle>
+                  <circle cx="4.5" cy="17.5" r="1.5" fill="currentColor" stroke="none"></circle>
+                  <line x1="9" y1="6.5" x2="20" y2="6.5"></line>
+                  <line x1="9" y1="12" x2="20" y2="12"></line>
+                  <line x1="9" y1="17.5" x2="20" y2="17.5"></line>
+                </svg>
+              </button>
+              <button type="button" id="descListOlBtn" class="desc-tool-btn desc-tool-icon-btn" title="Numbered list" aria-label="Numbered list">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 5h1.5v4M3.8 9h3.2" stroke-width="1.8"></path>
+                  <path d="M3.8 14.5c0-.8.7-1.3 1.5-1.3s1.4.5 1.4 1.2c0 .6-.4 1-.9 1.3l-2 1.3h3" stroke-width="1.7"></path>
+                  <line x1="10" y1="7" x2="20.5" y2="7"></line>
+                  <line x1="10" y1="12" x2="20.5" y2="12"></line>
+                  <line x1="10" y1="17" x2="20.5" y2="17"></line>
+                </svg>
+              </button>
+            </div>
+            <span class="desc-format-sep" aria-hidden="true"></span>
+            <div class="desc-format-group" role="group" aria-label="Alignment">
+              <button type="button" id="descAlignRightBtn" class="desc-tool-btn desc-tool-icon-btn" title="Align Right" aria-label="Align Right">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+                  <line x1="4" y1="6" x2="20" y2="6"></line>
+                  <line x1="9" y1="10" x2="20" y2="10"></line>
+                  <line x1="5" y1="14" x2="20" y2="14"></line>
+                  <line x1="11" y1="18" x2="20" y2="18"></line>
+                </svg>
+              </button>
+              <button type="button" id="descAlignCenterBtn" class="desc-tool-btn desc-tool-icon-btn" title="Align Center" aria-label="Align Center">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+                  <line x1="4" y1="6" x2="20" y2="6"></line>
+                  <line x1="7" y1="10" x2="17" y2="10"></line>
+                  <line x1="5" y1="14" x2="19" y2="14"></line>
+                  <line x1="8" y1="18" x2="16" y2="18"></line>
+                </svg>
+              </button>
+              <button type="button" id="descAlignLeftBtn" class="desc-tool-btn desc-tool-icon-btn" title="Align Left" aria-label="Align Left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+                  <line x1="4" y1="6" x2="20" y2="6"></line>
+                  <line x1="4" y1="10" x2="15" y2="10"></line>
+                  <line x1="4" y1="14" x2="19" y2="14"></line>
+                  <line x1="4" y1="18" x2="13" y2="18"></line>
+                </svg>
               </button>
             </div>
           </div>
@@ -1600,54 +1712,26 @@
         </div>
       </div>
 
-      <!-- Free Ad Link & Domain Link & Export -->
+      <!-- Free Link & Domain Link & Export -->
       <div class="card">
-        <h2 class="card-title" data-i18n="sectionLinks">Publish Free Ad Link</h2>
-
-        <div class="ad-auth-strip" id="adAuthStrip">
-          <span id="adAuthUserText" data-i18n="adConnectGoogle">Sign in with Google to publish & manage free ad links</span>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <button type="button" id="adSignInBtn" class="btn btn-grad btn-sm" data-i18n="adBtnGoogleSignIn">Google Sign In</button>
-            <button type="button" id="adSignOutBtn" class="btn btn-sm" style="display:none;" data-i18n="adSignOut">Sign Out</button>
-          </div>
-        </div>
+        <h2 class="card-title" data-i18n="sectionLinks">Free Link</h2>
 
         <div class="field-group">
-          <label class="field-label" for="adSlugInput" data-i18n="labelSlug">
-            Short Ad Link Name (URL Slug)
-          </label>
-          <div class="ad-slug-prefix-box">
-            <span class="ad-slug-prefix" id="adSlugPrefixSpan">/p/</span>
-            <input type="text" id="adSlugInput" data-i18n-placeholder="phSlug" placeholder="smart-earbuds" />
-          </div>
-        </div>
-
-        <div class="field-group" style="margin-top: 10px;">
-          <button type="button" id="publishFreeLinkBtn" class="btn btn-grad" style="width: 100%; font-weight: 800;" data-i18n="btnPublishAdLink">
-            🚀 Publish Free Ad Link
-          </button>
-        </div>
-
-        <div class="field-group" style="margin-top: 10px;">
-          <label class="field-label" for="freeAdLinkInput" data-i18n="labelFreeAdLink">
-            Free Ad Link (Ready for Facebook, TikTok & Instagram)
+          <label class="field-label" for="freeAdLinkInput" data-i18n="labelFreeLink">
+            Free Link
           </label>
           <div class="link-row">
             <input type="text" id="freeAdLinkInput" readonly />
-            <button type="button" id="copyFreeAdLinkBtn" class="btn btn-sm" data-i18n="btnCopyAdLink">Copy Ad Link</button>
-            <a id="openFreeAdLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-grad btn-sm" data-i18n="btnOpenAdLink">
-              Open Ad Page
+            <button type="button" id="copyFreeLinkBtn" class="btn btn-sm" data-i18n="btnCopyFreeLink">Copy Link</button>
+            <a id="openFreeLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-grad btn-sm" data-i18n="btnOpenFreeLink">
+              Open Link
             </a>
+            <button type="button" id="newFreeLinkBtn" class="btn btn-sm" data-i18n="btnNewFreeLink">+ New Link</button>
           </div>
           <div id="freeAdStatusMsg" class="ad-publish-msg" aria-live="polite"></div>
-          <p class="helper-note" data-i18n="hintFreeAdLink">
-            Clean short URL hosted free for social media ads on every phone and browser.
+          <p class="helper-note" data-i18n="hintFreeLink">
+            Generated and updated automatically — works on every phone and social platform.
           </p>
-          <div class="ad-badges-row">
-            <span class="ad-ready-badge">✓ <span data-i18n="adBadgeFb">Facebook / TikTok / IG Ads</span></span>
-            <span class="ad-ready-badge">✓ <span data-i18n="adBadgeOg">Ad Link Preview</span></span>
-            <span class="ad-ready-badge">✓ <span data-i18n="adBadgeCod">Cash on Delivery</span></span>
-          </div>
         </div>
 
         <div class="field-group" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #f3f4f6;">
@@ -1665,6 +1749,7 @@
             <a id="openDomainLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm" data-i18n="btnOpenDomain">
               Open Link
             </a>
+            <button type="button" id="domainHelpBtn" class="btn btn-grad btn-sm" data-i18n="btnDomainHelp">❓ How to connect domain</button>
           </div>
           <p class="helper-note" id="domainLinkFeedback"></p>
         </div>
@@ -1723,6 +1808,23 @@
     </div>
   </div>
 
+  <!-- Domain Setup Help Modal -->
+  <div id="domainHelpModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="domainHelpModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="domainHelpModalTitle" class="modal-title">🌐 <span data-i18n="domainHelpTitle">How to Set Up Your Domain</span></h3>
+        <button type="button" id="closeDomainHelpBtn" class="btn btn-sm">✕</button>
+      </div>
+      <div id="domainHelpModalBody" class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" id="domainHelpDownloadBtn" class="btn btn-grad btn-sm" data-i18n="btnDownloadHtml">
+          Download Standalone Landing Page (product.html)
+        </button>
+        <button type="button" id="closeDomainHelpFooterBtn" class="btn btn-sm" data-i18n="btnClose">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     (function () {
       var DRAFT_KEY = "lp_draft";
@@ -1757,9 +1859,9 @@
 
       var BUILDER_I18N = {
         en: {
-          btnSaveHeader: "💾 Save Link - حفظ الرابط",
-          btnSavedLinksHeader: "Saved Links - Show My Links",
-          modalSavedTitle: "Saved Links - Show My Links",
+          btnSaveHeader: "💾 Save Link",
+          btnSavedLinksHeader: "Saved Links",
+          modalSavedTitle: "Saved Links",
           btnDeleteAll: "Delete All Saved Links",
           sectionProduct: "Product Details",
           labelProductName: "Product Name",
@@ -1793,34 +1895,22 @@
           labelWhatsapp: "WhatsApp",
           labelEmail: "Email",
           labelInstagram: "Instagram",
-          sectionLinks: "Free Ad Link & Export",
-          adConnectGoogle: "Sign in with Google to publish & manage free ad links",
-          adBtnGoogleSignIn: "Google Sign In",
-          adConnectedAs: "Signed in:",
-          adSignOut: "Sign Out",
-          labelSlug: "Short Ad Link Name (URL Slug)",
-          phSlug: "smart-earbuds",
-          btnPublishAdLink: "🚀 Publish Free Ad Link",
-          btnUpdateAdLink: "🔄 Update Free Ad Link",
-          labelFreeAdLink: "Free Ad Link (Ready for Facebook, TikTok & Instagram)",
-          btnCopyAdLink: "Copy Ad Link",
-          btnOpenAdLink: "Open Ad Page",
-          hintFreeAdLink: "Clean short URL hosted free for social media ads on every phone and browser.",
-          adBadgeFb: "Facebook / TikTok / IG Ads",
-          adBadgeOg: "Ad Link Preview",
-          adBadgeCod: "Cash on Delivery",
-          adPublishing: "Publishing your free ad link...",
-          adPublishedOk: "Published! Your free ad link is live and ready for ads:",
-          adSlugTaken: "This short link name is already used. Please pick another slug name.",
-          adAuthRequired: "Please complete Google Sign-In to publish your free ad link.",
-          adDomainNotAllowed: "Add this domain in Firebase Console > Authentication > Authorized domains:",
-          adMediaTrimmedNote: "Note: Local video files cannot fit in a cloud link (use YouTube/MP4 URL via 🔗 Link). Text and main photos were published cleanly.",
-          adPublishError: "Could not publish link. Please try again.",
+          sectionLinks: "Free Link",
+          labelFreeLink: "Free Link",
+          btnCopyFreeLink: "Copy Link",
+          btnOpenFreeLink: "Open Link",
+          btnNewFreeLink: "+ New Link",
+          hintFreeLink: "Generated and updated automatically — works on every phone and social platform.",
+          linkCreating: "Creating free link...",
+          adMediaTrimmedNote: "Note: Local video files cannot fit in a cloud link (use YouTube/MP4 URL via Link). Text and main photos were saved cleanly.",
+          adPublishError: "Could not sync free link. Please try again.",
           adLoadToEdit: "Edit",
           labelDomain: "My Domain (e.g. https://mystore.com)",
           labelDomainLink: "Domain Link (/product.html)",
           btnCopyDomain: "Copy Link",
           btnOpenDomain: "Open Link",
+          btnDomainHelp: "❓ How it works",
+          domainHelpTitle: "How to Make Your Custom Domain Link Work",
           btnDownloadHtml: "Download Standalone Landing Page (product.html)",
           confirmDeleteAll: "Confirm delete all?",
           btnYesDelete: "Yes, Delete All",
@@ -1833,8 +1923,8 @@
           imagePrefix: "Image",
           noImages: "No images uploaded yet. Click \"Upload Product Image\" above.",
           copied: "Copied!",
-          savedToast: "Published!",
-          noSavedLinks: "No published ad links yet. Click \"Publish Free Ad Link\" to create your first short link.",
+          savedToast: "Saved!",
+          noSavedLinks: "No saved links yet. Your automatic free link will appear here once created or saved.",
           copyBtn: "Copy",
           openBtn: "Open",
           deleteBtn: "Delete",
@@ -1856,6 +1946,7 @@
           btnDescAi: "AI Description",
           aiSearching: "Analyzing product photo and searching the web...",
           aiDone: "Description generated from web research!",
+          aiDoneSimilar: "Exact product not found — description generated from similar products!",
           aiDoneVision: "Description generated from product photo analysis!",
           aiSourcesLabel: "Web sources:",
           aiErrorGeneric: "Could not generate AI description. Please try again.",
@@ -1863,9 +1954,9 @@
           aiErrorKey: "Gemini API key is missing or invalid in Settings > Secrets."
         },
         ar: {
-          btnSaveHeader: "🚀 نشر الرابط المجاني",
-          btnSavedLinksHeader: "روابطي المنشورة",
-          modalSavedTitle: "روابطي المجانية المنشورة",
+          btnSaveHeader: "💾 حفظ الرابط",
+          btnSavedLinksHeader: "الروابط المحفوظة",
+          modalSavedTitle: "الروابط المحفوظة",
           btnDeleteAll: "حذف جميع الروابط المحفوظة",
           sectionProduct: "تفاصيل المنتج",
           labelProductName: "اسم المنتج",
@@ -1899,34 +1990,22 @@
           labelWhatsapp: "الواتساب",
           labelEmail: "البريد الإلكتروني",
           labelInstagram: "إنستغرام",
-          sectionLinks: "الرابط المجاني للإعلانات",
-          adConnectGoogle: "اربط حساب جوجل لنشر وإدارة روابط البيع المجانية",
-          adBtnGoogleSignIn: "دخول بجوجل",
-          adConnectedAs: "الحساب:",
-          adSignOut: "خروج",
-          labelSlug: "الاسم المختصر للرابط (Slug)",
-          phSlug: "cerave-lotion",
-          btnPublishAdLink: "🚀 نشر الرابط المجاني للإعلانات",
-          btnUpdateAdLink: "🔄 تحديث الرابط المجاني",
-          labelFreeAdLink: "الرابط المجاني الاحترافي (جاهز لإعلانات فيسبوك، تيك توك، وإنستغرام)",
-          btnCopyAdLink: "نسخ رابط الإعلان",
-          btnOpenAdLink: "معاينة الرابط",
-          hintFreeAdLink: "رابط قصير ومجاني 100% يعمل مباشرة عند أي زبون من إعلانات فيسبوك أو باقي المنصات.",
-          adBadgeFb: "مناسب لإعلانات فيسبوك وتيك توك",
-          adBadgeOg: "صورة وعنوان للإعلان",
-          adBadgeCod: "الدفع عند الاستلام",
-          adPublishing: "جاري نشر الرابط المجاني...",
-          adPublishedOk: "تم النشر بنجاح! رابطك الاحترافي جاهز لوضعِه في إعلانات فيسبوك:",
-          adSlugTaken: "هذا الاسم مستخدم مسبقاً، يرجى كتابة اسم مختصر آخر.",
-          adAuthRequired: "يرجى تسجيل الدخول بحساب جوجل لإكمال نشر الرابط المجاني.",
-          adDomainNotAllowed: "للدومين المخصص: أضف هذا الدومين في Firebase Console > Authentication > Authorized domains:",
-          adMediaTrimmedNote: "ملاحظة: ملفات الفيديو المرفوعة مباشرة كبيرة على الرابط المجاني (استعمل رابط يوتيوب أو MP4 عبر زر 🔗 رابط). تم نشر النصوص والصور بنجاح.",
-          adPublishError: "تعذر نشر الرابط، يرجى المحاولة مرة أخرى.",
+          sectionLinks: "الرابط المجاني",
+          labelFreeLink: "الرابط المجاني",
+          btnCopyFreeLink: "نسخ الرابط",
+          btnOpenFreeLink: "فتح الرابط",
+          btnNewFreeLink: "+ رابط جديد",
+          hintFreeLink: "يُنشأ ويتجدد تلقائياً ومجاني 100% ويعمل مباشرة في الإعلانات وعلى جميع الهواتف.",
+          linkCreating: "جاري إنشاء الرابط المجاني...",
+          adMediaTrimmedNote: "ملاحظة: ملفات الفيديو المرفوعة مباشرة كبيرة على الرابط المجاني (استعمل رابط يوتيوب أو MP4 عبر زر 🔗 رابط). تم حفظ النصوص والصور بنجاح.",
+          adPublishError: "تعذر مزامنة الرابط المجاني، يرجى المحاولة مرة أخرى.",
           adLoadToEdit: "تعديل",
           labelDomain: "الدومين الخاص بي (مثال: https://mystore.com)",
           labelDomainLink: "رابط الدومين (/product.html)",
           btnCopyDomain: "نسخ الرابط",
           btnOpenDomain: "فتح الرابط",
+          btnDomainHelp: "❓ طريقة تشغيل الدومين",
+          domainHelpTitle: "كيفية إنشاء وتشغيل رابط الدومين الخاص بك",
           btnDownloadHtml: "تحميل صفحة الهبوط المستقلة (product.html)",
           confirmDeleteAll: "تأكيد حذف جميع الروابط؟",
           btnYesDelete: "نعم، احذف الكل",
@@ -1939,8 +2018,8 @@
           imagePrefix: "صورة",
           noImages: "لم يتم رفع صور بعد. اضغط على \"ارفع صورة المنتج\" بالأعلى.",
           copied: "تم النسخ!",
-          savedToast: "تم النشر!",
-          noSavedLinks: "لا توجد روابط منشورة بعد. اضغط على \"نشر الرابط المجاني للإعلانات\" لإنشاء أول رابط قصير.",
+          savedToast: "تم الحفظ!",
+          noSavedLinks: "لا توجد روابط محفوظة بعد. سيتم حفظ رابطك المجاني هنا تلقائياً.",
           copyBtn: "نسخ",
           openBtn: "فتح",
           deleteBtn: "حذف",
@@ -1962,6 +2041,7 @@
           btnDescAi: "توليد بالذكاء الاصطناعي",
           aiSearching: "جاري تحليل صورة المنتج والبحث في الويب...",
           aiDone: "تم توليد الوصف الاحترافي بناءً على بحث الويب!",
+          aiDoneSimilar: "لم يُعثر على نفس المنتج بالضبط — تم توليد الوصف من منتجات مشابهة له!",
           aiDoneVision: "تم توليد الوصف الاحترافي من تحليل صورة المنتج!",
           aiSourcesLabel: "مصادر الويب:",
           aiErrorGeneric: "تعذر توليد الوصف، يرجى المحاولة مرة أخرى.",
@@ -1969,9 +2049,9 @@
           aiErrorKey: "مفتاح Gemini API غير موجود أو غير صالح في Settings > Secrets."
         },
         fr: {
-          btnSaveHeader: "🚀 Publier le lien gratuit",
-          btnSavedLinksHeader: "Mes liens publiés",
-          modalSavedTitle: "Mes liens publicitaires publiés",
+          btnSaveHeader: "💾 Enregistrer le lien",
+          btnSavedLinksHeader: "Liens enregistrés",
+          modalSavedTitle: "Liens enregistrés",
           btnDeleteAll: "Supprimer tous les liens",
           sectionProduct: "Détails du produit",
           labelProductName: "Nom du produit",
@@ -2005,34 +2085,22 @@
           labelWhatsapp: "WhatsApp",
           labelEmail: "E-mail",
           labelInstagram: "Instagram",
-          sectionLinks: "Lien publicitaire gratuit",
-          adConnectGoogle: "Connectez Google pour publier et gérer vos liens publicitaires gratuits",
-          adBtnGoogleSignIn: "Connexion Google",
-          adConnectedAs: "Connecté :",
-          adSignOut: "Déconnexion",
-          labelSlug: "Nom court du lien (Slug)",
-          phSlug: "ecouteurs-pro",
-          btnPublishAdLink: "🚀 Publier le lien gratuit",
-          btnUpdateAdLink: "🔄 Mettre à jour le lien",
-          labelFreeAdLink: "Lien gratuit (Prêt pour Facebook, TikTok & Instagram Ads)",
-          btnCopyAdLink: "Copier le lien",
-          btnOpenAdLink: "Ouvrir la page",
-          hintFreeAdLink: "URL courte et gratuite hébergée pour vos publicités sur tous les appareils.",
-          adBadgeFb: "Facebook / TikTok / IG Ads",
-          adBadgeOg: "Aperçu publicitaire",
-          adBadgeCod: "Paiement à la livraison",
-          adPublishing: "Publication de votre lien gratuit...",
-          adPublishedOk: "Publié ! Votre lien publicitaire est prêt :",
-          adSlugTaken: "Ce slug est déjà utilisé. Choisissez un autre nom court.",
-          adAuthRequired: "Veuillez vous connecter avec Google pour publier ce lien.",
-          adDomainNotAllowed: "Ajoutez ce domaine dans Firebase Console > Authentication > Authorized domains :",
-          adMediaTrimmedNote: "Note : Les vidéos locales ne peuvent pas être hébergées (utilisez un lien YouTube/MP4 via 🔗). Texte et photos publiés.",
-          adPublishError: "Impossible de publier le lien. Veuillez réessayer.",
+          sectionLinks: "Lien gratuit",
+          labelFreeLink: "Lien gratuit",
+          btnCopyFreeLink: "Copier le lien",
+          btnOpenFreeLink: "Ouvrir le lien",
+          btnNewFreeLink: "+ Nouveau lien",
+          hintFreeLink: "Généré et mis à jour automatiquement — fonctionne sur tous les appareils et plateformes.",
+          linkCreating: "Création du lien gratuit...",
+          adMediaTrimmedNote: "Note : Les vidéos locales ne peuvent pas être hébergées (utilisez un lien YouTube/MP4). Texte et photos enregistrés.",
+          adPublishError: "Impossible de synchroniser le lien gratuit. Veuillez réessayer.",
           adLoadToEdit: "Modifier",
           labelDomain: "Mon domaine (ex. https://maboutique.com)",
           labelDomainLink: "Lien de domaine (/product.html)",
           btnCopyDomain: "Copier le lien",
           btnOpenDomain: "Ouvrir le lien",
+          btnDomainHelp: "❓ Comment l'activer",
+          domainHelpTitle: "Comment activer le lien de votre domaine",
           btnDownloadHtml: "Télécharger la page autonome (product.html)",
           confirmDeleteAll: "Confirmer la suppression ?",
           btnYesDelete: "Oui, tout supprimer",
@@ -2045,8 +2113,8 @@
           imagePrefix: "Image",
           noImages: "Aucune image importée. Cliquez sur « Importer une image » ci-dessus.",
           copied: "Copié !",
-          savedToast: "Publié !",
-          noSavedLinks: "Aucun lien publié pour le moment. Cliquez sur « Publier le lien gratuit ».",
+          savedToast: "Enregistré !",
+          noSavedLinks: "Aucun lien enregistré pour le moment. Votre lien gratuit sera enregistré ici automatiquement.",
           copyBtn: "Copier",
           openBtn: "Ouvrir",
           deleteBtn: "Supprimer",
@@ -2068,6 +2136,7 @@
           btnDescAi: "Générer par IA",
           aiSearching: "Analyse de la photo et recherche sur le web...",
           aiDone: "Description professionnelle générée depuis le web !",
+          aiDoneSimilar: "Produit exact introuvable — description générée à partir de produits similaires !",
           aiDoneVision: "Description professionnelle générée depuis l'image !",
           aiSourcesLabel: "Sources web :",
           aiErrorGeneric: "Impossible de générer la description. Veuillez réessayer.",
@@ -2552,9 +2621,12 @@
       };
 
       var currentFreeAdLink = "";
-      var isSlugPublishedLive = false;
-      var userEditedSlug = false;
       var rebuildTimer = null;
+      var cloudSyncTimer = null;
+      var cloudSyncInFlight = false;
+      var cloudSyncPending = false;
+      var cloudSyncedOnce = false;
+      var activeCloudSyncPromise = null;
       var savedDescRange = null;
       var latestUploadedAiImage = "";
       var lastAiAnalyzedImage = "";
@@ -2585,6 +2657,12 @@
       var descAiStatusBox = document.getElementById("descAiStatusBox");
       var descAiImageInput = document.getElementById("descAiImageInput");
       var descBoldBtn = document.getElementById("descBoldBtn");
+      var descFontSizeGroup = document.getElementById("descFontSizeGroup");
+      var descListUlBtn = document.getElementById("descListUlBtn");
+      var descListOlBtn = document.getElementById("descListOlBtn");
+      var descAlignRightBtn = document.getElementById("descAlignRightBtn");
+      var descAlignCenterBtn = document.getElementById("descAlignCenterBtn");
+      var descAlignLeftBtn = document.getElementById("descAlignLeftBtn");
       var descAddImgBtn = document.getElementById("descAddImgBtn");
       var descAddVidBtn = document.getElementById("descAddVidBtn");
       var descToggleVidUrlBtn = document.getElementById("descToggleVidUrlBtn");
@@ -2624,23 +2702,24 @@
       var contactEmailInput = document.getElementById("contactEmailInput");
       var contactInstagramInput = document.getElementById("contactInstagramInput");
 
-      var adAuthUserText = document.getElementById("adAuthUserText");
-      var adSignInBtn = document.getElementById("adSignInBtn");
-      var adSignOutBtn = document.getElementById("adSignOutBtn");
-      var adSlugPrefixSpan = document.getElementById("adSlugPrefixSpan");
-      var adSlugInput = document.getElementById("adSlugInput");
-      var publishFreeLinkBtn = document.getElementById("publishFreeLinkBtn");
       var freeAdLinkInput = document.getElementById("freeAdLinkInput");
-      var copyFreeAdLinkBtn = document.getElementById("copyFreeAdLinkBtn");
-      var openFreeAdLinkBtn = document.getElementById("openFreeAdLinkBtn");
+      var copyFreeLinkBtn = document.getElementById("copyFreeLinkBtn");
+      var openFreeLinkBtn = document.getElementById("openFreeLinkBtn");
+      var newFreeLinkBtn = document.getElementById("newFreeLinkBtn");
       var freeAdStatusMsg = document.getElementById("freeAdStatusMsg");
 
       var customDomainInput = document.getElementById("customDomainInput");
       var domainLinkInput = document.getElementById("domainLinkInput");
       var copyDomainLinkBtn = document.getElementById("copyDomainLinkBtn");
       var openDomainLinkBtn = document.getElementById("openDomainLinkBtn");
+      var domainHelpBtn = document.getElementById("domainHelpBtn");
       var domainLinkFeedback = document.getElementById("domainLinkFeedback");
       var downloadHtmlBtn = document.getElementById("downloadHtmlBtn");
+      var domainHelpModal = document.getElementById("domainHelpModal");
+      var domainHelpModalBody = document.getElementById("domainHelpModalBody");
+      var closeDomainHelpBtn = document.getElementById("closeDomainHelpBtn");
+      var closeDomainHelpFooterBtn = document.getElementById("closeDomainHelpFooterBtn");
+      var domainHelpDownloadBtn = document.getElementById("domainHelpDownloadBtn");
 
       var workspace = document.getElementById("workspace");
       var deviceToggleBtn = document.getElementById("deviceToggleBtn");
@@ -2737,6 +2816,23 @@
             return frEl;
           }
           var cleanEl = document.createElement(tag.toLowerCase());
+          var styleParts = [];
+          var rawAlign = "";
+          if (node.style && node.style.textAlign) {
+            rawAlign = String(node.style.textAlign).toLowerCase().trim();
+          } else if (node.getAttribute("align")) {
+            rawAlign = String(node.getAttribute("align")).toLowerCase().trim();
+          }
+          if (rawAlign === "left" || rawAlign === "center" || rawAlign === "right" || rawAlign === "justify") {
+            styleParts.push("text-align:" + rawAlign);
+          }
+          var rawFs = node.style && node.style.fontSize ? String(node.style.fontSize).toLowerCase().trim() : "";
+          if (/^(14|16|18|20)px$/.test(rawFs)) {
+            styleParts.push("font-size:" + rawFs);
+          }
+          if (styleParts.length > 0) {
+            cleanEl.setAttribute("style", styleParts.join(";") + ";");
+          }
           for (var i = 0; i < node.childNodes.length; i++) {
             var cleanedChild = cleanNode(node.childNodes[i]);
             if (cleanedChild) cleanEl.appendChild(cleanedChild);
@@ -3180,6 +3276,8 @@
           ".lp-desc{line-height:1.9;margin:0 0 18px 0;font-weight:700;white-space:normal;word-break:break-word;text-align:center}" +
           ".lp-desc strong,.lp-desc b{font-weight:900}" +
           ".lp-desc p,.lp-desc div{margin:0 0 10px 0}" +
+          ".lp-desc ul,.lp-desc ol{margin:8px 0 12px 0;padding:0 18px;list-style-position:inside;text-align:inherit}" +
+          ".lp-desc li{margin-bottom:5px;text-align:inherit}" +
           ".lp-desc img,.lp-desc video{display:block;max-width:100%;height:auto;border-radius:12px;margin:12px auto}" +
           ".lp-desc iframe{display:block;max-width:100%;aspect-ratio:16/9;height:auto;border-radius:12px;margin:12px auto}" +
           ".lp-delivery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}" +
@@ -3303,23 +3401,32 @@
         savedCountBadge.textContent = String(list.length);
       }
 
-      function upsertSavedLink(name, link) {
+      function upsertSavedLink(name, link, slug) {
         if (!link) return;
         var cleanName = (name || "").trim() || getEffectiveProductName();
+        var cleanSlug = (slug || state.slug || "").trim();
         var nowStr = new Date().toLocaleString();
         var list = getSavedLinks();
         var existingIdx = -1;
         for (var i = 0; i < list.length; i++) {
-          if (list[i] && list[i].name === cleanName) {
+          if (!list[i]) continue;
+          if (cleanSlug && list[i].slug === cleanSlug) {
+            existingIdx = i;
+            break;
+          }
+          if (list[i].link === link) {
             existingIdx = i;
             break;
           }
         }
         if (existingIdx !== -1) {
+          list[existingIdx].name = cleanName;
           list[existingIdx].link = link;
+          list[existingIdx].slug = cleanSlug;
           list[existingIdx].date = nowStr;
         } else {
           list.unshift({
+            slug: cleanSlug,
             name: cleanName,
             link: link,
             date: nowStr
@@ -3336,16 +3443,79 @@
         }
       }
 
-      function getDefaultSlugForState() {
-        var raw = (state.slug || state.productName || "").toLowerCase().trim();
-        var clean = raw.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 64);
-        if (clean.length >= 3) return clean;
-        return state.slug && state.slug.length >= 3 ? state.slug : "product-offer";
+      var ARABIC_SLUG_MAP = {
+        "ا": "a", "أ": "a", "إ": "a", "آ": "a", "ٱ": "a",
+        "ب": "b", "ت": "t", "ث": "th", "ج": "j", "ح": "h", "خ": "kh",
+        "د": "d", "ذ": "dh", "ر": "r", "ز": "z", "س": "s", "ش": "sh",
+        "ص": "s", "ض": "d", "ط": "t", "ظ": "z", "ع": "a", "غ": "gh",
+        "ف": "f", "ق": "q", "ك": "k", "ل": "l", "م": "m", "ن": "n",
+        "ه": "h", "ة": "a", "و": "o", "ؤ": "o", "ي": "i", "ى": "a", "ئ": "i",
+        "پ": "p", "چ": "ch", "ڤ": "v", "گ": "g", "ڨ": "g", "ڭ": "g",
+        "٠": "0", "١": "1", "٢": "2", "٣": "3", "٤": "4",
+        "٥": "5", "٦": "6", "٧": "7", "٨": "8", "٩": "9"
+      };
+
+      function slugifyProductNameLocal(name) {
+        var raw = String(name || "");
+        if (typeof raw.normalize === "function") {
+          raw = raw.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+        raw = raw.replace(/[\u064B-\u065F\u0670\u0640]/g, "");
+        var mapped = "";
+        for (var i = 0; i < raw.length; i++) {
+          var ch = raw.charAt(i);
+          mapped += Object.prototype.hasOwnProperty.call(ARABIC_SLUG_MAP, ch) ? ARABIC_SLUG_MAP[ch] : ch;
+        }
+        return mapped
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .slice(0, 48)
+          .replace(/-+$/g, "");
       }
 
-      function getFreeAdLinkUrl() {
-        var s = getDefaultSlugForState();
-        return window.location.origin + "/p/" + encodeURIComponent(s);
+      function generateRandomSlugSuffix(len) {
+        var chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+        var suffix = "";
+        var count = len || 5;
+        for (var i = 0; i < count; i++) {
+          suffix += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return suffix;
+      }
+
+      function syncSlugFromProductName() {
+        var base = window.LPCloud
+          ? window.LPCloud.slugifyProductName(state.productName)
+          : slugifyProductNameLocal(state.productName);
+        if (!base || base.length < 3) return false;
+        var cur = String(state.slug || "").toLowerCase().trim();
+        var matchesBase = cur === base || cur.indexOf(base + "-") === 0;
+        if (!matchesBase) {
+          state.slug = base;
+          cloudSyncedOnce = false;
+          return true;
+        }
+        return false;
+      }
+
+      function ensureStateSlug() {
+        var s = String(state.slug || "")
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9-]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .slice(0, 72)
+          .replace(/-+$/g, "");
+        if (s.length < 3) {
+          var base = window.LPCloud
+            ? window.LPCloud.slugifyProductName(state.productName)
+            : slugifyProductNameLocal(state.productName);
+          s = base && base.length >= 3 ? base : ("product-" + generateRandomSlugSuffix(5));
+        }
+        state.slug = s;
+        return s;
       }
 
       function showFreeAdStatus(msg, isError) {
@@ -3359,19 +3529,10 @@
       }
 
       function syncFreeAdLinkUI() {
-        var slugVal = getDefaultSlugForState();
-        if (!userEditedSlug && adSlugInput) {
-          adSlugInput.value = slugVal;
-        }
-        if (adSlugPrefixSpan) {
-          adSlugPrefixSpan.textContent = window.location.origin + "/p/";
-        }
-        currentFreeAdLink = window.location.origin + "/p/" + encodeURIComponent(adSlugInput.value.trim() || slugVal);
+        var slugVal = ensureStateSlug();
+        currentFreeAdLink = window.location.origin + "/p/" + encodeURIComponent(slugVal);
         freeAdLinkInput.value = currentFreeAdLink;
-        openFreeAdLinkBtn.href = currentFreeAdLink;
-        publishFreeLinkBtn.textContent = isSlugPublishedLive
-          ? BUILDER_I18N[state.lang].btnUpdateAdLink
-          : BUILDER_I18N[state.lang].btnPublishAdLink;
+        openFreeLinkBtn.href = currentFreeAdLink;
       }
 
       function saveDraftAndSyncLinks() {
@@ -3383,8 +3544,103 @@
 
         saveDraft();
 
-        builderStatusBadge.classList.remove("updating");
-        builderStatusBadge.textContent = BUILDER_I18N[state.lang].ready;
+        if (!cloudSyncInFlight) {
+          builderStatusBadge.classList.remove("updating");
+          builderStatusBadge.textContent = BUILDER_I18N[state.lang].ready;
+        }
+      }
+
+      function buildCloudPayload() {
+        return {
+          lang: state.lang,
+          theme: state.theme,
+          productName: getEffectiveProductName(),
+          description: getEffectiveDescription(),
+          descriptionHtml: state.descriptionHtml || "",
+          price: String(state.price || "129"),
+          currency: state.currency || "USD",
+          images: Array.isArray(state.images) ? state.images : [],
+          imageSize: state.imageSize || "large",
+          fontSize: String(state.fontSize || "28"),
+          scale: Number(state.scale) || 100,
+          reviews: getEffectiveReviews(),
+          customColors: state.customColors,
+          enabledContacts: state.enabledContacts,
+          website: state.website || "",
+          whatsapp: state.whatsapp || "",
+          instagram: state.instagram || "",
+          email: state.email || ""
+        };
+      }
+
+      function syncFreeLinkNow(opts) {
+        opts = opts || {};
+        var t = BUILDER_I18N[state.lang];
+        if (!window.LPCloud) {
+          return Promise.resolve(null);
+        }
+        if (cloudSyncTimer) {
+          clearTimeout(cloudSyncTimer);
+          cloudSyncTimer = null;
+        }
+        if (cloudSyncInFlight) {
+          cloudSyncPending = true;
+          return activeCloudSyncPromise || Promise.resolve(null);
+        }
+
+        cloudSyncInFlight = true;
+        cloudSyncPending = false;
+        builderStatusBadge.classList.add("updating");
+        builderStatusBadge.textContent = t.updating;
+        if (opts.showCreatingMsg) {
+          showFreeAdStatus("⏳ " + t.linkCreating, false);
+        }
+
+        var targetSlug = ensureStateSlug();
+        activeCloudSyncPromise = window.LPCloud.syncFreeLink(targetSlug, buildCloudPayload())
+          .then(function (res) {
+            cloudSyncedOnce = true;
+            state.slug = res.slug;
+            currentFreeAdLink = res.url;
+            freeAdLinkInput.value = res.url;
+            openFreeLinkBtn.href = res.url;
+            upsertSavedLink(getEffectiveProductName(), res.url, res.slug);
+            saveDraft();
+
+            if (res.trimmedMedia) {
+              showFreeAdStatus(BUILDER_I18N[state.lang].adMediaTrimmedNote, false);
+            } else {
+              showFreeAdStatus("", false);
+            }
+            return res;
+          })
+          .catch(function () {
+            showFreeAdStatus("⚠️ " + BUILDER_I18N[state.lang].adPublishError, true);
+            return null;
+          })
+          .finally(function () {
+            cloudSyncInFlight = false;
+            activeCloudSyncPromise = null;
+            if (cloudSyncPending) {
+              cloudSyncPending = false;
+              syncFreeLinkNow();
+            } else {
+              builderStatusBadge.classList.remove("updating");
+              builderStatusBadge.textContent = BUILDER_I18N[state.lang].ready;
+            }
+          });
+
+        return activeCloudSyncPromise;
+      }
+
+      function scheduleCloudSync(delayMs) {
+        if (cloudSyncTimer) {
+          clearTimeout(cloudSyncTimer);
+        }
+        cloudSyncTimer = setTimeout(function () {
+          cloudSyncTimer = null;
+          syncFreeLinkNow();
+        }, typeof delayMs === "number" ? delayMs : 850);
       }
 
       function scheduleRebuild() {
@@ -3396,8 +3652,11 @@
           clearTimeout(rebuildTimer);
         }
         rebuildTimer = setTimeout(function () {
+          rebuildTimer = null;
           saveDraftAndSyncLinks();
         }, 350);
+
+        scheduleCloudSync(850);
       }
 
       function updateControlActiveStates() {
@@ -3490,12 +3749,6 @@
         }
 
         builderStatusBadge.textContent = builderStatusBadge.classList.contains("updating") ? t.updating : t.ready;
-        if (window.LPCloud) {
-          var curUser = window.LPCloud.getCurrentUser();
-          if (curUser) {
-            adAuthUserText.textContent = t.adConnectedAs + " " + (curUser.displayName || curUser.email);
-          }
-        }
         syncFreeAdLinkUI();
         updateControlActiveStates();
         renderImageManager();
@@ -3612,11 +3865,7 @@
         document.body.removeChild(ta);
       }
 
-      var cloudSavedLinks = [];
-
       function getAllDisplayLinks() {
-        var cloudList = cloudSavedLinks || [];
-        if (cloudList.length > 0) return cloudList;
         var localList = getSavedLinks();
         return localList.filter(function (x) {
           return x && typeof x.link === "string" && x.link.indexOf("#landing=") === -1;
@@ -3628,7 +3877,7 @@
         var list = getAllDisplayLinks();
         savedCountBadge.textContent = String(list.length);
         deleteAllConfirmWrap.style.display = "none";
-        deleteAllSavedBtn.style.display = (list.length > 0 && cloudSavedLinks.length === 0) ? "inline-flex" : "none";
+        deleteAllSavedBtn.style.display = list.length > 0 ? "inline-flex" : "none";
 
         if (list.length === 0) {
           savedLinksModalBody.innerHTML = '<p class="helper-note">' + escapeHtml(t.noSavedLinks) + "</p>";
@@ -3638,10 +3887,8 @@
         var html = "";
         for (var i = 0; i < list.length; i++) {
           var item = list[i];
-          var dateStr = item.updatedAtMs
-            ? new Date(item.updatedAtMs).toLocaleString()
-            : (item.date || "");
-          var titleText = item.productName || item.name || item.slug || "Product";
+          var dateStr = item.date || "";
+          var titleText = item.name || item.slug || "Product";
           html +=
             '<div class="saved-link-item">' +
               '<div class="saved-link-top">' +
@@ -3658,20 +3905,6 @@
             "</div>";
         }
         savedLinksModalBody.innerHTML = html;
-      }
-
-      function refreshCloudLinks() {
-        if (!window.LPCloud || !window.LPCloud.getCurrentUser()) {
-          cloudSavedLinks = [];
-          renderSavedLinksModal();
-          return;
-        }
-        window.LPCloud.listMyPublishedPages().then(function (items) {
-          cloudSavedLinks = items || [];
-          renderSavedLinksModal();
-        }).catch(function () {
-          /* Ignore background list refresh failure */
-        });
       }
 
       function applyLoadedCloudPage(data, slug) {
@@ -3710,9 +3943,7 @@
           };
         }
         state.slug = slug;
-        adSlugInput.value = slug;
-        userEditedSlug = true;
-        isSlugPublishedLive = true;
+        cloudSyncedOnce = true;
 
         productNameInput.value = state.productName;
         productDescEditor.innerHTML = state.descriptionHtml || escapeHtml(state.description).replace(/\n/g, "<br>");
@@ -3729,102 +3960,8 @@
         applyLanguageUI();
         renderLivePreview();
         saveDraftAndSyncLinks();
+        syncDescToolbarActiveStates();
         savedLinksModal.classList.remove("open");
-      }
-
-      function handlePublishFreeAdLink(triggerBtn) {
-        var t = BUILDER_I18N[state.lang];
-        if (!window.LPCloud) {
-          showFreeAdStatus(t.adPublishError, true);
-          return;
-        }
-
-        function doPublish() {
-          if (triggerBtn) triggerBtn.disabled = true;
-          publishFreeLinkBtn.disabled = true;
-          showFreeAdStatus("⏳ " + t.adPublishing, false);
-
-          var desiredSlug = (adSlugInput.value || "").trim() || getDefaultSlugForState();
-          var payload = {
-            lang: state.lang,
-            theme: state.theme,
-            productName: getEffectiveProductName(),
-            description: getEffectiveDescription(),
-            descriptionHtml: state.descriptionHtml || "",
-            price: String(state.price || "129"),
-            currency: state.currency || "USD",
-            images: Array.isArray(state.images) ? state.images : [],
-            imageSize: state.imageSize || "large",
-            fontSize: String(state.fontSize || "28"),
-            scale: Number(state.scale) || 100,
-            reviews: getEffectiveReviews(),
-            customColors: state.customColors,
-            enabledContacts: state.enabledContacts,
-            website: state.website || "",
-            whatsapp: state.whatsapp || "",
-            instagram: state.instagram || "",
-            email: state.email || ""
-          };
-
-          window.LPCloud.publishLandingPage(desiredSlug, payload)
-            .then(function (res) {
-              state.slug = res.slug;
-              adSlugInput.value = res.slug;
-              userEditedSlug = true;
-              isSlugPublishedLive = true;
-              currentFreeAdLink = res.url;
-              freeAdLinkInput.value = res.url;
-              openFreeAdLinkBtn.href = res.url;
-              upsertSavedLink(getEffectiveProductName(), res.url);
-              saveDraftAndSyncLinks();
-              refreshCloudLinks();
-
-              var okMsg = "✅ " + t.adPublishedOk + " " + res.url;
-              if (res.trimmedMedia) {
-                okMsg += " — " + t.adMediaTrimmedNote;
-              }
-              showFreeAdStatus(okMsg, false);
-
-              if (triggerBtn === saveLinkHeaderBtn) {
-                saveLinkHeaderBtn.textContent = "✅ " + t.savedToast;
-                setTimeout(function () {
-                  saveLinkHeaderBtn.textContent = BUILDER_I18N[state.lang].btnSaveHeader;
-                }, 1600);
-              }
-            })
-            .catch(function (err) {
-              var msg = err && err.message ? err.message : "";
-              if (msg === "SLUG_TAKEN") {
-                showFreeAdStatus("⚠️ " + t.adSlugTaken, true);
-              } else if (msg === "AUTH_REQUIRED") {
-                showFreeAdStatus("⚠️ " + t.adAuthRequired, true);
-              } else {
-                showFreeAdStatus("⚠️ " + t.adPublishError, true);
-              }
-            })
-            .finally(function () {
-              if (triggerBtn) triggerBtn.disabled = false;
-              publishFreeLinkBtn.disabled = false;
-              syncFreeAdLinkUI();
-            });
-        }
-
-        if (!window.LPCloud.getCurrentUser()) {
-          window.LPCloud.signInGoogle()
-            .then(function () {
-              doPublish();
-            })
-            .catch(function (err) {
-              var code = err && err.code ? String(err.code) : "";
-              if (code === "auth/unauthorized-domain") {
-                showFreeAdStatus("⚠️ " + t.adDomainNotAllowed + " " + window.location.hostname, true);
-              } else {
-                showFreeAdStatus("⚠️ " + t.adAuthRequired, true);
-              }
-            });
-        } else {
-          doPublish();
-        }
       }
 
       /* Event Bindings */
@@ -3842,46 +3979,39 @@
       });
 
       saveLinkHeaderBtn.addEventListener("click", function () {
-        if (rebuildTimer) clearTimeout(rebuildTimer);
-        saveDraftAndSyncLinks();
-        handlePublishFreeAdLink(saveLinkHeaderBtn);
-      });
-
-      publishFreeLinkBtn.addEventListener("click", function () {
-        if (rebuildTimer) clearTimeout(rebuildTimer);
-        saveDraftAndSyncLinks();
-        handlePublishFreeAdLink(publishFreeLinkBtn);
-      });
-
-      adSignInBtn.addEventListener("click", function () {
         var t = BUILDER_I18N[state.lang];
-        if (!window.LPCloud) return;
-        window.LPCloud.signInGoogle().catch(function (err) {
-          var code = err && err.code ? String(err.code) : "";
-          if (code === "auth/unauthorized-domain") {
-            showFreeAdStatus("⚠️ " + t.adDomainNotAllowed + " " + window.location.hostname, true);
-          } else {
-            showFreeAdStatus("⚠️ " + t.adAuthRequired, true);
-          }
+        if (rebuildTimer) {
+          clearTimeout(rebuildTimer);
+          rebuildTimer = null;
+        }
+        saveDraftAndSyncLinks();
+        syncFreeLinkNow().then(function (res) {
+          var finalUrl = (res && res.url) || currentFreeAdLink;
+          upsertSavedLink(getEffectiveProductName(), finalUrl, state.slug);
+          saveLinkHeaderBtn.textContent = "✅ " + t.savedToast;
+          setTimeout(function () {
+            saveLinkHeaderBtn.textContent = BUILDER_I18N[state.lang].btnSaveHeader;
+          }, 1600);
         });
       });
 
-      adSignOutBtn.addEventListener("click", function () {
-        if (!window.LPCloud) return;
-        window.LPCloud.signOutUser();
-      });
-
-      adSlugInput.addEventListener("input", function () {
-        var cleaned = adSlugInput.value.toLowerCase().replace(/[^a-z0-9-]+/g, "-");
-        adSlugInput.value = cleaned;
-        userEditedSlug = cleaned.trim().length > 0;
-        state.slug = cleaned.replace(/^-+|-+$/g, "");
-        isSlugPublishedLive = false;
+      newFreeLinkBtn.addEventListener("click", function () {
+        if (rebuildTimer) {
+          clearTimeout(rebuildTimer);
+          rebuildTimer = null;
+        }
+        if (window.LPCloud) {
+          state.slug = window.LPCloud.createAutoSlug(state.productName, true);
+        } else {
+          var base = slugifyProductNameLocal(state.productName);
+          state.slug = base ? (base + "-" + generateRandomSlugSuffix(5)) : ("product-" + generateRandomSlugSuffix(5));
+        }
+        cloudSyncedOnce = false;
         saveDraftAndSyncLinks();
+        syncFreeLinkNow({ showCreatingMsg: true });
       });
 
       openSavedLinksBtn.addEventListener("click", function () {
-        refreshCloudLinks();
         renderSavedLinksModal();
         savedLinksModal.classList.add("open");
       });
@@ -3916,14 +4046,9 @@
 
         var loadSlug = target.getAttribute("data-saved-load");
         if (loadSlug && window.LPCloud) {
-          var matched = (cloudSavedLinks || []).find(function (c) { return c.slug === loadSlug; });
-          if (matched && matched.data) {
-            applyLoadedCloudPage(matched.data, loadSlug);
-          } else {
-            window.LPCloud.loadPublishedPage(loadSlug).then(function (d) {
-              if (d) applyLoadedCloudPage(d, loadSlug);
-            });
-          }
+          window.LPCloud.loadPublishedPage(loadSlug).then(function (d) {
+            if (d) applyLoadedCloudPage(d, loadSlug);
+          });
           return;
         }
 
@@ -3931,16 +4056,11 @@
         if (delIdx !== null) {
           var all = getAllDisplayLinks();
           var delItem = all[Number(delIdx)];
-          if (delItem && delItem.slug && cloudSavedLinks.length > 0 && window.LPCloud) {
-            window.LPCloud.deletePublishedPage(delItem.slug).then(function () {
-              cloudSavedLinks = cloudSavedLinks.filter(function (c) { return c.slug !== delItem.slug; });
-              renderSavedLinksModal();
-            });
-          } else {
-            var updated = getSavedLinks().filter(function (x) { return x && x.link !== (delItem && delItem.link); });
-            setSavedLinks(updated);
-            renderSavedLinksModal();
-          }
+          var updated = getSavedLinks().filter(function (x) {
+            return x && x.link !== (delItem && delItem.link);
+          });
+          setSavedLinks(updated);
+          renderSavedLinksModal();
         }
       });
 
@@ -3962,6 +4082,9 @@
       productNameInput.addEventListener("input", function () {
         state.productName = productNameInput.value;
         userTypedProductName = productNameInput.value.trim().length > 0;
+        if (syncSlugFromProductName()) {
+          syncFreeAdLinkUI();
+        }
         scheduleRebuild();
       });
 
@@ -4060,16 +4183,340 @@
         return null;
       }
 
+      function getDescCaretElement() {
+        var sel = window.getSelection();
+        var node = null;
+        if (sel && sel.rangeCount > 0 && productDescEditor.contains(sel.getRangeAt(0).commonAncestorContainer)) {
+          node = sel.getRangeAt(0).startContainer;
+        } else if (savedDescRange && productDescEditor.contains(savedDescRange.commonAncestorContainer)) {
+          node = savedDescRange.startContainer;
+        }
+        if (node && node.nodeType === 3) {
+          node = node.parentNode;
+        }
+        if (node && node !== productDescEditor && productDescEditor.contains(node) && node.nodeType === 1) {
+          return node;
+        }
+        return null;
+      }
+
+      function getDescExplicitAlign() {
+        var node = getDescCaretElement();
+        while (node && node !== productDescEditor && node.nodeType === 1) {
+          var raw = "";
+          if (node.style && node.style.textAlign) {
+            raw = String(node.style.textAlign).toLowerCase().trim();
+          } else if (node.getAttribute && node.getAttribute("align")) {
+            raw = String(node.getAttribute("align")).toLowerCase().trim();
+          }
+          if (raw === "right" || raw === "center" || raw === "left") {
+            return raw;
+          }
+          node = node.parentNode;
+        }
+        return "";
+      }
+
+      function getDescActiveListType() {
+        var node = getDescCaretElement();
+        while (node && node !== productDescEditor && node.nodeType === 1) {
+          var tag = node.tagName ? node.tagName.toUpperCase() : "";
+          if (tag === "UL") return "ul";
+          if (tag === "OL") return "ol";
+          node = node.parentNode;
+        }
+        return "";
+      }
+
+      function getDescActiveFontSize() {
+        var node = getDescCaretElement();
+        while (node && node !== productDescEditor && node.nodeType === 1) {
+          if (node.style && /^(14|16|18|20)px$/i.test(node.style.fontSize || "")) {
+            return node.style.fontSize.replace(/px/i, "");
+          }
+          node = node.parentNode;
+        }
+        return "";
+      }
+
+      function isDescEditorFocusedWithSelection() {
+        if (document.activeElement !== productDescEditor && !productDescEditor.contains(document.activeElement)) {
+          return false;
+        }
+        var sel = window.getSelection();
+        return Boolean(sel && sel.rangeCount > 0 && productDescEditor.contains(sel.getRangeAt(0).commonAncestorContainer));
+      }
+
+      function clearAllDescToolbarActiveStates() {
+        descBoldBtn.classList.remove("active");
+        descListUlBtn.classList.remove("active");
+        descListOlBtn.classList.remove("active");
+        descAlignRightBtn.classList.remove("active");
+        descAlignCenterBtn.classList.remove("active");
+        descAlignLeftBtn.classList.remove("active");
+        var fsBtns = descFontSizeGroup.querySelectorAll("button[data-desc-fs]");
+        for (var i = 0; i < fsBtns.length; i++) {
+          fsBtns[i].classList.remove("active");
+        }
+      }
+
+      function syncDescToolbarActiveStates(forcedFs, fromExplicitAction) {
+        if (!fromExplicitAction && !isDescEditorFocusedWithSelection()) {
+          clearAllDescToolbarActiveStates();
+          return;
+        }
+
+        var isBold = false;
+        try {
+          isBold = Boolean(document.queryCommandState("bold"));
+        } catch (e) {}
+        descBoldBtn.classList.toggle("active", isBold);
+
+        var listType = getDescActiveListType();
+        if (!listType) {
+          try {
+            if (document.queryCommandState("insertUnorderedList")) listType = "ul";
+            else if (document.queryCommandState("insertOrderedList")) listType = "ol";
+          } catch (e) {}
+        }
+        descListUlBtn.classList.toggle("active", listType === "ul");
+        descListOlBtn.classList.toggle("active", listType === "ol");
+
+        var explicitAlign = getDescExplicitAlign();
+        descAlignRightBtn.classList.toggle("active", explicitAlign === "right");
+        descAlignCenterBtn.classList.toggle("active", explicitAlign === "center");
+        descAlignLeftBtn.classList.toggle("active", explicitAlign === "left");
+
+        var activeFs = typeof forcedFs === "string" ? forcedFs : getDescActiveFontSize();
+        var fsBtns = descFontSizeGroup.querySelectorAll("button[data-desc-fs]");
+        for (var i = 0; i < fsBtns.length; i++) {
+          var b = fsBtns[i];
+          b.classList.toggle("active", Boolean(activeFs) && b.getAttribute("data-desc-fs") === activeFs);
+        }
+      }
+
+      function restoreDescRangeIfAny() {
+        if (savedDescRange && productDescEditor.contains(savedDescRange.commonAncestorContainer)) {
+          var sel = window.getSelection();
+          if (sel) {
+            sel.removeAllRanges();
+            sel.addRange(savedDescRange);
+          }
+        }
+      }
+
+      function applyDescFontSize(sizePx) {
+        var pxStr = String(sizePx) + "px";
+        productDescEditor.focus();
+        restoreDescRangeIfAny();
+
+        var currentFs = getDescActiveFontSize();
+        var sel = window.getSelection();
+        var hasSelection =
+          sel &&
+          sel.rangeCount > 0 &&
+          !sel.isCollapsed &&
+          productDescEditor.contains(sel.getRangeAt(0).commonAncestorContainer);
+
+        if (currentFs === String(sizePx)) {
+          if (hasSelection && sel && sel.rangeCount > 0) {
+            var rOff = sel.getRangeAt(0);
+            var fragOff = rOff.extractContents();
+            var styledOff = fragOff.querySelectorAll("[style]");
+            for (var s = 0; s < styledOff.length; s++) {
+              styledOff[s].style.fontSize = "";
+            }
+            rOff.insertNode(fragOff);
+          } else {
+            var allStyled = productDescEditor.querySelectorAll("[style]");
+            for (var a = 0; a < allStyled.length; a++) {
+              allStyled[a].style.fontSize = "";
+            }
+          }
+          saveDescRange();
+          syncDescriptionFromEditor(false);
+          syncDescToolbarActiveStates("", true);
+          return;
+        }
+
+        if (hasSelection && sel && sel.rangeCount > 0) {
+          var range = sel.getRangeAt(0);
+          var frag = range.extractContents();
+          var innerStyled = frag.querySelectorAll("[style]");
+          for (var i = 0; i < innerStyled.length; i++) {
+            innerStyled[i].style.fontSize = "";
+          }
+          var span = document.createElement("span");
+          span.style.fontSize = pxStr;
+          span.appendChild(frag);
+          range.insertNode(span);
+
+          var nextRange = document.createRange();
+          nextRange.selectNodeContents(span);
+          sel.removeAllRanges();
+          sel.addRange(nextRange);
+          savedDescRange = nextRange.cloneRange();
+        } else {
+          var existingStyled = productDescEditor.querySelectorAll("[style]");
+          for (var j = 0; j < existingStyled.length; j++) {
+            existingStyled[j].style.fontSize = "";
+          }
+          var kids = [];
+          for (var k = 0; k < productDescEditor.childNodes.length; k++) {
+            kids.push(productDescEditor.childNodes[k]);
+          }
+          if (
+            kids.length === 1 &&
+            kids[0].nodeType === 1 &&
+            (kids[0].tagName === "DIV" || kids[0].tagName === "P")
+          ) {
+            kids[0].style.fontSize = pxStr;
+          } else {
+            var wrapper = document.createElement("div");
+            wrapper.style.fontSize = pxStr;
+            while (productDescEditor.firstChild) {
+              wrapper.appendChild(productDescEditor.firstChild);
+            }
+            if (!wrapper.firstChild) {
+              wrapper.appendChild(document.createElement("br"));
+            }
+            productDescEditor.appendChild(wrapper);
+            if (sel) {
+              var r = document.createRange();
+              r.selectNodeContents(wrapper);
+              r.collapse(false);
+              sel.removeAllRanges();
+              sel.addRange(r);
+              savedDescRange = r.cloneRange();
+            }
+          }
+        }
+
+        syncDescriptionFromEditor(false);
+        syncDescToolbarActiveStates(String(sizePx), true);
+      }
+
+      function applyDescList(listType) {
+        productDescEditor.focus();
+        restoreDescRangeIfAny();
+        var sel = window.getSelection();
+        if (sel && (sel.rangeCount === 0 || !productDescEditor.contains(sel.getRangeAt(0).commonAncestorContainer))) {
+          var r = document.createRange();
+          r.selectNodeContents(productDescEditor);
+          r.collapse(false);
+          sel.removeAllRanges();
+          sel.addRange(r);
+        }
+        document.execCommand(listType === "ol" ? "insertOrderedList" : "insertUnorderedList", false);
+        saveDescRange();
+        syncDescriptionFromEditor(false);
+        syncDescToolbarActiveStates(undefined, true);
+      }
+
+      function clearExplicitAlignAtCaret() {
+        var node = getDescCaretElement();
+        var cleared = false;
+        while (node && node !== productDescEditor && node.nodeType === 1) {
+          if (node.style && node.style.textAlign) {
+            node.style.textAlign = "";
+            cleared = true;
+          }
+          if (node.hasAttribute && node.hasAttribute("align")) {
+            node.removeAttribute("align");
+            cleared = true;
+          }
+          node = node.parentNode;
+        }
+        return cleared;
+      }
+
+      function applyDescAlign(alignDir) {
+        var cmd = alignDir === "right" ? "justifyRight" : (alignDir === "center" ? "justifyCenter" : "justifyLeft");
+        productDescEditor.focus();
+        restoreDescRangeIfAny();
+        var selInit = window.getSelection();
+        if (selInit && (selInit.rangeCount === 0 || !productDescEditor.contains(selInit.getRangeAt(0).commonAncestorContainer))) {
+          var rInit = document.createRange();
+          rInit.selectNodeContents(productDescEditor);
+          rInit.collapse(false);
+          selInit.removeAllRanges();
+          selInit.addRange(rInit);
+        }
+
+        if (getDescExplicitAlign() === alignDir) {
+          clearExplicitAlignAtCaret();
+          saveDescRange();
+          syncDescriptionFromEditor(false);
+          syncDescToolbarActiveStates(undefined, true);
+          return;
+        }
+
+        document.execCommand(cmd, false);
+
+        var caretEl = getDescCaretElement();
+        if (caretEl) {
+          var blockEl = caretEl;
+          while (
+            blockEl &&
+            blockEl !== productDescEditor &&
+            !/^(DIV|P|LI|UL|OL)$/i.test(blockEl.tagName || "")
+          ) {
+            blockEl = blockEl.parentNode;
+          }
+          if (blockEl && blockEl !== productDescEditor && blockEl.nodeType === 1) {
+            blockEl.style.textAlign = alignDir;
+          }
+        }
+
+        if (getDescExplicitAlign() !== alignDir) {
+          var wrap = document.createElement("div");
+          wrap.style.textAlign = alignDir;
+          while (productDescEditor.firstChild) {
+            wrap.appendChild(productDescEditor.firstChild);
+          }
+          if (!wrap.firstChild) {
+            wrap.appendChild(document.createElement("br"));
+          }
+          productDescEditor.appendChild(wrap);
+          var selAfter = window.getSelection();
+          if (selAfter) {
+            var r = document.createRange();
+            r.selectNodeContents(wrap);
+            r.collapse(false);
+            selAfter.removeAllRanges();
+            selAfter.addRange(r);
+          }
+        }
+        saveDescRange();
+        syncDescriptionFromEditor(false);
+        syncDescToolbarActiveStates(undefined, true);
+      }
+
+      productDescEditor.addEventListener("focus", function () {
+        saveDescRange();
+        syncDescToolbarActiveStates();
+      });
       productDescEditor.addEventListener("input", function () {
         saveDescRange();
         syncDescriptionFromEditor(true);
+        syncDescToolbarActiveStates();
       });
-      productDescEditor.addEventListener("keyup", saveDescRange);
-      productDescEditor.addEventListener("mouseup", saveDescRange);
-      productDescEditor.addEventListener("touchend", saveDescRange);
+      productDescEditor.addEventListener("keyup", function () {
+        saveDescRange();
+        syncDescToolbarActiveStates();
+      });
+      productDescEditor.addEventListener("mouseup", function () {
+        saveDescRange();
+        syncDescToolbarActiveStates();
+      });
+      productDescEditor.addEventListener("touchend", function () {
+        saveDescRange();
+        syncDescToolbarActiveStates();
+      });
       productDescEditor.addEventListener("blur", function () {
         saveDescRange();
         syncDescriptionFromEditor(true);
+        clearAllDescToolbarActiveStates();
       });
 
       productDescEditor.addEventListener("paste", function (e) {
@@ -4083,18 +4530,64 @@
         }
       });
 
+      [descBoldBtn, descListUlBtn, descListOlBtn, descAlignRightBtn, descAlignCenterBtn, descAlignLeftBtn].forEach(function (btn) {
+        btn.addEventListener("mousedown", function (e) {
+          e.preventDefault();
+        });
+      });
+
+      descFontSizeGroup.addEventListener("mousedown", function (e) {
+        if (e.target instanceof HTMLElement && e.target.closest("button[data-desc-fs]")) {
+          e.preventDefault();
+        }
+      });
+
+      descFontSizeGroup.addEventListener("click", function (e) {
+        var target = e.target;
+        if (!(target instanceof HTMLElement)) return;
+        var btn = target.closest("button[data-desc-fs]");
+        if (!btn) return;
+        var fs = btn.getAttribute("data-desc-fs");
+        if (fs === "14" || fs === "16" || fs === "18" || fs === "20") {
+          applyDescFontSize(fs);
+        }
+      });
+
+      descListUlBtn.addEventListener("click", function () {
+        applyDescList("ul");
+      });
+
+      descListOlBtn.addEventListener("click", function () {
+        applyDescList("ol");
+      });
+
+      descAlignRightBtn.addEventListener("click", function () {
+        applyDescAlign("right");
+      });
+
+      descAlignCenterBtn.addEventListener("click", function () {
+        applyDescAlign("center");
+      });
+
+      descAlignLeftBtn.addEventListener("click", function () {
+        applyDescAlign("left");
+      });
+
       descBoldBtn.addEventListener("click", function () {
         productDescEditor.focus();
-        if (savedDescRange && productDescEditor.contains(savedDescRange.commonAncestorContainer)) {
-          var sel = window.getSelection();
-          if (sel) {
-            sel.removeAllRanges();
-            sel.addRange(savedDescRange);
-          }
+        restoreDescRangeIfAny();
+        var sel = window.getSelection();
+        if (sel && (sel.rangeCount === 0 || !productDescEditor.contains(sel.getRangeAt(0).commonAncestorContainer))) {
+          var r = document.createRange();
+          r.selectNodeContents(productDescEditor);
+          r.collapse(false);
+          sel.removeAllRanges();
+          sel.addRange(r);
         }
         document.execCommand("bold", false);
         saveDescRange();
         syncDescriptionFromEditor(false);
+        syncDescToolbarActiveStates(undefined, true);
       });
 
       descAddImgBtn.addEventListener("click", function () {
@@ -4313,6 +4806,9 @@
                 productNameInput.value = result.data.productName;
                 state.productName = result.data.productName;
                 userTypedProductName = false;
+                if (syncSlugFromProductName()) {
+                  syncFreeAdLinkUI();
+                }
               }
               lastAiProductName = result.data.productName;
             }
@@ -4337,7 +4833,9 @@
             }
 
             syncDescriptionFromEditor(false);
-            var doneMsg = result.data.usedWebSearch === false ? t.aiDoneVision : t.aiDone;
+            var doneMsg = result.data.usedSimilarProducts
+              ? t.aiDoneSimilar
+              : (result.data.usedWebSearch === false ? t.aiDoneVision : t.aiDone);
             showAiStatus("✅ " + doneMsg, false, result.data.sources || []);
           })
           .catch(function () {
@@ -4576,17 +5074,146 @@
         saveDraft();
       });
 
-      copyFreeAdLinkBtn.addEventListener("click", function () {
+      copyFreeLinkBtn.addEventListener("click", function () {
         if (rebuildTimer) {
           clearTimeout(rebuildTimer);
+          rebuildTimer = null;
           saveDraftAndSyncLinks();
         }
-        copyTextToClipboard(currentFreeAdLink, copyFreeAdLinkBtn, BUILDER_I18N[state.lang].btnCopyAdLink);
+        copyTextToClipboard(currentFreeAdLink, copyFreeLinkBtn, BUILDER_I18N[state.lang].btnCopyFreeLink);
+        if (cloudSyncTimer || !cloudSyncedOnce) {
+          syncFreeLinkNow();
+        }
       });
+
+      openFreeLinkBtn.addEventListener("click", function () {
+        if (rebuildTimer) {
+          clearTimeout(rebuildTimer);
+          rebuildTimer = null;
+          saveDraftAndSyncLinks();
+        }
+        if (cloudSyncTimer || !cloudSyncedOnce) {
+          syncFreeLinkNow();
+        }
+      });
+
+      function renderDomainHelpGuide() {
+        var cleanDomain = (state.domain || "https://mystore.com").trim();
+        if (!/^https?:\/\//i.test(cleanDomain)) cleanDomain = "https://" + cleanDomain;
+        cleanDomain = cleanDomain.replace(/\/+$/, "");
+        var fullLink = cleanDomain + "/product.html";
+
+        var guides = {
+          ar: {
+            steps: [
+              {
+                title: "1. امتلك دومين واستضافة (مجانية أو مدفوعة)",
+                desc: "اشترِ دومين باسم متجرك (مثلاً من Namecheap أو Hostinger أو GoDaddy)، ثم اربطه باستضافة ملفات مجانية مثل Cloudflare Pages أو Netlify أو استضافة cPanel."
+              },
+              {
+                title: "2. قم بتحميل صفحة الهبوط (product.html)",
+                desc: "اضغط على زر \"تحميل صفحة الهبوط المستقلة (product.html)\" لتحميل ملف صفحتك الجاهز على هاتفك أو حاسوبك."
+              },
+              {
+                title: "3. ارفع الملف داخل الدومين",
+                desc: "في استضافة cPanel/Hostinger افتح مدير الملفات ثم المجلد public_html وارفع ملف product.html داخله. وإذا كنت تستخدم Netlify أو Cloudflare Pages اسحب مجلداً يحتوي على الملف وارفعه مباشرة، وإذا أردت أن يفتح في الصفحة الرئيسية غيّر اسمه إلى index.html."
+              },
+              {
+                title: "4. اكتب الدومين هنا وجرّب الرابط",
+                desc: "أدخل اسم دومينك في خانة \"الدومين الخاص بي\" بالأعلى، وسيعمل معك هذا الرابط مباشرة:",
+                code: fullLink
+              }
+            ],
+            tip: "💡 لا تملك دومين حالياً؟ يمكنك الاعتماد مباشرة على \"الرابط المجاني\" بالأعلى — يعمل فوراً بالمجان في إعلانات فيسبوك وتيك توك بدون شراء دومين."
+          },
+          en: {
+            steps: [
+              {
+                title: "1. Get a Domain & Hosting (Free or Paid)",
+                desc: "Register your store domain (e.g. Namecheap, Hostinger, Cloudflare) and connect it to free static hosting (Cloudflare Pages, Netlify) or standard cPanel hosting."
+              },
+              {
+                title: "2. Download your landing page (product.html)",
+                desc: "Click \"Download Standalone Landing Page (product.html)\" to save the ready-to-host file."
+              },
+              {
+                title: "3. Upload product.html to your domain",
+                desc: "In cPanel/Hostinger, open File Manager -> public_html and upload product.html (or rename it to index.html for the homepage). On Netlify/Cloudflare Pages, upload a folder containing product.html."
+              },
+              {
+                title: "4. Enter your domain above and open the link",
+                desc: "Type your domain in \"My Domain\", then your custom link is ready to open and share:",
+                code: fullLink
+              }
+            ],
+            tip: "💡 No domain yet? Use your Free Link above — it works immediately for Facebook, TikTok, and Instagram ads at no cost."
+          },
+          fr: {
+            steps: [
+              {
+                title: "1. Obtenez un nom de domaine et un hébergement",
+                desc: "Achetez un domaine (Namecheap, Hostinger, OVH) et reliez-le à un hébergement gratuit (Cloudflare Pages, Netlify) ou cPanel."
+              },
+              {
+                title: "2. Téléchargez le fichier product.html",
+                desc: "Cliquez sur « Télécharger la page autonome (product.html) » pour enregistrer votre page complète."
+              },
+              {
+                title: "3. Importez product.html sur votre domaine",
+                desc: "Sur cPanel/Hostinger, ouvrez File Manager -> public_html et envoyez product.html (ou renommez-le en index.html pour la page d'accueil). Sur Netlify/Cloudflare Pages, déposez un dossier contenant le fichier."
+              },
+              {
+                title: "4. Saisissez votre domaine et testez le lien",
+                desc: "Entrez votre domaine ci-dessus ; votre lien personnalisé fonctionnera aussitôt :",
+                code: fullLink
+              }
+            ],
+            tip: "💡 Pas encore de domaine ? Utilisez directement votre Lien gratuit ci-dessus — prêt immédiatement pour vos publicités."
+          }
+        };
+
+        var g = guides[state.lang] || guides.en;
+        var html = '<ol class="domain-guide-list">';
+        for (var i = 0; i < g.steps.length; i++) {
+          var st = g.steps[i];
+          html +=
+            '<li class="domain-guide-step">' +
+              '<h4 class="domain-guide-step-title">' + escapeHtml(st.title) + "</h4>" +
+              '<p class="domain-guide-step-desc">' + escapeHtml(st.desc) + "</p>" +
+              (st.code ? '<div class="domain-guide-code">' + escapeHtml(st.code) + "</div>" : "") +
+            "</li>";
+        }
+        html += "</ol>";
+        html += '<div class="domain-guide-tip">' + escapeHtml(g.tip) + "</div>";
+        domainHelpModalBody.innerHTML = html;
+      }
 
       copyDomainLinkBtn.addEventListener("click", function () {
         var link = getCleanDomainLink();
         copyTextToClipboard(link, copyDomainLinkBtn, BUILDER_I18N[state.lang].btnCopyDomain);
+      });
+
+      domainHelpBtn.addEventListener("click", function () {
+        renderDomainHelpGuide();
+        domainHelpModal.classList.add("open");
+      });
+
+      closeDomainHelpBtn.addEventListener("click", function () {
+        domainHelpModal.classList.remove("open");
+      });
+
+      closeDomainHelpFooterBtn.addEventListener("click", function () {
+        domainHelpModal.classList.remove("open");
+      });
+
+      domainHelpModal.addEventListener("click", function (e) {
+        if (e.target === domainHelpModal) {
+          domainHelpModal.classList.remove("open");
+        }
+      });
+
+      domainHelpDownloadBtn.addEventListener("click", function () {
+        downloadHtmlBtn.click();
       });
 
       downloadHtmlBtn.addEventListener("click", function () {
@@ -4712,7 +5339,6 @@
               if (typeof parsed.domain === "string") state.domain = parsed.domain;
               if (typeof parsed.slug === "string" && parsed.slug) {
                 state.slug = parsed.slug;
-                userEditedSlug = true;
               }
               if (parsed.previewDevice === "mobile" || parsed.previewDevice === "computer") {
                 state.previewDevice = parsed.previewDevice;
@@ -4742,9 +5368,6 @@
         contactEmailInput.value = state.email;
         contactInstagramInput.value = state.instagram;
         customDomainInput.value = state.domain;
-        if (state.slug) {
-          adSlugInput.value = state.slug;
-        }
 
         // Purge legacy #landing= links from localStorage so only short clean links remain
         try {
@@ -4756,26 +5379,15 @@
 
         function bindCloudBridge() {
           if (!window.LPCloud) {
-            setTimeout(bindCloudBridge, 120);
+            setTimeout(bindCloudBridge, 80);
             return;
           }
-          window.LPCloud.initAuthListener(function (user) {
-            var t = BUILDER_I18N[state.lang];
-            if (user) {
-              adAuthUserText.textContent = t.adConnectedAs + " " + (user.displayName || user.email);
-              adSignInBtn.style.display = "none";
-              adSignOutBtn.style.display = "inline-flex";
-              refreshCloudLinks();
-            } else {
-              adAuthUserText.textContent = t.adConnectGoogle;
-              adSignInBtn.style.display = "inline-flex";
-              adSignOutBtn.style.display = "none";
-              cloudSavedLinks = [];
-              savedCountBadge.textContent = String(getAllDisplayLinks().length);
-            }
-          });
+          syncFreeLinkNow();
         }
 
+        if (state.productName && state.productName.trim()) {
+          syncSlugFromProductName();
+        }
         syncThemePickerButtons();
         syncColorBarInputs();
         syncContactChannelCards();
@@ -4783,6 +5395,7 @@
         applyLanguageUI();
         renderLivePreview();
         saveDraftAndSyncLinks();
+        syncDescToolbarActiveStates();
         bindCloudBridge();
       }
 

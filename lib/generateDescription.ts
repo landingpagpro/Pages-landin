@@ -1,6 +1,9 @@
-import { GoogleGenAI } from "@google/genai";
+import crypto from "node:crypto";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 
 const MAX_IMAGE_BASE64_LEN = 11_000_000;
+const CACHE_TTL_MS = 12 * 60 * 60 * 1000;
+const MAX_CACHE_ENTRIES = 120;
 
 export type SupportedLang = "en" | "ar" | "fr";
 
@@ -29,26 +32,64 @@ interface WebSearchItem {
   snippet: string;
 }
 
+interface CacheEntry {
+  result: GenerateDescResult;
+  expiresAt: number;
+}
+
+const resultCache = new Map<string, CacheEntry>();
+const inFlightRequests = new Map<string, Promise<GenerateDescResult>>();
+
 export class GenerateDescError extends Error {
   statusCode: number;
   code: string;
+  sources?: GroundingSource[];
 
-  constructor(statusCode: number, code: string, message: string) {
+  constructor(statusCode: number, code: string, message: string, sources?: GroundingSource[]) {
     super(message);
     this.statusCode = statusCode;
     this.code = code;
+    if (sources && sources.length > 0) {
+      this.sources = sources;
+    }
   }
 }
 
-function getGeminiClient(): GoogleGenAI {
-  const apiKey = (process.env.GEMINI_API_KEY || "").trim();
-  if (!apiKey) {
+function getGeminiApiKeys(): string[] {
+  const rawSources = [
+    process.env.GEMINI_API_KEY,
+    process.env.GEMINI_API_KEYS,
+    process.env.GEMINI_API_KEY_BACKUP,
+    process.env.GEMINI_API_KEY_2,
+    process.env.GEMINI_API_KEY_3,
+  ];
+
+  const keys: string[] = [];
+  const seen = new Set<string>();
+
+  for (const src of rawSources) {
+    if (!src) continue;
+    const parts = src.split(/[\s,;]+/);
+    for (const part of parts) {
+      const cleaned = part.trim();
+      if (!cleaned || cleaned === "MY_GEMINI_API_KEY" || seen.has(cleaned)) continue;
+      seen.add(cleaned);
+      keys.push(cleaned);
+    }
+  }
+
+  if (keys.length === 0) {
     throw new GenerateDescError(
       500,
       "MISSING_API_KEY",
       "Gemini API key is not configured in Settings > Secrets (or Vercel Environment Variables)."
     );
   }
+
+  return keys;
+}
+
+function createGeminiClient(apiKey: string): GoogleGenAI {
   return new GoogleGenAI({
     apiKey,
     httpOptions: {
@@ -56,6 +97,40 @@ function getGeminiClient(): GoogleGenAI {
         "User-Agent": "aistudio-build",
       },
     },
+  });
+}
+
+function buildCacheKey(lang: SupportedLang, hintName: string, mimeType: string, base64Data: string): string {
+  return crypto
+    .createHash("sha256")
+    .update(lang)
+    .update("|")
+    .update(hintName.toLowerCase())
+    .update("|")
+    .update(mimeType)
+    .update("|")
+    .update(base64Data)
+    .digest("hex");
+}
+
+function getCachedResult(cacheKey: string): GenerateDescResult | null {
+  const entry = resultCache.get(cacheKey);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) {
+    resultCache.delete(cacheKey);
+    return null;
+  }
+  return entry.result;
+}
+
+function setCachedResult(cacheKey: string, result: GenerateDescResult): void {
+  if (resultCache.size >= MAX_CACHE_ENTRIES) {
+    const oldestKey = resultCache.keys().next().value;
+    if (oldestKey) resultCache.delete(oldestKey);
+  }
+  resultCache.set(cacheKey, {
+    result,
+    expiresAt: Date.now() + CACHE_TTL_MS,
   });
 }
 
@@ -242,7 +317,15 @@ function buildDirectSearchPrompts(lang: SupportedLang, hintName: string): { syst
   return { systemInstruction, userPrompt };
 }
 
-function getUpstreamErrorDetails(err: unknown): { status: number; code: string; rawMsg: string } {
+interface ErrorDetails {
+  status: number;
+  code: string;
+  rawMsg: string;
+  isDailyOrZeroQuota: boolean;
+  isTransientRateLimit: boolean;
+}
+
+function getUpstreamErrorDetails(err: unknown): ErrorDetails {
   const rawMsg = err instanceof Error ? err.message : String(err);
   const directStatus = typeof (err as { status?: unknown })?.status === "number"
     ? (err as { status: number }).status
@@ -250,17 +333,22 @@ function getUpstreamErrorDetails(err: unknown): { status: number; code: string; 
 
   let status = directStatus || 500;
   let code = "";
+  let parsedMessage = rawMsg;
 
   try {
     const parsed = JSON.parse(rawMsg) as { error?: { code?: number; status?: string; message?: string } };
     if (parsed && parsed.error) {
       if (typeof parsed.error.code === "number") status = parsed.error.code;
       if (typeof parsed.error.status === "string") code = parsed.error.status;
+      if (typeof parsed.error.message === "string") parsedMessage = parsed.error.message;
     }
   } catch {
     if (/429|RESOURCE_EXHAUSTED|quota/i.test(rawMsg)) {
       status = 429;
       code = "RESOURCE_EXHAUSTED";
+    } else if (/503|UNAVAILABLE|overloaded/i.test(rawMsg)) {
+      status = 503;
+      code = "UNAVAILABLE";
     } else if (/403|PERMISSION_DENIED/i.test(rawMsg)) {
       status = 403;
       code = "PERMISSION_DENIED";
@@ -270,7 +358,62 @@ function getUpstreamErrorDetails(err: unknown): { status: number; code: string; 
     }
   }
 
-  return { status, code, rawMsg };
+  const combined = `${code} ${parsedMessage} ${rawMsg}`;
+  const isDailyOrZeroQuota = /PerDay|limit:\s*0|daily|free_tier_requests.*limit:\s*0|billing/i.test(combined);
+  const isQuotaError = status === 429 || code === "RESOURCE_EXHAUSTED" || /RESOURCE_EXHAUSTED|quota/i.test(combined);
+  const isTransientRateLimit =
+    status === 503 ||
+    code === "UNAVAILABLE" ||
+    (isQuotaError && !isDailyOrZeroQuota);
+
+  return {
+    status,
+    code,
+    rawMsg: parsedMessage,
+    isDailyOrZeroQuota,
+    isTransientRateLimit,
+  };
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function callGenerateContentWithRetry(
+  ai: GoogleGenAI,
+  params: Parameters<GoogleGenAI["models"]["generateContent"]>[0]
+) {
+  const maxAttempts = 2; // Initial attempt + 1 exponential backoff retry for transient 429/503 bursts
+  let lastErr: unknown = null;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      return await ai.models.generateContent(params);
+    } catch (err: unknown) {
+      lastErr = err;
+      const details = getUpstreamErrorDetails(err);
+
+      // Fail fast on invalid/unauthorized key or hard daily limit so we can immediately rotate model or key
+      if (
+        details.status === 403 ||
+        details.code === "PERMISSION_DENIED" ||
+        details.code === "API_KEY_INVALID" ||
+        details.isDailyOrZeroQuota
+      ) {
+        throw err;
+      }
+
+      if (details.isTransientRateLimit && attempt < maxAttempts - 1) {
+        const jitterMs = Math.floor(Math.random() * 350);
+        await sleep(950 * Math.pow(2, attempt) + jitterMs);
+        continue;
+      }
+
+      throw err;
+    }
+  }
+
+  throw lastErr;
 }
 
 async function fetchBingRssResults(
@@ -283,7 +426,7 @@ async function fetchBingRssResults(
 
   try {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 5000);
+    const timer = setTimeout(() => controller.abort(), 4000);
     const resp = await fetch(
       `https://www.bing.com/search?format=rss&q=${encodeURIComponent(cleanQuery)}`,
       {
@@ -345,7 +488,7 @@ function extractSearchKeywords(queryText: string): string[] {
     .slice(0, 6);
 }
 
-function mergeWebBatches(batches: WebSearchItem[][], limit = 6): WebSearchItem[] {
+function mergeWebBatches(batches: WebSearchItem[][], limit = 5): WebSearchItem[] {
   const merged: WebSearchItem[] = [];
   const seenUrls = new Set<string>();
   for (const batch of batches) {
@@ -371,10 +514,9 @@ async function searchWebForProduct(
     const exactQueries = [
       exactTrimmed,
       `${exactTrimmed} features benefits ingredients how to use`,
-      `${exactTrimmed} amazon aliexpress alibaba pinterest`,
     ];
     const exactBatches = await Promise.all(exactQueries.map((q) => fetchBingRssResults(q, exactKeywords)));
-    const exactMerged = mergeWebBatches(exactBatches, 6);
+    const exactMerged = mergeWebBatches(exactBatches, 5);
     if (exactMerged.length > 0) {
       return { items: exactMerged, usedSimilarProducts: false };
     }
@@ -385,13 +527,12 @@ async function searchWebForProduct(
     const similarKeywords = extractSearchKeywords(fallbackQuery);
     const similarQueries = [
       fallbackQuery,
-      `${fallbackQuery} aliexpress alibaba amazon`,
-      `${fallbackQuery} features benefits ingredients how to use`,
+      `${fallbackQuery} amazon aliexpress`,
     ];
     const similarBatches = await Promise.all(
       similarQueries.map((q) => fetchBingRssResults(q, similarKeywords, 1))
     );
-    const similarMerged = mergeWebBatches(similarBatches, 6);
+    const similarMerged = mergeWebBatches(similarBatches, 5);
     if (similarMerged.length > 0) {
       return { items: similarMerged, usedSimilarProducts: true };
     }
@@ -400,50 +541,168 @@ async function searchWebForProduct(
   return { items: [], usedSimilarProducts: Boolean(fallbackQuery) };
 }
 
-async function identifyProductFromImage(
+function extractGroundingSources(response: {
+  candidates?: Array<{
+    groundingMetadata?: {
+      groundingChunks?: Array<{ web?: { uri?: string; title?: string } }>;
+    };
+  }>;
+}): GroundingSource[] {
+  const rawChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+  const sources: GroundingSource[] = [];
+  const seenUrls = new Set<string>();
+
+  if (Array.isArray(rawChunks)) {
+    for (const chunk of rawChunks) {
+      const web = chunk?.web;
+      if (web && typeof web.uri === "string") {
+        const safeUrl = sanitizeHttpUrl(web.uri);
+        if (safeUrl && !seenUrls.has(safeUrl)) {
+          seenUrls.add(safeUrl);
+          sources.push({
+            title: typeof web.title === "string" && web.title.trim() ? web.title.trim() : safeUrl,
+            url: safeUrl,
+          });
+        }
+      }
+      if (sources.length >= 6) break;
+    }
+  }
+  return sources;
+}
+
+async function generateWithSingleKey(
   ai: GoogleGenAI,
   imagePart: { inlineData: { mimeType: string; data: string } },
+  lang: SupportedLang,
   hintName: string
-): Promise<{ productName: string; searchQuery: string; similarQuery: string }> {
-  const modelsToTry = ["gemini-3.1-flash-lite", "gemini-4-hydrogen"];
-  const prompt = [
-    "Look closely at this product photo.",
-    hintName ? `Optional user note: "${hintName}" (trust what you visually see in the photo above all).` : "",
-    "Identify the commercial product, brand, model, or product type — and also identify the broader category for closely similar products.",
-    "Return ONLY three lines in this exact format:",
-    "NAME: <concise product name>",
-    "SEARCH_QUERY: <3 to 7 clean English keywords to search this exact product on Google, AliExpress, Alibaba, Pinterest, and Amazon>",
-    "SIMILAR_QUERY: <3 to 5 broader English category/type keywords to find closely similar products if this exact item is not listed online>",
-  ]
-    .filter(Boolean)
-    .join("\n");
+): Promise<{ result?: GenerateDescResult; lastError?: unknown; keyInvalidError?: ErrorDetails }> {
+  let lastError: unknown = null;
 
-  for (const model of modelsToTry) {
+  // Step 1 (Single-Call Quota-Optimal Path):
+  // Call primary multimodal model with Google Search grounding and LOW thinking to minimize tokens & API calls.
+  // Accept any complete structured description even if groundingChunks is empty (avoids wasting 2-4 extra calls).
+  const groundingModels = ["gemini-4-hydrogen", "gemini-3.1-flash-lite"];
+  for (const model of groundingModels) {
     try {
-      const resp = await ai.models.generateContent({
+      const { systemInstruction, userPrompt } = buildDirectSearchPrompts(lang, hintName);
+      const response = await callGenerateContentWithRetry(ai, {
         model,
-        contents: { parts: [imagePart, { text: prompt }] },
+        contents: { parts: [imagePart, { text: userPrompt }] },
+        config: {
+          systemInstruction,
+          thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
+          tools: [{ googleSearch: {} }],
+        },
       });
-      const text = (resp.text || "").trim();
-      const nameMatch = text.match(/^NAME\s*:\s*(.+)$/im);
-      const queryMatch = text.match(/^SEARCH_QUERY\s*:\s*(.+)$/im);
-      const similarMatch = text.match(/^SIMILAR_QUERY\s*:\s*(.+)$/im);
-      const productName = nameMatch && nameMatch[1] ? nameMatch[1].trim() : "";
-      const searchQuery = queryMatch && queryMatch[1] ? queryMatch[1].trim() : productName;
-      const similarQuery = similarMatch && similarMatch[1] ? similarMatch[1].trim() : searchQuery;
-      if (searchQuery || similarQuery) {
+
+      const parsed = parseStructuredAiText(response.text || "");
+      if (parsed.description && parsed.description.trim().length >= 80) {
+        let sources = extractGroundingSources(response);
+        let usedWebSearch = sources.length > 0;
+
+        // If model answered richly without emitting groundingChunks, attach free Bing RSS links if available
+        if (sources.length === 0 && (parsed.productName || hintName)) {
+          const freeWeb = await searchWebForProduct(hintName || parsed.productName, parsed.productName || hintName);
+          if (freeWeb.items.length > 0) {
+            sources = freeWeb.items.map((w) => ({ title: w.title, url: w.url }));
+            usedWebSearch = true;
+          }
+        }
+
         return {
-          productName: productName || searchQuery || similarQuery,
-          searchQuery: searchQuery || similarQuery,
-          similarQuery: similarQuery || searchQuery,
+          result: {
+            productName: parsed.productName || hintName,
+            description: parsed.description,
+            sources,
+            usedWebSearch,
+          },
         };
       }
-    } catch {
-      /* Try next model */
+    } catch (err: unknown) {
+      lastError = err;
+      const info = getUpstreamErrorDetails(err);
+      if (info.status === 403 || info.code === "PERMISSION_DENIED" || info.code === "API_KEY_INVALID") {
+        return { lastError, keyInvalidError: info };
+      }
     }
   }
 
-  return { productName: hintName, searchQuery: hintName, similarQuery: hintName };
+  // Step 2 (Lightweight Fallback WITHOUT googleSearch tool — often uses separate quota & works if search grounding hits limits):
+  // Uses free Bing RSS web search (skipping any extra identification API call when hintName is already known).
+  try {
+    const webRes = hintName
+      ? await searchWebForProduct(hintName, hintName)
+      : { items: [], usedSimilarProducts: false };
+    const webItems = webRes.items;
+    const usedSimilarProducts = webRes.usedSimilarProducts;
+
+    const languageLabel =
+      lang === "ar" ? "Arabic (العربية الفصحى التسويقية الواضحة)" : lang === "fr" ? "French (Français)" : "English";
+
+    const webContext = webItems.length > 0
+      ? webItems
+          .map((item, idx) => `[${idx + 1}] ${item.title}\nSource: ${item.url}\nSnippet: ${item.snippet}`)
+          .join("\n\n")
+      : "";
+
+    const contextInstruction = webContext
+      ? (usedSimilarProducts
+          ? `Exact listings for this specific item were not found online, so below are real web listings for closely similar products in the same category:\n\n${webContext}\n\nSynthesize a professional e-commerce landing page description modeled after these similar products while staying completely accurate to the design, colors, and features visible in the user's photo.`
+          : `Below are real product listings and descriptions found on the web for this product:\n\n${webContext}\n\nSynthesize a professional e-commerce landing page description using the real specs, materials, and benefits found in these web listings alongside what is visible in the photo.`)
+      : "Inspect the product carefully in the photo (brand, label text, packaging, materials, category, and design) and write an accurate, persuasive 5-section commercial description modeled after leading products in the exact same category. Never state that the product was not found.";
+
+    const synthesisPrompt = [
+      `Analyze this product photo${hintName ? ` (product title hint: ${hintName})` : ""}.`,
+      contextInstruction,
+      buildStructuredDescFormatInstructions(lang),
+    ].join("\n\n");
+
+    const synthSystem = [
+      "You are an expert e-commerce product researcher and conversion copywriter.",
+      `Write the entire output strictly in ${languageLabel}. Never mix languages (except standard brand/model names).`,
+      "Write a rich, thorough, persuasive landing page description (around 220 to 350 words) including all 5 sections in order: Product Overview, Key Features, Benefits, How to Use, and Ingredients/Contents.",
+      "Avoid overly short or generic one-line bullets; provide clear, helpful, detailed commercial copy.",
+      "Never apologize or say the product could not be found; always produce a strong structured commercial description.",
+      "Do not include markdown links, URLs, bracketed citations like [1], or HTML tags.",
+    ].join(" ");
+
+    const synthModels = ["gemini-3.1-flash-lite", "gemini-4-hydrogen"];
+    for (const model of synthModels) {
+      try {
+        const resp = await callGenerateContentWithRetry(ai, {
+          model,
+          contents: { parts: [imagePart, { text: synthesisPrompt }] },
+          config: {
+            systemInstruction: synthSystem,
+            thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
+          },
+        });
+        const parsed = parseStructuredAiText(resp.text || "");
+        if (parsed.description) {
+          return {
+            result: {
+              productName: parsed.productName || hintName,
+              description: parsed.description,
+              sources: webItems.map((w) => ({ title: w.title, url: w.url })),
+              usedWebSearch: webItems.length > 0,
+              usedSimilarProducts: webItems.length > 0 ? usedSimilarProducts : false,
+            },
+          };
+        }
+      } catch (err: unknown) {
+        lastError = err;
+        const info = getUpstreamErrorDetails(err);
+        if (info.status === 403 || info.code === "PERMISSION_DENIED" || info.code === "API_KEY_INVALID") {
+          return { lastError, keyInvalidError: info };
+        }
+      }
+    }
+  } catch (err: unknown) {
+    lastError = err;
+  }
+
+  return { lastError };
 }
 
 export async function generateDescriptionFromImage(input: GenerateDescInput): Promise<GenerateDescResult> {
@@ -458,7 +717,18 @@ export async function generateDescriptionFromImage(input: GenerateDescInput): Pr
   const lang: SupportedLang = rawLang === "ar" || rawLang === "fr" ? rawLang : "en";
   const hintName = typeof input.productName === "string" ? input.productName.trim().slice(0, 180) : "";
 
-  const ai = getGeminiClient();
+  const cacheKey = buildCacheKey(lang, hintName, parsedImage.mimeType, parsedImage.data);
+  const cached = getCachedResult(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  const existingInFlight = inFlightRequests.get(cacheKey);
+  if (existingInFlight) {
+    return existingInFlight;
+  }
+
+  const keys = getGeminiApiKeys();
   const imagePart = {
     inlineData: {
       mimeType: parsedImage.mimeType,
@@ -466,147 +736,76 @@ export async function generateDescriptionFromImage(input: GenerateDescInput): Pr
     },
   };
 
-  let lastError: unknown = null;
+  const task = (async (): Promise<GenerateDescResult> => {
+    let lastError: unknown = null;
+    let sawQuotaError = false;
+    let sawInvalidKeyError: ErrorDetails | null = null;
 
-  // Step 1: Try native Google Search Grounding directly on multimodal models
-  const groundingModels = ["gemini-4-hydrogen", "gemini-3.1-flash-lite"];
-  for (const model of groundingModels) {
-    try {
-      const { systemInstruction, userPrompt } = buildDirectSearchPrompts(lang, hintName);
-      const response = await ai.models.generateContent({
-        model,
-        contents: { parts: [imagePart, { text: userPrompt }] },
-        config: { systemInstruction, tools: [{ googleSearch: {} }] },
-      });
+    for (const apiKey of keys) {
+      const ai = createGeminiClient(apiKey);
+      const outcome = await generateWithSingleKey(ai, imagePart, lang, hintName);
 
-      const rawText = response.text || "";
-      const parsed = parseStructuredAiText(rawText);
-      const rawChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-      const sources: GroundingSource[] = [];
-      const seenUrls = new Set<string>();
+      if (outcome.result) {
+        setCachedResult(cacheKey, outcome.result);
+        return outcome.result;
+      }
 
-      if (Array.isArray(rawChunks)) {
-        for (const chunk of rawChunks) {
-          const web = (chunk as { web?: { uri?: string; title?: string } }).web;
-          if (web && typeof web.uri === "string") {
-            const safeUrl = sanitizeHttpUrl(web.uri);
-            if (safeUrl && !seenUrls.has(safeUrl)) {
-              seenUrls.add(safeUrl);
-              sources.push({
-                title: typeof web.title === "string" && web.title.trim() ? web.title.trim() : safeUrl,
-                url: safeUrl,
-              });
-            }
-          }
-          if (sources.length >= 6) break;
+      if (outcome.keyInvalidError) {
+        sawInvalidKeyError = outcome.keyInvalidError;
+        lastError = outcome.lastError;
+        continue; // try next configured key if available
+      }
+
+      if (outcome.lastError) {
+        lastError = outcome.lastError;
+        const details = getUpstreamErrorDetails(outcome.lastError);
+        if (details.status === 429 || details.code === "RESOURCE_EXHAUSTED") {
+          sawQuotaError = true;
         }
       }
-
-      if (parsed.description && sources.length > 0) {
-        return {
-          productName: parsed.productName,
-          description: parsed.description,
-          sources,
-          usedWebSearch: true,
-        };
-      }
-    } catch (err: unknown) {
-      lastError = err;
-      const info = getUpstreamErrorDetails(err);
-      if (info.status === 403 || (info.status === 400 && info.code === "API_KEY_INVALID")) {
-        throw new GenerateDescError(
-          info.status,
-          "INVALID_API_KEY",
-          "Invalid or unauthorized Gemini API key. Please check Settings > Secrets."
-        );
-      }
     }
-  }
 
-  // Step 2: 2-Stage Visual Identification + Exact Web Search + Similar-Products Fallback
+    const finalInfo = getUpstreamErrorDetails(lastError);
+    if (sawQuotaError || finalInfo.status === 429 || finalInfo.code === "RESOURCE_EXHAUSTED") {
+      let realWebSources: GroundingSource[] | undefined;
+      if (hintName) {
+        const freeWeb = await searchWebForProduct(hintName, hintName).catch(() => ({ items: [], usedSimilarProducts: false }));
+        if (freeWeb.items.length > 0) {
+          realWebSources = freeWeb.items.map((w) => ({ title: w.title, url: w.url }));
+        }
+      }
+      throw new GenerateDescError(
+        429,
+        "QUOTA_EXCEEDED",
+        "Gemini API quota exceeded for the current key. Please check your plan or select a billing-enabled API key in Settings > Secrets.",
+        realWebSources
+      );
+    }
+
+    if (
+      sawInvalidKeyError ||
+      finalInfo.status === 403 ||
+      finalInfo.code === "PERMISSION_DENIED" ||
+      finalInfo.code === "API_KEY_INVALID"
+    ) {
+      throw new GenerateDescError(
+        sawInvalidKeyError?.status || finalInfo.status || 403,
+        "INVALID_API_KEY",
+        "Invalid or unauthorized Gemini API key. Please check Settings > Secrets."
+      );
+    }
+
+    throw new GenerateDescError(
+      502,
+      "GENERATION_FAILED",
+      "Could not generate description right now. Please try again."
+    );
+  })();
+
+  inFlightRequests.set(cacheKey, task);
   try {
-    const identified = await identifyProductFromImage(ai, imagePart, hintName);
-    const searchRes = (identified.searchQuery || identified.similarQuery)
-      ? await searchWebForProduct(identified.searchQuery, identified.similarQuery)
-      : { items: [], usedSimilarProducts: true };
-    const webItems = searchRes.items;
-    const usedSimilarProducts = searchRes.usedSimilarProducts;
-
-    const languageLabel =
-      lang === "ar" ? "Arabic (العربية الفصحى التسويقية الواضحة)" : lang === "fr" ? "French (Français)" : "English";
-
-    const webContext = webItems.length > 0
-      ? webItems
-          .map((item, idx) => `[${idx + 1}] ${item.title}\nSource: ${item.url}\nSnippet: ${item.snippet}`)
-          .join("\n\n")
-      : "";
-
-    const contextInstruction = webContext
-      ? (usedSimilarProducts
-          ? `Exact listings for this specific item were not found online, so below are real web listings for closely similar products in the same category:\n\n${webContext}\n\nSynthesize a professional e-commerce landing page description modeled after these similar products (their proven selling points, benefits, and specifications) while staying completely accurate to the design, colors, and features visible in the user's photo.`
-          : `Below are real product listings and descriptions found on the web for this product:\n\n${webContext}\n\nSynthesize a professional e-commerce landing page description using the real specs, materials, and benefits found in these web listings alongside what is visible in the photo.`)
-      : "If the exact product is not listed online, analyze its category, design, materials, and visual details in the photo and write an accurate, persuasive commercial description modeled after top-selling similar products in the same category. Never state that the product was not found.";
-
-    const synthesisPrompt = [
-      `Analyze this product photo${identified.productName ? ` (identified as: ${identified.productName})` : ""}.`,
-      contextInstruction,
-      buildStructuredDescFormatInstructions(lang),
-    ].join("\n\n");
-
-    const synthSystem = [
-      "You are an expert e-commerce product researcher and conversion copywriter.",
-      `Write the entire output strictly in ${languageLabel}. Never mix languages (except standard brand/model names).`,
-      "Write a rich, thorough, persuasive landing page description (around 220 to 350 words) including all 5 sections in order: Product Overview, Key Features, Benefits, How to Use, and Ingredients/Contents.",
-      "Avoid overly short or generic one-line bullets; provide clear, helpful, detailed commercial copy.",
-      "Never apologize or say the product could not be found; always produce a strong structured commercial description from exact matches or similar category products.",
-      "Do not include markdown links, URLs, bracketed citations like [1], or HTML tags.",
-    ].join(" ");
-
-    const synthModels = ["gemini-3.1-flash-lite", "gemini-4-hydrogen"];
-    for (const model of synthModels) {
-      try {
-        const resp = await ai.models.generateContent({
-          model,
-          contents: { parts: [imagePart, { text: synthesisPrompt }] },
-          config: { systemInstruction: synthSystem },
-        });
-        const parsed = parseStructuredAiText(resp.text || "");
-        if (parsed.description) {
-          return {
-            productName: parsed.productName || identified.productName,
-            description: parsed.description,
-            sources: webItems.map((w) => ({ title: w.title, url: w.url })),
-            usedWebSearch: webItems.length > 0,
-            usedSimilarProducts,
-          };
-        }
-      } catch (err: unknown) {
-        lastError = err;
-      }
-    }
-  } catch (err: unknown) {
-    lastError = err;
+    return await task;
+  } finally {
+    inFlightRequests.delete(cacheKey);
   }
-
-  const finalInfo = getUpstreamErrorDetails(lastError);
-  if (finalInfo.status === 429 || finalInfo.code === "RESOURCE_EXHAUSTED") {
-    throw new GenerateDescError(
-      429,
-      "QUOTA_EXCEEDED",
-      "Gemini API quota exceeded for the current key. Please check your plan or select a billing-enabled API key in Settings > Secrets."
-    );
-  }
-  if (finalInfo.status === 403 || finalInfo.code === "PERMISSION_DENIED" || finalInfo.code === "API_KEY_INVALID") {
-    throw new GenerateDescError(
-      finalInfo.status,
-      "INVALID_API_KEY",
-      "Invalid or unauthorized Gemini API key. Please check Settings > Secrets."
-    );
-  }
-
-  throw new GenerateDescError(
-    502,
-    "GENERATION_FAILED",
-    "Could not generate description right now. Please try again."
-  );
 }

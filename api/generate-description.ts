@@ -67,7 +67,11 @@ export default async function handler(req: VercelNodeRequest, res: ServerRespons
     sendJson(res, 200, result);
   } catch (err: unknown) {
     if (err instanceof GenerateDescError) {
-      sendJson(res, err.statusCode, { error: err.code, message: err.message });
+      sendJson(res, err.statusCode, {
+        error: err.code,
+        message: err.message,
+        ...(err.sources ? { sources: err.sources } : {}),
+      });
       return;
     }
     const msg = err instanceof Error ? err.message : String(err);

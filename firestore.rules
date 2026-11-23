@@ -116,14 +116,14 @@ service cloud.firestore {
           'description', 'descriptionHtml', 'price', 'currency',
           'images', 'imageSize', 'fontSize', 'scale', 'reviews',
           'customColors', 'enabledContacts', 'website', 'whatsapp',
-          'instagram', 'email', 'footerConfig', 'createdAt', 'updatedAt'
+          'instagram', 'email', 'footerConfig', 'domain', 'createdAt', 'updatedAt'
         ]) &&
         data.keys().hasOnly([
           'slug', 'lang', 'theme', 'productName',
           'description', 'descriptionHtml', 'price', 'currency',
           'images', 'imageSize', 'fontSize', 'scale', 'reviews',
           'customColors', 'enabledContacts', 'website', 'whatsapp',
-          'instagram', 'email', 'footerConfig', 'createdAt', 'updatedAt'
+          'instagram', 'email', 'footerConfig', 'domain', 'createdAt', 'updatedAt'
         ]) &&
         isValidSlugId(data.slug) &&
         data.slug == slug &&
@@ -146,6 +146,7 @@ service cloud.firestore {
         data.instagram is string && data.instagram.size() <= 120 &&
         data.email is string && data.email.size() <= 160 &&
         isValidFooterConfig(data.footerConfig) &&
+        data.domain is string && data.domain.size() <= 300 &&
         data.createdAt is timestamp &&
         data.updatedAt is timestamp;
     }
@@ -190,7 +191,7 @@ service cloud.firestore {
           'lang', 'theme', 'productName', 'description', 'descriptionHtml',
           'price', 'currency', 'images', 'imageSize', 'fontSize', 'scale',
           'reviews', 'customColors', 'enabledContacts', 'website', 'whatsapp',
-          'instagram', 'email', 'footerConfig', 'updatedAt'
+          'instagram', 'email', 'footerConfig', 'domain', 'updatedAt'
         ]);
     }
   }

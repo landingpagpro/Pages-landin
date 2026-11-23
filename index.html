@@ -1029,6 +1029,43 @@
       margin-bottom: 6px;
     }
 
+    .saved-link-name-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .saved-link-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      color: #374151;
+    }
+
+    .saved-link-badge.is-free {
+      background: #f5f3ff;
+      border-color: #ddd6fe;
+      color: #6d28d9;
+    }
+
+    .saved-link-badge.is-domain {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #047857;
+    }
+
+    .domain-autosave-note {
+      color: #166534;
+      font-weight: 700;
+    }
+
     .saved-link-name {
       font-size: 15px;
       font-weight: 700;
@@ -2157,6 +2194,10 @@
           btnNewFreeLink: "+ New Link",
           hintFreeLink: "Generated and updated automatically — works on every phone and social platform.",
           linkCreating: "Creating free link...",
+          freeAutoSaved: "✓ Free link auto-saved",
+          domainAutoSaved: "✓ Domain link auto-saved",
+          linkTypeFree: "Free Link",
+          linkTypeDomain: "Domain Link",
           adMediaTrimmedNote: "Note: Local video files cannot fit in a cloud link (use YouTube/MP4 URL via Link). Text and main photos were saved cleanly.",
           adPublishError: "Could not sync free link. Please try again.",
           adLoadToEdit: "Edit",
@@ -2179,7 +2220,7 @@
           noImages: "No images uploaded yet. Click \"Upload Product Image\" above.",
           copied: "Copied!",
           savedToast: "Saved!",
-          noSavedLinks: "No saved links yet. Your automatic free link will appear here once created or saved.",
+          noSavedLinks: "No saved links yet. Your free link and domain link are saved here automatically.",
           copyBtn: "Copy",
           openBtn: "Open",
           deleteBtn: "Delete",
@@ -2267,6 +2308,10 @@
           btnNewFreeLink: "+ رابط جديد",
           hintFreeLink: "يُنشأ ويتجدد تلقائياً ومجاني 100% ويعمل مباشرة في الإعلانات وعلى جميع الهواتف.",
           linkCreating: "جاري إنشاء الرابط المجاني...",
+          freeAutoSaved: "✓ تم حفظ الرابط المجاني تلقائياً",
+          domainAutoSaved: "✓ تم حفظ رابط الدومين تلقائياً",
+          linkTypeFree: "الرابط المجاني",
+          linkTypeDomain: "رابط الدومين",
           adMediaTrimmedNote: "ملاحظة: ملفات الفيديو المرفوعة مباشرة كبيرة على الرابط المجاني (استعمل رابط يوتيوب أو MP4 عبر زر 🔗 رابط). تم حفظ النصوص والصور بنجاح.",
           adPublishError: "تعذر مزامنة الرابط المجاني، يرجى المحاولة مرة أخرى.",
           adLoadToEdit: "تعديل",
@@ -2289,7 +2334,7 @@
           noImages: "لم يتم رفع صور بعد. اضغط على \"ارفع صورة المنتج\" بالأعلى.",
           copied: "تم النسخ!",
           savedToast: "تم الحفظ!",
-          noSavedLinks: "لا توجد روابط محفوظة بعد. سيتم حفظ رابطك المجاني هنا تلقائياً.",
+          noSavedLinks: "لا توجد روابط محفوظة بعد. يتم حفظ الرابط المجاني ورابط الدومين هنا تلقائياً.",
           copyBtn: "نسخ",
           openBtn: "فتح",
           deleteBtn: "حذف",
@@ -2377,6 +2422,10 @@
           btnNewFreeLink: "+ Nouveau lien",
           hintFreeLink: "Généré et mis à jour automatiquement — fonctionne sur tous les appareils et plateformes.",
           linkCreating: "Création du lien gratuit...",
+          freeAutoSaved: "✓ Lien gratuit enregistré automatiquement",
+          domainAutoSaved: "✓ Lien de domaine enregistré automatiquement",
+          linkTypeFree: "Lien gratuit",
+          linkTypeDomain: "Lien de domaine",
           adMediaTrimmedNote: "Note : Les vidéos locales ne peuvent pas être hébergées (utilisez un lien YouTube/MP4). Texte et photos enregistrés.",
           adPublishError: "Impossible de synchroniser le lien gratuit. Veuillez réessayer.",
           adLoadToEdit: "Modifier",
@@ -2399,7 +2448,7 @@
           noImages: "Aucune image importée. Cliquez sur « Importer une image » ci-dessus.",
           copied: "Copié !",
           savedToast: "Enregistré !",
-          noSavedLinks: "Aucun lien enregistré pour le moment. Votre lien gratuit sera enregistré ici automatiquement.",
+          noSavedLinks: "Aucun lien enregistré pour le moment. Votre lien gratuit et votre lien de domaine sont enregistrés ici automatiquement.",
           copyBtn: "Copier",
           openBtn: "Ouvrir",
           deleteBtn: "Supprimer",
@@ -4003,32 +4052,47 @@
         savedCountBadge.textContent = String(list.length);
       }
 
-      function upsertSavedLink(name, link, slug) {
+      function detectSavedLinkType(item) {
+        if (!item) return "free";
+        if (item.linkType === "domain") return "domain";
+        if (item.linkType === "free") return "free";
+        return /\/product\.html(\?|#|$)/i.test(String(item.link || "")) ? "domain" : "free";
+      }
+
+      function upsertSavedLink(name, link, slug, linkType) {
         if (!link) return;
         var cleanName = (name || "").trim() || getEffectiveProductName();
         var cleanSlug = (slug || state.slug || "").trim();
+        var type = linkType === "domain" || /\/product\.html(\?|#|$)/i.test(String(link)) ? "domain" : "free";
         var nowStr = new Date().toLocaleString();
         var list = getSavedLinks();
         var existingIdx = -1;
         for (var i = 0; i < list.length; i++) {
           if (!list[i]) continue;
-          if (cleanSlug && list[i].slug === cleanSlug) {
-            existingIdx = i;
-            break;
-          }
-          if (list[i].link === link) {
-            existingIdx = i;
-            break;
+          var entryType = detectSavedLinkType(list[i]);
+          if (entryType !== type) continue;
+          if (type === "free") {
+            if ((cleanSlug && list[i].slug === cleanSlug) || list[i].link === link) {
+              existingIdx = i;
+              break;
+            }
+          } else {
+            if (list[i].link === link || (cleanSlug && list[i].slug === cleanSlug)) {
+              existingIdx = i;
+              break;
+            }
           }
         }
         if (existingIdx !== -1) {
           list[existingIdx].name = cleanName;
           list[existingIdx].link = link;
           list[existingIdx].slug = cleanSlug;
+          list[existingIdx].linkType = type;
           list[existingIdx].date = nowStr;
         } else {
           list.unshift({
             slug: cleanSlug,
+            linkType: type,
             name: cleanName,
             link: link,
             date: nowStr
@@ -4137,6 +4201,27 @@
         openFreeLinkBtn.href = currentFreeAdLink;
       }
 
+      function autoSaveBothLinks() {
+        var t = BUILDER_I18N[state.lang];
+        var prodName = getEffectiveProductName();
+        var slugVal = ensureStateSlug();
+
+        if (currentFreeAdLink) {
+          upsertSavedLink(prodName, currentFreeAdLink, slugVal, "free");
+        }
+
+        var hasDomain = Boolean((state.domain || "").trim());
+        var domainLink = getCleanDomainLink();
+        if (hasDomain && /^https?:\/\//i.test(domainLink)) {
+          upsertSavedLink(prodName, domainLink, slugVal, "domain");
+          domainLinkFeedback.textContent = t.domainAutoSaved;
+          domainLinkFeedback.classList.add("domain-autosave-note");
+        } else {
+          domainLinkFeedback.textContent = "";
+          domainLinkFeedback.classList.remove("domain-autosave-note");
+        }
+      }
+
       function saveDraftAndSyncLinks() {
         syncFreeAdLinkUI();
 
@@ -4144,6 +4229,7 @@
         domainLinkInput.value = domainLink;
         openDomainLinkBtn.href = domainLink;
 
+        autoSaveBothLinks();
         saveDraft();
 
         if (!cloudSyncInFlight) {
@@ -4172,7 +4258,8 @@
           whatsapp: state.whatsapp || "",
           instagram: state.instagram || "",
           email: state.email || "",
-          footerConfig: state.footerConfig
+          footerConfig: state.footerConfig,
+          domain: (state.domain || "").trim()
         };
       }
 
@@ -4207,13 +4294,21 @@
             currentFreeAdLink = res.url;
             freeAdLinkInput.value = res.url;
             openFreeLinkBtn.href = res.url;
-            upsertSavedLink(getEffectiveProductName(), res.url, res.slug);
+            upsertSavedLink(getEffectiveProductName(), res.url, res.slug, "free");
+
+            var hasDomain = Boolean((state.domain || "").trim());
+            var domainLink = getCleanDomainLink();
+            if (hasDomain && /^https?:\/\//i.test(domainLink)) {
+              upsertSavedLink(getEffectiveProductName(), domainLink, res.slug, "domain");
+              domainLinkFeedback.textContent = BUILDER_I18N[state.lang].domainAutoSaved;
+              domainLinkFeedback.classList.add("domain-autosave-note");
+            }
             saveDraft();
 
             if (res.trimmedMedia) {
               showFreeAdStatus(BUILDER_I18N[state.lang].adMediaTrimmedNote, false);
             } else {
-              showFreeAdStatus("", false);
+              showFreeAdStatus(BUILDER_I18N[state.lang].freeAutoSaved, false);
             }
             return res;
           })
@@ -4353,6 +4448,13 @@
 
         builderStatusBadge.textContent = builderStatusBadge.classList.contains("updating") ? t.updating : t.ready;
         syncFreeAdLinkUI();
+        if (freeAdStatusMsg.classList.contains("open") && !freeAdStatusMsg.classList.contains("err")) {
+          showFreeAdStatus(t.freeAutoSaved, false);
+        }
+        if ((state.domain || "").trim() && /^https?:\/\//i.test(getCleanDomainLink())) {
+          domainLinkFeedback.textContent = t.domainAutoSaved;
+          domainLinkFeedback.classList.add("domain-autosave-note");
+        }
         syncFooterConfigUI();
         updateControlActiveStates();
         renderImageManager();
@@ -4493,10 +4595,16 @@
           var item = list[i];
           var dateStr = item.date || "";
           var titleText = item.name || item.slug || "Product";
+          var itemType = detectSavedLinkType(item);
+          var badgeText = itemType === "domain" ? ("🌐 " + t.linkTypeDomain) : ("🔗 " + t.linkTypeFree);
+          var badgeClass = itemType === "domain" ? "saved-link-badge is-domain" : "saved-link-badge is-free";
           html +=
             '<div class="saved-link-item">' +
               '<div class="saved-link-top">' +
-                '<span class="saved-link-name">' + escapeHtml(titleText) + "</span>" +
+                '<div class="saved-link-name-wrap">' +
+                  '<span class="saved-link-name">' + escapeHtml(titleText) + "</span>" +
+                  '<span class="' + badgeClass + '">' + escapeHtml(badgeText) + "</span>" +
+                "</div>" +
                 '<span class="saved-link-date">' + escapeHtml(dateStr) + "</span>" +
               "</div>" +
               '<div class="saved-link-url">' + escapeHtml(item.link) + "</div>" +
@@ -4578,6 +4686,9 @@
             textColor: "#000000"
           };
         }
+        if (typeof data.domain === "string" && data.domain.trim()) {
+          state.domain = data.domain.trim();
+        }
         state.slug = slug;
         cloudSyncedOnce = true;
 
@@ -4589,6 +4700,7 @@
         contactWhatsappInput.value = state.whatsapp;
         contactInstagramInput.value = state.instagram;
         contactEmailInput.value = state.email;
+        customDomainInput.value = state.domain;
 
         syncThemePickerButtons();
         syncColorBarInputs();
@@ -4623,7 +4735,12 @@
         saveDraftAndSyncLinks();
         syncFreeLinkNow().then(function (res) {
           var finalUrl = (res && res.url) || currentFreeAdLink;
-          upsertSavedLink(getEffectiveProductName(), finalUrl, state.slug);
+          upsertSavedLink(getEffectiveProductName(), finalUrl, state.slug, "free");
+          var hasDomain = Boolean((state.domain || "").trim());
+          var domainLink = getCleanDomainLink();
+          if (hasDomain && /^https?:\/\//i.test(domainLink)) {
+            upsertSavedLink(getEffectiveProductName(), domainLink, state.slug, "domain");
+          }
           saveLinkHeaderBtn.textContent = "✅ " + t.savedToast;
           setTimeout(function () {
             saveLinkHeaderBtn.textContent = BUILDER_I18N[state.lang].btnSaveHeader;
@@ -5920,7 +6037,27 @@
         domainLinkInput.value = link;
         openDomainLinkBtn.href = link;
         saveDraft();
+        if ((state.domain || "").trim()) {
+          domainLinkFeedback.textContent = BUILDER_I18N[state.lang].updating;
+          domainLinkFeedback.classList.remove("domain-autosave-note");
+        } else {
+          domainLinkFeedback.textContent = "";
+          domainLinkFeedback.classList.remove("domain-autosave-note");
+        }
+        scheduleRebuild();
       });
+
+      function flushDomainAutoSave() {
+        if (rebuildTimer) {
+          clearTimeout(rebuildTimer);
+          rebuildTimer = null;
+        }
+        saveDraftAndSyncLinks();
+        scheduleCloudSync(150);
+      }
+
+      customDomainInput.addEventListener("change", flushDomainAutoSave);
+      customDomainInput.addEventListener("blur", flushDomainAutoSave);
 
       copyFreeLinkBtn.addEventListener("click", function () {
         if (rebuildTimer) {

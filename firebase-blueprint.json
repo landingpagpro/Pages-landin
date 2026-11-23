@@ -134,6 +134,11 @@
           "type": "object",
           "description": "Customizable footer delivery, cash on delivery, privacy policy, and theme styling settings."
         },
+        "domain": {
+          "type": "string",
+          "description": "Custom domain URL associated with this landing page.",
+          "maxLength": 300
+        },
         "createdAt": {
           "type": "string",
           "format": "date-time",
@@ -166,6 +171,7 @@
         "instagram",
         "email",
         "footerConfig",
+        "domain",
         "createdAt",
         "updatedAt"
       ]

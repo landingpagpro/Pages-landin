@@ -118,6 +118,7 @@ export interface FreeLinkPayloadInput {
     bgColor?: string | null;
     textColor?: string | null;
   };
+  domain?: string;
 }
 
 const SECRETS_STORAGE_KEY = "lp_page_lock_secrets";
@@ -327,6 +328,7 @@ async function syncFreeLink(
     instagram: en.instagram ? String(input.instagram || "").trim().slice(0, 120) : "",
     email: en.email ? String(input.email || "").trim().slice(0, 160) : "",
     footerConfig: safeFooterConfig,
+    domain: String(input.domain || "").trim().slice(0, 300),
   });
 
   let mutableFields = buildMutableFields(workingImages, safeHtml);

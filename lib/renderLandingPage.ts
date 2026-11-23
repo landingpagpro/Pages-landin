@@ -701,6 +701,18 @@ const LP_I18N: Record<
     orderSuccessCod: string;
     orderErrorMissing: string;
     whatsappConfirmBtn: string;
+    chooseSendChannelLabel: string;
+    chooseSendChannelSub: string;
+    orderCopiedHint: string;
+    msgLabels: {
+      product: string;
+      price: string;
+      name: string;
+      phone: string;
+      city: string;
+      address: string;
+      qty: string;
+    };
     notFoundTitle: string;
     notFoundDesc: string;
   }
@@ -729,6 +741,10 @@ const LP_I18N: Record<
     orderSuccessCod: "Payment method: Cash on Delivery",
     orderErrorMissing: "Please fill in your full name, phone number, city, and address.",
     whatsappConfirmBtn: "Confirm Order via WhatsApp",
+    chooseSendChannelLabel: "Choose where to send your order:",
+    chooseSendChannelSub: "Tap your preferred channel below to send the order and complete it",
+    orderCopiedHint: "Order details copied — paste them when the page opens.",
+    msgLabels: { product: "Product", price: "Price", name: "Name", phone: "Phone", city: "City", address: "Address", qty: "Qty" },
     notFoundTitle: "Landing Page Not Found",
     notFoundDesc: "This product link may have been removed or is not yet published.",
   },
@@ -756,6 +772,10 @@ const LP_I18N: Record<
     orderSuccessCod: "طريقة الدفع: الدفع عند الاستلام",
     orderErrorMissing: "يرجى إدخال الاسم الكامل ورقم الهاتف والمدينة والعنوان.",
     whatsappConfirmBtn: "تأكيد الطلب عبر واتساب",
+    chooseSendChannelLabel: "اختر وسيلة إرسال الطلب:",
+    chooseSendChannelSub: "اضغط على الخيار المناسب لإرسال تفاصيل طلبك وإتمام العملية",
+    orderCopiedHint: "تم نسخ تفاصيل الطلب تلقائياً — قم بلصقها عند الفتح.",
+    msgLabels: { product: "المنتج", price: "السعر", name: "الاسم", phone: "الهاتف", city: "المدينة", address: "العنوان", qty: "الكمية" },
     notFoundTitle: "صفحة المنتج غير موجودة",
     notFoundDesc: "قد يكون رابط المنتج غير منشور بعد أو تم حذفه.",
   },
@@ -783,6 +803,10 @@ const LP_I18N: Record<
     orderSuccessCod: "Mode de paiement : Paiement à la livraison",
     orderErrorMissing: "Veuillez renseigner votre nom complet, téléphone, ville et adresse.",
     whatsappConfirmBtn: "Confirmer la commande sur WhatsApp",
+    chooseSendChannelLabel: "Choisissez où envoyer votre commande :",
+    chooseSendChannelSub: "Cliquez sur un choix ci-dessous pour envoyer et finaliser votre commande",
+    orderCopiedHint: "Détails copiés — collez-les à l'ouverture.",
+    msgLabels: { product: "Produit", price: "Prix", name: "Nom", phone: "Téléphone", city: "Ville", address: "Adresse", qty: "Quantité" },
     notFoundTitle: "Page produit introuvable",
     notFoundDesc: "Ce lien produit n'existe pas encore ou a été supprimé.",
   },
@@ -1220,6 +1244,16 @@ body{margin:0;padding:0;overflow-x:hidden;background:${th.pageBg};color:${th.des
 .lp-form-field input{width:100%;padding:12px 13px;border-radius:8px;font-size:16px;font-weight:700;font-family:inherit}
 .lp-order-submit{width:100%;margin-top:8px;padding:14px 18px;border:none;border-radius:10px;font-size:17px;font-weight:900;cursor:pointer;font-family:inherit}
 .lp-order-confirm{margin-top:14px;padding:14px;border-radius:10px;background:#f0fdf4;border:1px solid #86efac;color:#111111;font-size:15px;font-weight:800;display:none;text-align:center}
+.lp-send-choice-title{margin:0 0 4px 0;font-size:16px;font-weight:900;color:#111111}
+.lp-send-choice-sub{margin:0 0 12px 0;font-size:13px;font-weight:700;color:#475569}
+.lp-send-choice-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:9px}
+.lp-send-choice-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:10px;color:#ffffff;font-size:14.5px;font-weight:900;text-decoration:none;cursor:pointer;transition:transform 0.15s ease,opacity 0.15s ease}
+.lp-send-choice-btn:hover{opacity:0.9;transform:translateY(-1px)}
+.lp-send-wa{background:#16a34a}
+.lp-send-email{background:#2563eb}
+.lp-send-ig{background:linear-gradient(135deg,#e1306c 0%,#833ab4 100%)}
+.lp-send-store{background:#0f172a}
+.lp-confirm-copied{margin-top:8px;font-size:13px;font-weight:700;color:#166534}
 .lp-wa-confirm{display:inline-block;margin-top:10px;padding:10px 16px;border-radius:8px;background:#16a34a;color:#ffffff;font-weight:900;text-decoration:none;font-size:14px}
 .lp-reviews-section{margin-bottom:28px}
 .lp-section-title{margin:0 0 14px 0;font-size:21px;font-weight:900;text-align:center}
@@ -1238,14 +1272,51 @@ body{margin:0;padding:0;overflow-x:hidden;background:${th.pageBg};color:${th.des
 .lp-privacy-text{margin:0;font-size:13.5px;font-weight:700;line-height:1.75;opacity:0.92}
 @media(max-width:640px){.lp-delivery-grid{grid-template-columns:1fr}}`;
 
+  const ssrChannels: Array<{ type: string; label: string; digits?: string; email?: string; url?: string }> = [];
+  if (whatsappDigits) ssrChannels.push({ type: "whatsapp", label: lp.whatsappLabel, digits: whatsappDigits });
+  if (email) ssrChannels.push({ type: "email", label: lp.emailLabel, email });
+  if (instagramHref) ssrChannels.push({ type: "instagram", label: lp.instagramLabel, url: instagramHref });
+  if (websiteHref) ssrChannels.push({ type: "website", label: lp.websiteLabel, url: websiteHref });
+
   const orderScript = `(function(){
     var f=document.getElementById('lpOrderForm');
     var m=document.getElementById('lpOrderConfirm');
     if(!f||!m)return;
-    var waDigits=${JSON.stringify(whatsappDigits)};
+    var channels=${JSON.stringify(ssrChannels)};
     var prod=${JSON.stringify(page.productName)};
     var priceStr=${JSON.stringify(priceText)};
-    var waBtnText=${JSON.stringify(lp.whatsappConfirmBtn)};
+    var cfg=${JSON.stringify({
+      errMissing: lp.orderErrorMissing,
+      successPrefix: lp.orderSuccessPrefix,
+      successCod: lp.orderSuccessCod,
+      chooseTitle: lp.chooseSendChannelLabel,
+      chooseSub: lp.chooseSendChannelSub,
+      copiedHint: lp.orderCopiedHint,
+      ml: lp.msgLabels,
+    })};
+    var icons={
+      whatsapp:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',
+      email:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>',
+      instagram:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>',
+      website:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>'
+    };
+    function showThanks(n,q,c,copied){
+      m.style.display='block';
+      m.style.background='#f0fdf4';
+      m.style.borderColor='#86efac';
+      m.style.color='#111111';
+      m.innerHTML='';
+      var d=document.createElement('div');
+      d.textContent=cfg.successPrefix+' '+n+' ('+q+') — '+c+' — '+cfg.successCod;
+      m.appendChild(d);
+      if(copied){
+        var h=document.createElement('div');
+        h.className='lp-confirm-copied';
+        h.textContent=cfg.copiedHint;
+        m.appendChild(h);
+      }
+      f.reset();
+    }
     f.addEventListener('submit',function(e){
       e.preventDefault();
       var fd=new FormData(f);
@@ -1258,25 +1329,56 @@ body{margin:0;padding:0;overflow-x:hidden;background:${th.pageBg};color:${th.des
         m.style.display='block';
         m.style.background='#fef2f2';
         m.style.borderColor='#fca5a5';
-        m.textContent=${JSON.stringify(lp.orderErrorMissing)};
+        m.style.color='#991b1b';
+        m.textContent=cfg.errMissing;
         return;
       }
-      m.style.display='block';
-      m.style.background='#f0fdf4';
-      m.style.borderColor='#86efac';
-      m.textContent=${JSON.stringify(lp.orderSuccessPrefix)}+' '+n+' ('+q+') — '+c+' — '+${JSON.stringify(lp.orderSuccessCod)};
-      if(waDigits){
-        var msg=prod+' ('+priceStr+')\\n'+n+'\\n'+p+'\\n'+c+' - '+a+'\\nQty: '+q;
-        var aEl=document.createElement('a');
-        aEl.className='lp-wa-confirm';
-        aEl.href='https://wa.me/'+waDigits+'?text='+encodeURIComponent(msg);
-        aEl.target='_blank';
-        aEl.rel='noopener noreferrer';
-        aEl.textContent=waBtnText;
-        m.appendChild(document.createElement('br'));
-        m.appendChild(aEl);
+      if(!channels||channels.length===0){
+        showThanks(n,q,c,false);
+        return;
       }
-      f.reset();
+      var msg=cfg.ml.product+': '+prod+' ('+priceStr+')\\n'+cfg.ml.name+': '+n+'\\n'+cfg.ml.phone+': '+p+'\\n'+cfg.ml.city+': '+c+'\\n'+cfg.ml.address+': '+a+'\\n'+cfg.ml.qty+': '+q;
+      m.style.display='block';
+      m.style.background='#f8fafc';
+      m.style.borderColor='#cbd5e1';
+      m.style.color='#111111';
+      m.innerHTML='';
+      var tEl=document.createElement('div');
+      tEl.className='lp-send-choice-title';
+      tEl.textContent=cfg.chooseTitle;
+      m.appendChild(tEl);
+      var sEl=document.createElement('div');
+      sEl.className='lp-send-choice-sub';
+      sEl.textContent=cfg.chooseSub;
+      m.appendChild(sEl);
+      var gEl=document.createElement('div');
+      gEl.className='lp-send-choice-grid';
+      channels.forEach(function(ch){
+        var btn=document.createElement('a');
+        btn.className='lp-send-choice-btn '+(ch.type==='whatsapp'?'lp-send-wa':ch.type==='email'?'lp-send-email':ch.type==='instagram'?'lp-send-ig':'lp-send-store');
+        btn.innerHTML=(icons[ch.type]||'')+'<span></span>';
+        btn.querySelector('span').textContent=ch.label;
+        if(ch.type==='whatsapp'){
+          btn.href='https://wa.me/'+ch.digits+'?text='+encodeURIComponent(msg);
+          btn.target='_blank';
+          btn.rel='noopener noreferrer';
+        }else if(ch.type==='email'){
+          btn.href='mailto:'+ch.email+'?subject='+encodeURIComponent(prod+' - '+n)+'&body='+encodeURIComponent(msg);
+        }else{
+          btn.href=ch.url;
+          btn.target='_blank';
+          btn.rel='noopener noreferrer';
+        }
+        btn.addEventListener('click',function(){
+          var needCopy=(ch.type==='instagram'||ch.type==='website');
+          if(needCopy&&navigator.clipboard&&navigator.clipboard.writeText){
+            try{navigator.clipboard.writeText(msg);}catch(err){}
+          }
+          setTimeout(function(){showThanks(n,q,c,needCopy);},80);
+        });
+        gEl.appendChild(btn);
+      });
+      m.appendChild(gEl);
     });
   })();`;
 

@@ -1344,14 +1344,68 @@
 
     .lp-order-confirm {
       margin-top: 12px;
-      padding: 12px;
-      border-radius: 8px;
+      padding: 14px;
+      border-radius: 10px;
       background: #f0fdf4;
       border: 1px solid #86efac;
       color: #111111;
       font-size: 15px;
       font-weight: 800;
+      text-align: center;
       display: none;
+    }
+
+    .lp-send-choice-title {
+      margin: 0 0 4px 0;
+      font-size: 16px;
+      font-weight: 900;
+      color: #111111;
+    }
+
+    .lp-send-choice-sub {
+      margin: 0 0 12px 0;
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+    }
+
+    .lp-send-choice-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 9px;
+    }
+
+    .lp-send-choice-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      color: #ffffff;
+      font-size: 14.5px;
+      font-weight: 900;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .lp-send-choice-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .lp-send-wa { background: #16a34a; }
+    .lp-send-email { background: #2563eb; }
+    .lp-send-ig { background: linear-gradient(135deg, #e1306c 0%, #833ab4 100%); }
+    .lp-send-store { background: #0f172a; }
+
+    .lp-confirm-copied {
+      margin-top: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #166534;
     }
 
     .lp-reviews-section {
@@ -2418,6 +2472,10 @@
           orderSuccessPrefix: "Thank you! Your order has been received:",
           orderSuccessCod: "Payment method: Cash on Delivery",
           orderErrorMissing: "Please fill in your full name, phone number, city, and address.",
+          chooseSendChannelLabel: "Choose where to send your order:",
+          chooseSendChannelSub: "Tap your preferred channel below to send the order and complete it",
+          orderCopiedHint: "Order details copied — paste them when the page opens.",
+          msgLabels: { product: "Product", price: "Price", name: "Name", phone: "Phone", city: "City", address: "Address", qty: "Qty" },
           defaultReviews: [
             { name: "Emily R.", stars: 5, text: "Arrived the next day and works even better than expected." },
             { name: "Daniel K.", stars: 5, text: "Great quality for the price and very smooth delivery." }
@@ -2448,6 +2506,10 @@
           orderSuccessPrefix: "شكراً لك! تم تسجيل طلبك بنجاح:",
           orderSuccessCod: "طريقة الدفع: الدفع عند الاستلام",
           orderErrorMissing: "يرجى إدخال الاسم الكامل ورقم الهاتف والمدينة والعنوان.",
+          chooseSendChannelLabel: "اختر وسيلة إرسال الطلب:",
+          chooseSendChannelSub: "اضغط على الخيار المناسب لإرسال تفاصيل طلبك وإتمام العملية",
+          orderCopiedHint: "تم نسخ تفاصيل الطلب تلقائياً — قم بلصقها عند الفتح.",
+          msgLabels: { product: "المنتج", price: "السعر", name: "الاسم", phone: "الهاتف", city: "المدينة", address: "العنوان", qty: "الكمية" },
           defaultReviews: [
             { name: "سارة م.", stars: 5, text: "منتج رائع جداً والتوصيل كان سريعاً خلال يوم واحد." },
             { name: "يوسف ع.", stars: 5, text: "جودة ممتازة مقابل السعر وتعامل احترافي." }
@@ -2478,6 +2540,10 @@
           orderSuccessPrefix: "Merci ! Votre commande a bien été enregistrée :",
           orderSuccessCod: "Mode de paiement : Paiement à la livraison",
           orderErrorMissing: "Veuillez renseigner votre nom complet, téléphone, ville et adresse.",
+          chooseSendChannelLabel: "Choisissez où envoyer votre commande :",
+          chooseSendChannelSub: "Cliquez sur un choix ci-dessous pour envoyer et finaliser votre commande",
+          orderCopiedHint: "Détails copiés — collez-les à l'ouverture.",
+          msgLabels: { product: "Produit", price: "Prix", name: "Nom", phone: "Téléphone", city: "Ville", address: "Adresse", qty: "Quantité" },
           defaultReviews: [
             { name: "Camille L.", stars: 5, text: "Livraison rapide en 24 heures et excellente qualité." },
             { name: "Lucas B.", stars: 5, text: "Très satisfait de mon achat, paiement à la réception pratique." }
@@ -3657,7 +3723,17 @@
           ".lp-form-field label{display:block;font-size:15px;font-weight:900;margin-bottom:5px}" +
           ".lp-form-field input{width:100%;padding:12px 13px;border-radius:8px;font-size:16px;font-weight:700;font-family:inherit}" +
           ".lp-order-submit{width:100%;margin-top:8px;padding:14px 18px;border:none;border-radius:10px;font-size:17px;font-weight:900;cursor:pointer;font-family:inherit}" +
-          ".lp-order-confirm{margin-top:12px;padding:12px;border-radius:8px;background:#f0fdf4;border:1px solid #86efac;color:#111111;font-size:15px;font-weight:800;display:none}" +
+          ".lp-order-confirm{margin-top:12px;padding:14px;border-radius:10px;background:#f0fdf4;border:1px solid #86efac;color:#111111;font-size:15px;font-weight:800;text-align:center;display:none}" +
+          ".lp-send-choice-title{margin:0 0 4px 0;font-size:16px;font-weight:900;color:#111111}" +
+          ".lp-send-choice-sub{margin:0 0 12px 0;font-size:13px;font-weight:700;color:#475569}" +
+          ".lp-send-choice-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:9px}" +
+          ".lp-send-choice-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:10px;color:#ffffff;font-size:14.5px;font-weight:900;text-decoration:none;cursor:pointer;transition:transform 0.15s ease,opacity 0.15s ease}" +
+          ".lp-send-choice-btn:hover{opacity:0.9;transform:translateY(-1px)}" +
+          ".lp-send-wa{background:#16a34a}" +
+          ".lp-send-email{background:#2563eb}" +
+          ".lp-send-ig{background:linear-gradient(135deg,#e1306c 0%,#833ab4 100%)}" +
+          ".lp-send-store{background:#0f172a}" +
+          ".lp-confirm-copied{margin-top:8px;font-size:13px;font-weight:700;color:#166534}" +
           ".lp-reviews-section{margin-bottom:28px}" +
           ".lp-section-title{margin:0 0 14px 0;font-size:21px;font-weight:900;text-align:center}" +
           ".lp-reviews-list{display:grid;grid-template-columns:1fr;gap:10px}" +
@@ -3675,11 +3751,50 @@
           ".lp-privacy-text{margin:0;font-size:13.5px;font-weight:700;line-height:1.75;opacity:0.92}" +
           "@media(max-width:640px){.lp-delivery-grid,.lp-delivery-grid.cols-2,.lp-delivery-grid.cols-3{grid-template-columns:1fr}}";
 
+        var enabledNow = state.enabledContacts || { website: false, whatsapp: false, instagram: true, email: true };
+        var exportChannels = [];
+        var waRawExp = enabledNow.whatsapp ? (state.whatsapp || "").trim() : "";
+        var waDigitsExp = waRawExp.replace(/[^\d]/g, "");
+        if (waDigitsExp) exportChannels.push({ type: "whatsapp", label: lp.whatsappLabel, digits: waDigitsExp });
+        var emailExp = enabledNow.email ? (state.email || "").trim() : "";
+        if (emailExp) exportChannels.push({ type: "email", label: lp.emailLabel, email: emailExp });
+        var igRawExp = enabledNow.instagram ? (state.instagram || "").trim() : "";
+        var igHandleExp = igRawExp.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/^@+/, "");
+        if (igHandleExp) exportChannels.push({ type: "instagram", label: lp.instagramLabel, url: "https://instagram.com/" + encodeURIComponent(igHandleExp) });
+        var webRawExp = enabledNow.website ? (state.website || "").trim() : "";
+        var webHrefExp = webRawExp ? (/^https?:\/\//i.test(webRawExp) ? webRawExp : "https://" + webRawExp) : "";
+        if (webHrefExp) exportChannels.push({ type: "website", label: lp.websiteLabel, url: webHrefExp });
+
         var orderHandlerScript =
           "(function(){" +
             "var f=document.getElementById('lpExportOrderForm');" +
             "var m=document.getElementById('lpExportOrderConfirm');" +
             "if(!f||!m)return;" +
+            "var channels=" + JSON.stringify(exportChannels) + ";" +
+            "var prod=" + JSON.stringify(productName) + ";" +
+            "var priceStr=" + JSON.stringify(formatPriceOnly()) + ";" +
+            "var cfg=" + JSON.stringify({
+              errMissing: lp.orderErrorMissing,
+              successPrefix: lp.orderSuccessPrefix,
+              successCod: lp.orderSuccessCod,
+              chooseTitle: lp.chooseSendChannelLabel,
+              chooseSub: lp.chooseSendChannelSub,
+              copiedHint: lp.orderCopiedHint,
+              ml: lp.msgLabels
+            }) + ";" +
+            "var icons={" +
+              "whatsapp:'<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z\"/></svg>'," +
+              "email:'<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><polyline points=\"3 7 12 13 21 7\"/></svg>'," +
+              "instagram:'<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"4\"/><circle cx=\"17.5\" cy=\"6.5\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/></svg>'," +
+              "website:'<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z\"/><line x1=\"3\" y1=\"6\" x2=\"21\" y2=\"6\"/><path d=\"M16 10a4 4 0 0 1-8 0\"/></svg>'" +
+            "};" +
+            "function showThanks(n,q,c,copied){" +
+              "m.style.display='block';m.style.background='#f0fdf4';m.style.borderColor='#86efac';m.style.color='#111111';" +
+              "m.innerHTML='';" +
+              "var d=document.createElement('div');d.textContent=cfg.successPrefix+' '+n+' ('+q+') — '+c+' — '+cfg.successCod;m.appendChild(d);" +
+              "if(copied){var h=document.createElement('div');h.className='lp-confirm-copied';h.textContent=cfg.copiedHint;m.appendChild(h);}" +
+              "f.reset();" +
+            "}" +
             "f.addEventListener('submit',function(e){" +
               "e.preventDefault();" +
               "var fd=new FormData(f);" +
@@ -3688,10 +3803,29 @@
               "var c=(fd.get('city')||'').toString().trim();" +
               "var a=(fd.get('address')||'').toString().trim();" +
               "var q=(fd.get('quantity')||'1').toString().trim();" +
-              "if(!n||!p||!c||!a){m.style.display='block';m.style.background='#fef2f2';m.style.borderColor='#fca5a5';m.textContent=" + JSON.stringify(lp.orderErrorMissing) + ";return;}" +
-              "m.style.display='block';m.style.background='#f0fdf4';m.style.borderColor='#86efac';" +
-              "m.textContent=" + JSON.stringify(lp.orderSuccessPrefix) + "+' '+n+' ('+q+') — '+c+' — '+" + JSON.stringify(lp.orderSuccessCod) + ";" +
-              "f.reset();" +
+              "if(!n||!p||!c||!a){m.style.display='block';m.style.background='#fef2f2';m.style.borderColor='#fca5a5';m.style.color='#991b1b';m.textContent=cfg.errMissing;return;}" +
+              "if(!channels||channels.length===0){showThanks(n,q,c,false);return;}" +
+              "var msg=cfg.ml.product+': '+prod+' ('+priceStr+')\\n'+cfg.ml.name+': '+n+'\\n'+cfg.ml.phone+': '+p+'\\n'+cfg.ml.city+': '+c+'\\n'+cfg.ml.address+': '+a+'\\n'+cfg.ml.qty+': '+q;" +
+              "m.style.display='block';m.style.background='#f8fafc';m.style.borderColor='#cbd5e1';m.style.color='#111111';m.innerHTML='';" +
+              "var tEl=document.createElement('div');tEl.className='lp-send-choice-title';tEl.textContent=cfg.chooseTitle;m.appendChild(tEl);" +
+              "var sEl=document.createElement('div');sEl.className='lp-send-choice-sub';sEl.textContent=cfg.chooseSub;m.appendChild(sEl);" +
+              "var gEl=document.createElement('div');gEl.className='lp-send-choice-grid';" +
+              "channels.forEach(function(ch){" +
+                "var btn=document.createElement('a');" +
+                "btn.className='lp-send-choice-btn '+(ch.type==='whatsapp'?'lp-send-wa':ch.type==='email'?'lp-send-email':ch.type==='instagram'?'lp-send-ig':'lp-send-store');" +
+                "btn.innerHTML=(icons[ch.type]||'')+'<span></span>';" +
+                "btn.querySelector('span').textContent=ch.label;" +
+                "if(ch.type==='whatsapp'){btn.href='https://wa.me/'+ch.digits+'?text='+encodeURIComponent(msg);btn.target='_blank';btn.rel='noopener noreferrer';}" +
+                "else if(ch.type==='email'){btn.href='mailto:'+ch.email+'?subject='+encodeURIComponent(prod+' - '+n)+'&body='+encodeURIComponent(msg);}" +
+                "else{btn.href=ch.url;btn.target='_blank';btn.rel='noopener noreferrer';}" +
+                "btn.addEventListener('click',function(){" +
+                  "var needCopy=(ch.type==='instagram'||ch.type==='website');" +
+                  "if(needCopy&&navigator.clipboard&&navigator.clipboard.writeText){try{navigator.clipboard.writeText(msg);}catch(err){}}" +
+                  "setTimeout(function(){showThanks(n,q,c,needCopy);},80);" +
+                "});" +
+                "gEl.appendChild(btn);" +
+              "});" +
+              "m.appendChild(gEl);" +
             "});" +
           "})();";
 
@@ -3729,6 +3863,44 @@
         var previewConfirm = document.getElementById("lpPreviewOrderConfirm");
         var lp = LP_I18N[state.lang];
         if (previewForm && previewConfirm) {
+          var enabledPrev = state.enabledContacts || { website: false, whatsapp: false, instagram: true, email: true };
+          var prevChannels = [];
+          var waPrevRaw = enabledPrev.whatsapp ? (state.whatsapp || "").trim() : "";
+          var waPrevDigits = waPrevRaw.replace(/[^\d]/g, "");
+          if (waPrevDigits) prevChannels.push({ type: "whatsapp", label: lp.whatsappLabel, digits: waPrevDigits });
+          var emailPrev = enabledPrev.email ? (state.email || "").trim() : "";
+          if (emailPrev) prevChannels.push({ type: "email", label: lp.emailLabel, email: emailPrev });
+          var igPrevRaw = enabledPrev.instagram ? (state.instagram || "").trim() : "";
+          var igPrevHandle = igPrevRaw.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/^@+/, "");
+          if (igPrevHandle) prevChannels.push({ type: "instagram", label: lp.instagramLabel, url: "https://instagram.com/" + encodeURIComponent(igPrevHandle) });
+          var webPrevRaw = enabledPrev.website ? (state.website || "").trim() : "";
+          var webPrevHref = webPrevRaw ? (/^https?:\/\//i.test(webPrevRaw) ? webPrevRaw : "https://" + webPrevRaw) : "";
+          if (webPrevHref) prevChannels.push({ type: "website", label: lp.websiteLabel, url: webPrevHref });
+
+          var prevIcons = {
+            whatsapp: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',
+            email: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>',
+            instagram: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>',
+            website: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>'
+          };
+
+          function showPreviewThanks(n, q, c, copied) {
+            previewConfirm.style.display = "block";
+            previewConfirm.style.background = "#f0fdf4";
+            previewConfirm.style.borderColor = "#86efac";
+            previewConfirm.style.color = "#111111";
+            previewConfirm.innerHTML = "";
+            var d = document.createElement("div");
+            d.textContent = lp.orderSuccessPrefix + " " + n + " (" + q + ") — " + c + " — " + lp.orderSuccessCod;
+            previewConfirm.appendChild(d);
+            if (copied) {
+              var h = document.createElement("div");
+              h.className = "lp-confirm-copied";
+              h.textContent = lp.orderCopiedHint;
+              previewConfirm.appendChild(h);
+            }
+          }
+
           previewForm.addEventListener("submit", function (e) {
             e.preventDefault();
             var fd = new FormData(previewForm);
@@ -3741,14 +3913,72 @@
               previewConfirm.style.display = "block";
               previewConfirm.style.background = "#fef2f2";
               previewConfirm.style.borderColor = "#fca5a5";
+              previewConfirm.style.color = "#991b1b";
               previewConfirm.textContent = lp.orderErrorMissing;
               return;
             }
+            if (prevChannels.length === 0) {
+              showPreviewThanks(n, q, c, false);
+              previewForm.reset();
+              return;
+            }
+            var prodNameNow = getEffectiveProductName();
+            var priceNow = formatPriceOnly();
+            var msg =
+              lp.msgLabels.product + ": " + prodNameNow + " (" + priceNow + ")\n" +
+              lp.msgLabels.name + ": " + n + "\n" +
+              lp.msgLabels.phone + ": " + p + "\n" +
+              lp.msgLabels.city + ": " + c + "\n" +
+              lp.msgLabels.address + ": " + a + "\n" +
+              lp.msgLabels.qty + ": " + q;
+
             previewConfirm.style.display = "block";
-            previewConfirm.style.background = "#f0fdf4";
-            previewConfirm.style.borderColor = "#86efac";
-            previewConfirm.textContent =
-              lp.orderSuccessPrefix + " " + n + " (" + q + ") — " + c + " — " + lp.orderSuccessCod;
+            previewConfirm.style.background = "#f8fafc";
+            previewConfirm.style.borderColor = "#cbd5e1";
+            previewConfirm.style.color = "#111111";
+            previewConfirm.innerHTML = "";
+
+            var tEl = document.createElement("div");
+            tEl.className = "lp-send-choice-title";
+            tEl.textContent = lp.chooseSendChannelLabel;
+            previewConfirm.appendChild(tEl);
+
+            var sEl = document.createElement("div");
+            sEl.className = "lp-send-choice-sub";
+            sEl.textContent = lp.chooseSendChannelSub;
+            previewConfirm.appendChild(sEl);
+
+            var gEl = document.createElement("div");
+            gEl.className = "lp-send-choice-grid";
+            prevChannels.forEach(function (ch) {
+              var btn = document.createElement("a");
+              btn.className = "lp-send-choice-btn " + (ch.type === "whatsapp" ? "lp-send-wa" : ch.type === "email" ? "lp-send-email" : ch.type === "instagram" ? "lp-send-ig" : "lp-send-store");
+              btn.innerHTML = (prevIcons[ch.type] || "") + "<span></span>";
+              btn.querySelector("span").textContent = ch.label;
+              if (ch.type === "whatsapp") {
+                btn.href = "https://wa.me/" + ch.digits + "?text=" + encodeURIComponent(msg);
+                btn.target = "_blank";
+                btn.rel = "noopener noreferrer";
+              } else if (ch.type === "email") {
+                btn.href = "mailto:" + ch.email + "?subject=" + encodeURIComponent(prodNameNow + " - " + n) + "&body=" + encodeURIComponent(msg);
+              } else {
+                btn.href = ch.url;
+                btn.target = "_blank";
+                btn.rel = "noopener noreferrer";
+              }
+              btn.addEventListener("click", function () {
+                var needCopy = ch.type === "instagram" || ch.type === "website";
+                if (needCopy && navigator.clipboard && navigator.clipboard.writeText) {
+                  try { navigator.clipboard.writeText(msg); } catch (err) {}
+                }
+                setTimeout(function () {
+                  showPreviewThanks(n, q, c, needCopy);
+                  previewForm.reset();
+                }, 80);
+              });
+              gEl.appendChild(btn);
+            });
+            previewConfirm.appendChild(gEl);
           });
         }
         priceDisplayExample.textContent = formatProductPriceBanner();

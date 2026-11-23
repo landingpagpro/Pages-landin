@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Landing Page Pro — Landing Page Builder</title>
   <meta name="description" content="Fast, professional Landing Page Builder with Arabic RTL, English, and French support, AI web-search copywriting, custom colors, and free short ad links for Facebook, TikTok, and Instagram." />
+  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+  <link rel="apple-touch-icon" href="/logo.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&display=swap" />
@@ -70,24 +72,31 @@
     }
 
     .lp-logo-box {
-      width: 38px;
-      height: 38px;
-      border-radius: 8px;
-      background: var(--grad);
-      color: #ffffff;
-      font-weight: 800;
-      font-size: 15px;
-      letter-spacing: 0.5px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1px solid var(--border);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.22);
+    }
+
+    .lp-logo-box img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
     }
 
     .brand-title {
       font-size: 19px;
       font-weight: 800;
       color: #111111;
+      letter-spacing: -0.2px;
       white-space: nowrap;
     }
 
@@ -572,8 +581,8 @@
 
     .desc-rich-editor {
       width: 100%;
-      min-height: 128px;
-      max-height: 360px;
+      min-height: 170px;
+      max-height: 440px;
       overflow-y: auto;
       padding: 12px 14px;
       font-size: 15px;
@@ -684,6 +693,45 @@
       .contact-channels-grid {
         grid-template-columns: 1fr;
       }
+    }
+
+    .footer-items-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-item-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .footer-item-head .contact-channel-toggle {
+      margin-bottom: 0;
+    }
+
+    .footer-del-btn {
+      padding: 3px 9px;
+      font-size: 11.5px;
+    }
+
+    .footer-control-card:not(.active) {
+      opacity: 0.62;
+      background: #f9fafb;
+    }
+
+    .footer-custom-colors {
+      display: none;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .footer-custom-colors.open {
+      display: flex;
     }
 
     .price-preview-strip {
@@ -1069,6 +1117,7 @@
       padding: 0;
       margin: 0;
       min-height: 100%;
+      overflow-x: hidden;
       font-family: 'Cairo', system-ui, -apple-system, 'Segoe UI', Roboto, Tahoma, Arial, sans-serif;
       font-weight: 700;
       -webkit-font-smoothing: antialiased;
@@ -1151,7 +1200,7 @@
       font-weight: 700;
       white-space: normal;
       word-break: break-word;
-      text-align: center;
+      text-align: start;
     }
 
     .lp-desc strong,
@@ -1203,8 +1252,20 @@
     .lp-delivery-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 12px;
+      gap: 10px;
+      margin: 0 0 14px 0;
+    }
+
+    .lp-delivery-grid.cols-1 {
+      grid-template-columns: 1fr;
+    }
+
+    .lp-delivery-grid.cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .lp-delivery-grid.cols-3 {
+      grid-template-columns: repeat(3, 1fr);
     }
 
     .lp-delivery-box {
@@ -1342,18 +1403,54 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 14px;
-      font-size: 16px;
+      gap: 10px;
+      font-size: 15px;
       font-weight: 800;
     }
 
-    .lp-contact-items a {
-      color: #7c3aed;
+    .lp-contact-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      text-decoration: none;
+      font-weight: 800;
+      line-height: 1.3;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .lp-contact-link:hover {
+      opacity: 0.86;
+      transform: translateY(-1px);
       text-decoration: none;
     }
 
-    .lp-contact-items a:hover {
-      text-decoration: underline;
+    .lp-bottom-policies {
+      margin-top: 22px;
+      padding-top: 18px;
+    }
+
+    .lp-privacy-box {
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+
+    .lp-privacy-title {
+      margin: 0 0 6px 0;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .lp-privacy-text {
+      margin: 0;
+      font-size: 13.5px;
+      font-weight: 700;
+      line-height: 1.75;
+      opacity: 0.92;
     }
 
     /* Free Link Status Message */
@@ -1393,7 +1490,9 @@
         position: static;
       }
 
-      .lp-delivery-grid {
+      .lp-delivery-grid,
+      .lp-delivery-grid.cols-2,
+      .lp-delivery-grid.cols-3 {
         grid-template-columns: 1fr;
       }
     }
@@ -1403,8 +1502,26 @@
   <header class="app-header">
     <div class="header-inner">
       <div class="brand">
-        <div class="lp-logo-box" aria-hidden="true">LP</div>
-        <span class="brand-title">Landing Page Pro</span>
+        <div class="lp-logo-box" aria-hidden="true">
+          <svg viewBox="0 0 128 128" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="lpHdrGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#9333EA"/>
+                <stop offset="52%" stop-color="#4F46E5"/>
+                <stop offset="100%" stop-color="#1D4ED8"/>
+              </linearGradient>
+              <clipPath id="lpHdrClip">
+                <circle cx="64" cy="64" r="62"/>
+              </clipPath>
+            </defs>
+            <circle cx="64" cy="64" r="62" fill="#FFFFFF"/>
+            <g clip-path="url(#lpHdrClip)">
+              <rect x="12" y="12" width="104" height="104" rx="22" fill="url(#lpHdrGrad)"/>
+            </g>
+            <text x="64" y="81" text-anchor="middle" fill="#FFFFFF" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif" font-weight="900" font-size="54" letter-spacing="-1">LP</text>
+          </svg>
+        </div>
+        <span class="brand-title">landing page pro</span>
       </div>
 
       <div class="header-actions">
@@ -1492,6 +1609,9 @@
             <div class="desc-toolbar">
               <button type="button" id="descAiBtn" class="desc-tool-btn desc-tool-ai">
                 ✨ <span data-i18n="btnDescAi">AI Description</span>
+              </button>
+              <button type="button" id="descTemplateBtn" class="desc-tool-btn">
+                📝 <span data-i18n="btnDescTemplate">5-Part Template</span>
               </button>
               <button type="button" id="descBoldBtn" class="desc-tool-btn" title="Bold">B</button>
               <button type="button" id="descAddImgBtn" class="desc-tool-btn desc-tool-img">
@@ -1681,7 +1801,7 @@
           <div class="contact-channel-card" id="channelCardWebsite">
             <label class="contact-channel-toggle" for="enableWebsiteChk">
               <input type="checkbox" id="enableWebsiteChk" />
-              <span data-i18n="labelWebsite">Website</span>
+              <span data-i18n="labelWebsite">Store</span>
             </label>
             <input type="url" id="contactWebsiteInput" placeholder="https://yourstore.com" />
           </div>
@@ -1708,6 +1828,87 @@
               <span data-i18n="labelEmail">Email</span>
             </label>
             <input type="email" id="contactEmailInput" placeholder="orders@yourstore.com" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery, Payment & Privacy Policy (Footer Controls) -->
+      <div class="card">
+        <h2 class="card-title">
+          <span data-i18n="sectionFooterPolicies">Delivery, Payment &amp; Policy (Footer)</span>
+          <span style="display:inline-flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" id="footerResetBtn" class="btn btn-sm" data-i18n="btnFooterReset">↺ Restore</button>
+            <button type="button" id="footerDeleteAllBtn" class="btn btn-danger btn-sm" data-i18n="btnFooterDeleteAll">🗑️ Delete All</button>
+          </span>
+        </h2>
+
+        <div class="field-group">
+          <label class="field-label" data-i18n="labelFooterTheme">Footer Theme / Style</label>
+          <div class="segmented-row" id="footerThemeModeGroup">
+            <button type="button" class="btn btn-sm" data-footer-theme="auto" data-i18n="footerThemeAuto">Auto (Page Theme)</button>
+            <button type="button" class="btn btn-sm" data-footer-theme="accent" data-i18n="footerThemeAccent">Primary Card Color</button>
+            <button type="button" class="btn btn-sm" data-footer-theme="custom" data-i18n="footerThemeCustom">Custom Colors</button>
+          </div>
+          <div id="footerCustomColorRow" class="footer-custom-colors">
+            <label class="color-chip" for="footerBgColorInput">
+              <span data-i18n="footerBgColor">Background</span>
+              <input type="color" id="footerBgColorInput" value="#FFFFFF" />
+              <code id="footerBgColorHex">#FFFFFF</code>
+            </label>
+            <label class="color-chip" for="footerTextColorInput">
+              <span data-i18n="footerTextColor">Text</span>
+              <input type="color" id="footerTextColorInput" value="#000000" />
+              <code id="footerTextColorHex">#000000</code>
+            </label>
+          </div>
+        </div>
+
+        <div class="footer-items-stack">
+          <div class="contact-channel-card footer-control-card" id="fcCardTime">
+            <div class="footer-item-head">
+              <label class="contact-channel-toggle" for="fcShowTime">
+                <input type="checkbox" id="fcShowTime" checked />
+                <span>🚚 <span data-i18n="labelFcTime">Delivery Time</span></span>
+              </label>
+              <button type="button" id="fcDelTimeBtn" class="btn btn-danger btn-sm footer-del-btn" data-i18n="deleteBtn">Delete</button>
+            </div>
+            <input type="text" id="fcTimeText" maxlength="120" />
+          </div>
+
+          <div class="contact-channel-card footer-control-card" id="fcCardFree">
+            <div class="footer-item-head">
+              <label class="contact-channel-toggle" for="fcShowFree">
+                <input type="checkbox" id="fcShowFree" checked />
+                <span>🎁 <span data-i18n="labelFcFree">Free Shipping</span></span>
+              </label>
+              <button type="button" id="fcDelFreeBtn" class="btn btn-danger btn-sm footer-del-btn" data-i18n="deleteBtn">Delete</button>
+            </div>
+            <input type="text" id="fcFreeText" maxlength="120" />
+          </div>
+
+          <div class="contact-channel-card footer-control-card" id="fcCardCod">
+            <div class="footer-item-head">
+              <label class="contact-channel-toggle" for="fcShowCod">
+                <input type="checkbox" id="fcShowCod" checked />
+                <span>💵 <span data-i18n="labelFcCod">Cash on Delivery</span></span>
+              </label>
+              <button type="button" id="fcDelCodBtn" class="btn btn-danger btn-sm footer-del-btn" data-i18n="deleteBtn">Delete</button>
+            </div>
+            <input type="text" id="fcCodText" maxlength="120" />
+          </div>
+
+          <div class="contact-channel-card footer-control-card" id="fcCardPrivacy">
+            <div class="footer-item-head">
+              <label class="contact-channel-toggle" for="fcShowPrivacy">
+                <input type="checkbox" id="fcShowPrivacy" checked />
+                <span>🔒 <span data-i18n="labelFcPrivacy">Privacy Policy</span></span>
+              </label>
+              <button type="button" id="fcDelPrivacyBtn" class="btn btn-danger btn-sm footer-del-btn" data-i18n="deleteBtn">Delete</button>
+            </div>
+            <div class="field-group" style="margin-bottom:8px;">
+              <input type="text" id="fcPrivacyTitle" maxlength="120" />
+            </div>
+            <textarea id="fcPrivacyText" rows="3" maxlength="2000"></textarea>
           </div>
         </div>
       </div>
@@ -1867,7 +2068,7 @@
           labelProductName: "Product Name",
           phProductName: "Smart Wireless Earbuds",
           labelDescription: "Description",
-          phDescription: "Describe key benefits, features, and what makes this product worth ordering today.",
+          phDescription: "Product Overview, Key Features, Benefits, How to Use, and Ingredients/Contents...",
           labelPrice: "Price",
           labelCurrency: "Currency",
           sectionManageImages: "Manage Images",
@@ -1891,7 +2092,7 @@
           btnAddReview: "+ Add Review",
           sectionContact: "Contact Information",
           hintMultiContact: "Select one or more",
-          labelWebsite: "Website",
+          labelWebsite: "Store",
           labelWhatsapp: "WhatsApp",
           labelEmail: "Email",
           labelInstagram: "Instagram",
@@ -1944,6 +2145,8 @@
           phVideoUrl: "Paste YouTube or MP4 video URL...",
           btnInsertVideoUrl: "Insert",
           btnDescAi: "AI Description",
+          btnDescTemplate: "5-Part Template",
+          descTemplateText: "**📌 Product Overview:**\nWrite a detailed 2–3 sentence introduction explaining what this product is, its build quality, and why customers choose it every day.\n\n**✨ Key Features:**\n• Feature 1: Describe its primary build, design, or performance highlight.\n• Feature 2: Highlight smart usability, power, or ergonomics.\n• Feature 3: Explain durability, capacity, or material quality.\n• Feature 4: Add any standout bonus feature.\n\n**💡 Benefits:**\n• Benefit 1: Explain the clear everyday result for the customer.\n• Benefit 2: Highlight how it saves time, effort, or improves comfort.\n• Benefit 3: Emphasize reliable performance and lasting value.\n\n**📋 How to Use:**\n• Step 1: Explain preparation or setup in clear words.\n• Step 2: Describe normal daily usage step by step.\n• Step 3: Add a helpful care or maintenance tip.\n\n**🧪 Ingredients & Contents:**\n• Main ingredient or material 1 and its function.\n• Main ingredient or material 2 and quality standard.\n• Full items included inside the package.",
           aiSearching: "Analyzing product photo and searching the web...",
           aiDone: "Description generated from web research!",
           aiDoneSimilar: "Exact product not found — description generated from similar products!",
@@ -1951,7 +2154,20 @@
           aiSourcesLabel: "Web sources:",
           aiErrorGeneric: "Could not generate AI description. Please try again.",
           aiErrorQuota: "API quota reached (429). Check Settings > Secrets or try again shortly.",
-          aiErrorKey: "Gemini API key is missing or invalid in Settings > Secrets."
+          aiErrorKey: "Gemini API key is missing or invalid in Settings > Secrets.",
+          sectionFooterPolicies: "Delivery, Payment & Policy (Footer)",
+          btnFooterReset: "↺ Restore",
+          btnFooterDeleteAll: "🗑️ Delete All",
+          labelFooterTheme: "Footer Theme / Style",
+          footerThemeAuto: "Auto (Page Theme)",
+          footerThemeAccent: "Primary Card Color",
+          footerThemeCustom: "Custom Colors",
+          footerBgColor: "Background",
+          footerTextColor: "Text",
+          labelFcTime: "Delivery Time",
+          labelFcFree: "Free Shipping",
+          labelFcCod: "Cash on Delivery",
+          labelFcPrivacy: "Privacy Policy"
         },
         ar: {
           btnSaveHeader: "💾 حفظ الرابط",
@@ -1962,7 +2178,7 @@
           labelProductName: "اسم المنتج",
           phProductName: "سماعات لاسلكية ذكية",
           labelDescription: "وصف المنتج",
-          phDescription: "اكتب مميزات المنتج وفوائده التي تشجع الزبون على الطلب الآن.",
+          phDescription: "تعريف بالمنتج، المميزات، الفوائد، طريقة الاستعمال، والمكونات...",
           labelPrice: "الثمن",
           labelCurrency: "العملة",
           sectionManageImages: "إدارة الصور",
@@ -1986,9 +2202,9 @@
           btnAddReview: "+ إضافة رأي",
           sectionContact: "معلومات التواصل",
           hintMultiContact: "يمكنك تحديد أكثر من خيار",
-          labelWebsite: "الموقع الإلكتروني",
+          labelWebsite: "المتجر",
           labelWhatsapp: "الواتساب",
-          labelEmail: "البريد الإلكتروني",
+          labelEmail: "الإيميل",
           labelInstagram: "إنستغرام",
           sectionLinks: "الرابط المجاني",
           labelFreeLink: "الرابط المجاني",
@@ -2039,6 +2255,8 @@
           phVideoUrl: "الصق رابط يوتيوب أو رابط فيديو MP4...",
           btnInsertVideoUrl: "إدراج",
           btnDescAi: "توليد بالذكاء الاصطناعي",
+          btnDescTemplate: "قالب الوصف (5 أقسام)",
+          descTemplateText: "**📌 تعريف بالمنتج:**\nاكتب فقرة متكاملة من سطرين إلى ثلاثة أسطر توضح ما هو المنتج، جودة تصنيعه، ولمن صُمم بالتحديد.\n\n**✨ المميزات:**\n• الميزة الأولى: اشرح أبرز خاصية أو تقنية يتميز بها المنتج.\n• الميزة الثانية: وضّح جودة التصميم أو الأداء العملي.\n• الميزة الثالثة: اذكر المتانة أو السعة أو سهولة الاستخدام.\n• الميزة الرابعة: أضف أي ميزة إضافية تميّز المنتج عن غيره.\n\n**💡 الفوائد:**\n• الفائدة الأولى: النتيجة العملية التي يحصل عليها الزبون في يومه.\n• الفائدة الثانية: كيف يحل المنتج مشكلة حقيقية أو يوفر الوقت والجهد.\n• الفائدة الثالثة: راحة وأمان ونتائج ملموسة تدوم طويلاً.\n\n**📋 طريقة الاستعمال:**\n• الخطوة الأولى: شرح التحضير أو البداية بوضوح.\n• الخطوة الثانية: طريقة الاستعمال الصحيحة خطوة بخطوة.\n• الخطوة الثالثة: نصيحة عملية أو عناية للحصول على أفضل نتيجة.\n\n**🧪 المكونات:**\n• المكون أو المادة الأولى مع توضيح دورها أو جودتها.\n• المكون أو المادة الثانية وفق المواصفات الفعلية.\n• جميع القطع أو المحتويات المرفقة داخل العلبة.",
           aiSearching: "جاري تحليل صورة المنتج والبحث في الويب...",
           aiDone: "تم توليد الوصف الاحترافي بناءً على بحث الويب!",
           aiDoneSimilar: "لم يُعثر على نفس المنتج بالضبط — تم توليد الوصف من منتجات مشابهة له!",
@@ -2046,7 +2264,20 @@
           aiSourcesLabel: "مصادر الويب:",
           aiErrorGeneric: "تعذر توليد الوصف، يرجى المحاولة مرة أخرى.",
           aiErrorQuota: "تم تجاوز حصة مفتاح Gemini API الحالية. تأكد من الحصة أو اختر مفتاحاً مفعلاً في Settings > Secrets.",
-          aiErrorKey: "مفتاح Gemini API غير موجود أو غير صالح في Settings > Secrets."
+          aiErrorKey: "مفتاح Gemini API غير موجود أو غير صالح في Settings > Secrets.",
+          sectionFooterPolicies: "التوصيل والدفع والسياسة (أسفل الصفحة)",
+          btnFooterReset: "↺ استعادة الافتراضي",
+          btnFooterDeleteAll: "🗑️ مسح الكل",
+          labelFooterTheme: "ثيم وألوان أسفل الصفحة",
+          footerThemeAuto: "تلقائي (حسب الثيم)",
+          footerThemeAccent: "لون البطاقة الرئيسي",
+          footerThemeCustom: "ألوان مخصصة",
+          footerBgColor: "الخلفية",
+          footerTextColor: "لون النص",
+          labelFcTime: "مدة التوصيل",
+          labelFcFree: "التوصيل المجاني",
+          labelFcCod: "الدفع عند الاستلام",
+          labelFcPrivacy: "سياسة الخصوصية"
         },
         fr: {
           btnSaveHeader: "💾 Enregistrer le lien",
@@ -2057,7 +2288,7 @@
           labelProductName: "Nom du produit",
           phProductName: "Écouteurs Sans Fil Intelligents",
           labelDescription: "Description",
-          phDescription: "Décrivez les avantages et caractéristiques clés de votre produit.",
+          phDescription: "Présentation du produit, caractéristiques, avantages, mode d'emploi et ingrédients...",
           labelPrice: "Prix",
           labelCurrency: "Devise",
           sectionManageImages: "Gérer les images",
@@ -2081,7 +2312,7 @@
           btnAddReview: "+ Ajouter un avis",
           sectionContact: "Informations de contact",
           hintMultiContact: "Sélectionnez un ou plusieurs",
-          labelWebsite: "Site web",
+          labelWebsite: "Boutique",
           labelWhatsapp: "WhatsApp",
           labelEmail: "E-mail",
           labelInstagram: "Instagram",
@@ -2134,6 +2365,8 @@
           phVideoUrl: "Collez un lien YouTube ou MP4...",
           btnInsertVideoUrl: "Insérer",
           btnDescAi: "Générer par IA",
+          btnDescTemplate: "Modèle (5 sections)",
+          descTemplateText: "**📌 Présentation du produit :**\nRédigez une présentation complète de 2 à 3 phrases expliquant le produit, sa qualité et son utilité principale.\n\n**✨ Caractéristiques :**\n• Caractéristique 1 : détail sur la technologie ou la fabrication.\n• Caractéristique 2 : design ergonomique et performance.\n• Caractéristique 3 : robustesse, capacité ou autonomie.\n• Caractéristique 4 : atout supplémentaire notable.\n\n**💡 Avantages :**\n• Avantage 1 : résultat concret au quotidien pour le client.\n• Avantage 2 : gain de temps, de confort ou résolution d'un besoin.\n• Avantage 3 : fiabilité et satisfaction durable.\n\n**📋 Mode d'emploi :**\n• Étape 1 : préparation ou mise en marche claire.\n• Étape 2 : utilisation étape par étape.\n• Étape 3 : conseil pratique pour un résultat optimal.\n\n**🧪 Ingrédients et composition :**\n• Ingrédient ou matériau principal 1 et son rôle.\n• Ingrédient ou matériau 2 de haute qualité.\n• Contenu complet inclus dans le coffret.",
           aiSearching: "Analyse de la photo et recherche sur le web...",
           aiDone: "Description professionnelle générée depuis le web !",
           aiDoneSimilar: "Produit exact introuvable — description générée à partir de produits similaires !",
@@ -2141,7 +2374,20 @@
           aiSourcesLabel: "Sources web :",
           aiErrorGeneric: "Impossible de générer la description. Veuillez réessayer.",
           aiErrorQuota: "Quota API atteint (429). Vérifiez Settings > Secrets ou réessayez plus tard.",
-          aiErrorKey: "Clé Gemini API manquante ou invalide dans Settings > Secrets."
+          aiErrorKey: "Clé Gemini API manquante ou invalide dans Settings > Secrets.",
+          sectionFooterPolicies: "Livraison, paiement et confidentialité",
+          btnFooterReset: "↺ Restaurer",
+          btnFooterDeleteAll: "🗑️ Tout supprimer",
+          labelFooterTheme: "Thème du pied de page",
+          footerThemeAuto: "Auto (Thème de page)",
+          footerThemeAccent: "Couleur principale",
+          footerThemeCustom: "Couleurs personnalisées",
+          footerBgColor: "Arrière-plan",
+          footerTextColor: "Texte",
+          labelFcTime: "Délai de livraison",
+          labelFcFree: "Livraison gratuite",
+          labelFcCod: "Paiement à la livraison",
+          labelFcPrivacy: "Politique de confidentialité"
         }
       };
 
@@ -2150,10 +2396,12 @@
         en: {
           dir: "ltr",
           defaultProduct: "Smart Wireless Earbuds",
-          defaultDesc: "Premium sound clarity, active noise isolation, and all-day ergonomic comfort designed for daily use.",
-          deliveryTime: "Delivery within 24-48 Hour",
-          deliveryFree: "Free",
+          defaultDesc: "**📌 Product Overview:**\nHigh-precision smart wireless earbuds engineered to deliver studio-grade clarity, active noise isolation, and featherlight comfort from morning commute to evening workout.\n\n**✨ Key Features:**\n• Active Noise Isolation: Filters out busy street and office noise so every note and voice stays crystal clear.\n• Ergonomic Featherlight Fit: Contoured in-ear shape stays secure and comfortable during work, walking, or exercise.\n• Smart Touch Controls & Stable Connection: Instant auto-pairing with intuitive tap controls for tracks, volume, and calls.\n• Extended Battery & Fast Charging: All-day playback backed by a pocket-sized magnetic fast-charging case.\n\n**💡 Benefits:**\n• Stay deeply focused on calls, podcasts, and music without background distractions.\n• Enjoy hours of continuous wear with zero ear pressure or soreness.\n• Never worry about running low on battery while commuting or traveling.\n\n**📋 How to Use:**\n• Open the charging case near your phone and connect once via Bluetooth in seconds.\n• Tap once to play, pause, or answer calls; double-tap to skip tracks effortlessly.\n• Place the earbuds back in the magnetic case after use for automatic recharging.\n\n**🧪 Ingredients & Contents:**\n• Pair of high-definition wireless earbuds crafted from smooth matte ABS and soft skin-safe silicone.\n• Compact smart magnetic charging case with battery indicator.\n• Three sizes of soft silicone ear tips (S/M/L) plus a fast USB charging cable and user guide.",
+          deliveryTime: "Delivery within 24-48 Hours",
+          deliveryFree: "Free Shipping",
           deliveryCod: "Cash on Delivery",
+          privacyTitle: "Privacy Policy",
+          privacyText: "We respect your privacy. Your contact details (name, phone number, city, and address) are used strictly to confirm and deliver your order with Cash on Delivery and are never shared with third parties.",
           orderTitle: "Order the Product Now",
           orderBtn: "Order the Product Now",
           fieldFullName: "Full Name",
@@ -2163,7 +2411,7 @@
           fieldQty: "Quantity",
           reviewsTitle: "Our Customers' Reviews",
           contactTitle: "Contact Us",
-          websiteLabel: "Website",
+          websiteLabel: "Store",
           whatsappLabel: "WhatsApp",
           emailLabel: "Email",
           instagramLabel: "Instagram",
@@ -2178,10 +2426,12 @@
         ar: {
           dir: "rtl",
           defaultProduct: "سماعات لاسلكية ذكية",
-          defaultDesc: "جودة صوت نقية وعزل ممتاز للضوضاء مع تصميم مريح للاستخدام اليومي طوال اليوم.",
+          defaultDesc: "**📌 تعريف بالمنتج:**\nسماعات لاسلكية ذكية عالية الدقة، صُممت بعناية لتجمع بين نقاء الصوت الاحترافي، عزل الضوضاء المحيطة، والتصميم الخفيف المريح للاستخدام المكثف طوال اليوم في العمل والرياضة والسفر.\n\n**✨ المميزات:**\n• عزل فعّال للضوضاء: تقلل الأصوات المزعجة من حولك لتمنحك صوتاً نقياً وتفاصيل واضحة في المكالمات والموسيقى.\n• تصميم مريح وخفيف الوزن: تنسجم مع شكل الأذن بثبات تام دون التسبب بأي ضغط أو إزعاج.\n• تحكم ذكي باللمس واتصال فوري: اقتران تلقائي سريع عبر البلوتوث مع استجابة لمس دقيقة للمكالمات والمقاطع الصوتية.\n• بطارية تدوم طويلاً: ساعات طويلة من التشغيل المتواصل مع علبة شحن ذكية مدمجة تدعم الشحن السريع.\n\n**💡 الفوائد:**\n• استمتع بتركيز كامل أثناء المكالمات والعمل أو الاستماع لمحتواك المفضل في الأماكن المزدحمة.\n• راحة مستمرة لساعات طويلة دون آلام الأذن أو تشابك الأسلاك التقليدية.\n• حرية حركة تامة طوال اليوم سواء أثناء القيادة، التمارين الرياضية، أو التنقل.\n\n**📋 طريقة الاستعمال:**\n• افتح غطاء علبة الشحن بالقرب من هاتفك وسيظهر اسم السماعة فوراً للاقتران عبر البلوتوث.\n• المس السماعة نقرة واحدة للرد على المكالمات أو الإيقاف والتشغيل، ونقرتين للتبديل بين المقاطع.\n• أعد السماعتين إلى العلبة المغناطيسية بعد الانتهاء ليتم شحنهما وحمايتهما تلقائياً.\n\n**🧪 المكونات:**\n• سماعتان لاسلكيتان بهيكل متين وخفيف وسماعات داخلية عالية الحساسية.\n• علبة شحن ذكية محمولة ببطارية احتياطية مدمجة ومؤشر للشحن.\n• ثلاث مقاسات من وسادات السيليكون الطبية الناعمة للأذن + كابل شحن USB ودليل الاستخدام.",
           deliveryTime: "التوصيل خلال 24-48 ساعة",
-          deliveryFree: "مجاني",
+          deliveryFree: "التوصيل مجاني",
           deliveryCod: "الدفع عند الاستلام",
+          privacyTitle: "سياسة الخصوصية",
+          privacyText: "نحترم خصوصيتك بالكامل؛ يتم استخدام بياناتك (الاسم، رقم الهاتف، المدينة والعنوان) فقط لتأكيد طلبك وتوصيله عبر خدمة الدفع عند الاستلام، ولا تتم مشاركتها مع أي طرف ثالث.",
           orderTitle: "اطلب المنتج الآن",
           orderBtn: "اطلب المنتج الآن",
           fieldFullName: "الاسم الكامل",
@@ -2191,9 +2441,9 @@
           fieldQty: "الكمية",
           reviewsTitle: "آراء عملائنا",
           contactTitle: "تواصل معنا",
-          websiteLabel: "الموقع الإلكتروني",
-          whatsappLabel: "واتساب",
-          emailLabel: "البريد الإلكتروني",
+          websiteLabel: "المتجر",
+          whatsappLabel: "الواتساب",
+          emailLabel: "الإيميل",
           instagramLabel: "إنستغرام",
           orderSuccessPrefix: "شكراً لك! تم تسجيل طلبك بنجاح:",
           orderSuccessCod: "طريقة الدفع: الدفع عند الاستلام",
@@ -2206,10 +2456,12 @@
         fr: {
           dir: "ltr",
           defaultProduct: "Écouteurs Sans Fil Intelligents",
-          defaultDesc: "Clarté sonore exceptionnelle, réduction active du bruit et confort ergonomique pour toute la journée.",
+          defaultDesc: "**📌 Présentation du produit :**\nÉcouteurs sans fil de haute précision conçus pour offrir une clarté sonore exceptionnelle, une réduction active du bruit et un maintien ergonomique ultra-léger du matin jusqu'au soir.\n\n**✨ Caractéristiques :**\n• Réduction active du bruit : atténue les bruits ambiants pour des appels clairs et un son pur.\n• Ergonomie légère et stable : épouse naturellement l'oreille sans gêne, même en mouvement.\n• Commandes tactiles et connexion rapide : appairage Bluetooth instantané dès l'ouverture du boîtier.\n• Grande autonomie : plusieurs heures d'écoute continue avec boîtier de charge rapide compact.\n\n**💡 Avantages :**\n• Restez parfaitement concentré au travail, dans les transports ou pendant vos séances de sport.\n• Confort durable sans pression ni fatigue auditive après plusieurs heures d'utilisation.\n• Liberté totale sans câbles encombrants et recharge facile où que vous soyez.\n\n**📋 Mode d'emploi :**\n• Ouvrez le boîtier à proximité de votre téléphone pour connecter automatiquement les écouteurs en Bluetooth.\n• Touchez une fois pour répondre aux appels ou mettre en pause, deux fois pour changer de piste.\n• Replacez les écouteurs dans leur boîtier magnétique après usage pour une recharge automatique.\n\n**🧪 Ingrédients et composition :**\n• Paire d'écouteurs sans fil haute définition fabriqués en matériaux durables et légers.\n• Boîtier de charge magnétique portable avec indicateur de batterie.\n• Trois tailles d'embouts en silicone doux (S/M/L), câble USB de charge rapide et notice.",
           deliveryTime: "Livraison sous 24 à 48 heures",
-          deliveryFree: "Gratuit",
+          deliveryFree: "Livraison Gratuite",
           deliveryCod: "Paiement à la livraison",
+          privacyTitle: "Politique de confidentialité",
+          privacyText: "Nous respectons votre vie privée. Vos coordonnées (nom, téléphone, ville et adresse) sont utilisées uniquement pour confirmer et livrer votre commande avec paiement à la livraison, et ne sont jamais partagées avec des tiers.",
           orderTitle: "Commander le produit maintenant",
           orderBtn: "Commander le produit maintenant",
           fieldFullName: "Nom complet",
@@ -2219,7 +2471,7 @@
           fieldQty: "Quantité",
           reviewsTitle: "Avis de nos clients",
           contactTitle: "Contactez-nous",
-          websiteLabel: "Site web",
+          websiteLabel: "Boutique",
           whatsappLabel: "WhatsApp",
           emailLabel: "E-mail",
           instagramLabel: "Instagram",
@@ -2614,6 +2866,20 @@
           instagram: true,
           email: true
         },
+        footerConfig: {
+          showDeliveryTime: true,
+          showDeliveryFree: true,
+          showDeliveryCod: true,
+          deliveryTimeText: "",
+          deliveryFreeText: "",
+          deliveryCodText: "",
+          showPrivacy: true,
+          privacyTitle: "",
+          privacyText: "",
+          themeMode: "auto",
+          bgColor: "#FFFFFF",
+          textColor: "#000000"
+        },
         domain: "https://mystore.com",
         slug: "",
         previewDevice: "computer",
@@ -2654,6 +2920,7 @@
       var productNameInput = document.getElementById("productNameInput");
       var productDescEditor = document.getElementById("productDescEditor");
       var descAiBtn = document.getElementById("descAiBtn");
+      var descTemplateBtn = document.getElementById("descTemplateBtn");
       var descAiStatusBox = document.getElementById("descAiStatusBox");
       var descAiImageInput = document.getElementById("descAiImageInput");
       var descBoldBtn = document.getElementById("descBoldBtn");
@@ -2701,6 +2968,32 @@
       var contactWhatsappInput = document.getElementById("contactWhatsappInput");
       var contactEmailInput = document.getElementById("contactEmailInput");
       var contactInstagramInput = document.getElementById("contactInstagramInput");
+
+      var footerResetBtn = document.getElementById("footerResetBtn");
+      var footerDeleteAllBtn = document.getElementById("footerDeleteAllBtn");
+      var footerThemeModeGroup = document.getElementById("footerThemeModeGroup");
+      var footerCustomColorRow = document.getElementById("footerCustomColorRow");
+      var footerBgColorInput = document.getElementById("footerBgColorInput");
+      var footerBgColorHex = document.getElementById("footerBgColorHex");
+      var footerTextColorInput = document.getElementById("footerTextColorInput");
+      var footerTextColorHex = document.getElementById("footerTextColorHex");
+      var fcCardTime = document.getElementById("fcCardTime");
+      var fcCardFree = document.getElementById("fcCardFree");
+      var fcCardCod = document.getElementById("fcCardCod");
+      var fcCardPrivacy = document.getElementById("fcCardPrivacy");
+      var fcShowTime = document.getElementById("fcShowTime");
+      var fcShowFree = document.getElementById("fcShowFree");
+      var fcShowCod = document.getElementById("fcShowCod");
+      var fcShowPrivacy = document.getElementById("fcShowPrivacy");
+      var fcTimeText = document.getElementById("fcTimeText");
+      var fcFreeText = document.getElementById("fcFreeText");
+      var fcCodText = document.getElementById("fcCodText");
+      var fcPrivacyTitle = document.getElementById("fcPrivacyTitle");
+      var fcPrivacyText = document.getElementById("fcPrivacyText");
+      var fcDelTimeBtn = document.getElementById("fcDelTimeBtn");
+      var fcDelFreeBtn = document.getElementById("fcDelFreeBtn");
+      var fcDelCodBtn = document.getElementById("fcDelCodBtn");
+      var fcDelPrivacyBtn = document.getElementById("fcDelPrivacyBtn");
 
       var freeAdLinkInput = document.getElementById("freeAdLinkInput");
       var copyFreeLinkBtn = document.getElementById("copyFreeLinkBtn");
@@ -2856,10 +3149,10 @@
         var hasMedia = tmp.querySelector("img,video,iframe") !== null;
         if (!hasText && !hasMedia) {
           var plain = (state.description || "").trim();
-          if (plain) {
-            return escapeHtml(plain).replace(/\n/g, "<br>");
-          }
-          return escapeHtml(LP_I18N[state.lang].defaultDesc);
+          var fallbackText = plain || LP_I18N[state.lang].defaultDesc;
+          return escapeHtml(fallbackText)
+            .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+            .replace(/\n/g, "<br>");
         }
         var mediaNodes = tmp.querySelectorAll("img,video,iframe");
         for (var i = 0; i < mediaNodes.length; i++) {
@@ -3163,20 +3456,26 @@
 
         var contactHtml = "";
         if (websiteHref || whatsappHref || email || instagramHandle) {
+          var contactBtnStyle = "color:" + th.footerLink + ";border-color:" + th.footerBorder + ";background:" + th.formBg + ";";
+          var waIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
+          var mailIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>';
+          var igIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>';
+          var storeIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>';
+
           contactHtml += '<footer class="lp-contact-footer" style="border-top:1px solid ' + th.footerBorder + ';color:' + th.footerText + ';">';
           contactHtml += '<h2 class="lp-section-title" style="font-size:17px;color:' + th.footerHeadingColor + ';">' + escapeHtml(lp.contactTitle) + "</h2>";
           contactHtml += '<div class="lp-contact-items" style="color:' + th.footerText + ';">';
-          if (websiteHref) {
-            contactHtml += '<span>' + escapeHtml(lp.websiteLabel) + ': <a style="color:' + th.footerLink + ';text-decoration:none;" href="' + escapeHtml(websiteHref) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(websiteDisplay || websiteHref) + "</a></span>";
-          }
           if (whatsappHref) {
-            contactHtml += '<span>' + escapeHtml(lp.whatsappLabel) + ': <a style="color:' + th.footerLink + ';text-decoration:none;" href="' + escapeHtml(whatsappHref) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(whatsappRaw) + "</a></span>";
-          }
-          if (instagramHandle) {
-            contactHtml += '<span>' + escapeHtml(lp.instagramLabel) + ': <a style="color:' + th.footerLink + ';text-decoration:none;" href="' + escapeHtml(instagramHref) + '" target="_blank" rel="noopener noreferrer">@' + escapeHtml(instagramHandle) + "</a></span>";
+            contactHtml += '<a class="lp-contact-link" style="' + contactBtnStyle + '" href="' + escapeHtml(whatsappHref) + '" target="_blank" rel="noopener noreferrer">' + waIcon + "<span>" + escapeHtml(lp.whatsappLabel) + "</span></a>";
           }
           if (email) {
-            contactHtml += '<span>' + escapeHtml(lp.emailLabel) + ': <a style="color:' + th.footerLink + ';text-decoration:none;" href="mailto:' + escapeHtml(email) + '">' + escapeHtml(email) + "</a></span>";
+            contactHtml += '<a class="lp-contact-link" style="' + contactBtnStyle + '" href="mailto:' + escapeHtml(email) + '">' + mailIcon + "<span>" + escapeHtml(lp.emailLabel) + "</span></a>";
+          }
+          if (instagramHandle) {
+            contactHtml += '<a class="lp-contact-link" style="' + contactBtnStyle + '" href="' + escapeHtml(instagramHref) + '" target="_blank" rel="noopener noreferrer">' + igIcon + "<span>" + escapeHtml(lp.instagramLabel) + "</span></a>";
+          }
+          if (websiteHref) {
+            contactHtml += '<a class="lp-contact-link" style="' + contactBtnStyle + '" href="' + escapeHtml(websiteHref) + '" target="_blank" rel="noopener noreferrer">' + storeIcon + "<span>" + escapeHtml(lp.websiteLabel) + "</span></a>";
           }
           contactHtml += "</div></footer>";
         }
@@ -3185,7 +3484,45 @@
         var msgIdAttr = isExport ? "lpExportOrderConfirm" : "lpPreviewOrderConfirm";
         var orderBoxIdAttr = isExport ? "lpExportOrderBox" : "lpPreviewOrderBox";
         var inputStyle = "background:" + th.inputBg + ";border:1px solid " + th.inputBorder + ";color:" + th.formText + ";";
-        var deliveryStyle = "background:" + th.deliveryBg + ";border:" + th.deliveryBorder + ";color:" + th.deliveryColor + ";";
+        var fc = state.footerConfig || {
+          showDeliveryTime: true,
+          showDeliveryFree: true,
+          showDeliveryCod: true,
+          deliveryTimeText: "",
+          deliveryFreeText: "",
+          deliveryCodText: "",
+          showPrivacy: true,
+          privacyTitle: "",
+          privacyText: "",
+          themeMode: "auto",
+          bgColor: "#FFFFFF",
+          textColor: "#000000"
+        };
+
+        var boxBg = th.formBg;
+        var boxBorder = "1px solid " + th.formBorder;
+        var boxText = th.formText;
+        var boxHeading = th.footerHeadingColor;
+
+        if (fc.themeMode === "accent") {
+          boxBg = th.cardBg;
+          boxBorder = th.cardBorder !== "none" ? th.cardBorder : "none";
+          boxText = th.productNameColor;
+          boxHeading = th.productNameColor;
+        } else if (fc.themeMode === "custom") {
+          if (isValidHexColor(fc.bgColor)) {
+            boxBg = fc.bgColor.toUpperCase();
+          }
+          if (isValidHexColor(fc.textColor)) {
+            boxText = fc.textColor.toUpperCase();
+            boxHeading = boxText;
+          } else if (isValidHexColor(fc.bgColor)) {
+            boxText = getContrastTextColor(boxBg);
+            boxHeading = boxText;
+          }
+        }
+
+        var deliveryStyle = "background:" + boxBg + ";border:" + boxBorder + ";color:" + boxText + ";";
         var deliveryClass = isMinimal ? "lp-delivery-box is-pill" : "lp-delivery-box";
         var cardExtraStyle = isBlackGold ? "box-shadow:inset 0 0 0 4px #111111,inset 0 0 0 5px rgba(212,175,55,0.35);" : "";
 
@@ -3193,12 +3530,39 @@
           ? '<div class="lp-ornament"><svg width="180" height="16" viewBox="0 0 180 16" fill="none" aria-hidden="true"><line x1="0" y1="8" x2="72" y2="8" stroke="#D4AF37" stroke-width="1" stroke-opacity="0.6"/><path d="M90 2l5 6-5 6-5-6 5-6z" fill="#D4AF37"/><line x1="108" y1="8" x2="180" y2="8" stroke="#D4AF37" stroke-width="1" stroke-opacity="0.6"/></svg></div>'
           : "";
 
-        var deliveryGridHtml =
-          '<div class="lp-delivery-grid">' +
-            '<div class="' + deliveryClass + '" style="' + deliveryStyle + '">🚚<span class="lp-delivery-label" style="color:' + th.deliveryColor + ';">' + escapeHtml(lp.deliveryTime) + "</span></div>" +
-            '<div class="' + deliveryClass + '" style="' + deliveryStyle + '">🎁<span class="lp-delivery-label" style="color:' + th.deliveryColor + ';">' + escapeHtml(lp.deliveryFree) + "</span></div>" +
-            '<div class="' + deliveryClass + '" style="' + deliveryStyle + '">💵<span class="lp-delivery-label" style="color:' + th.deliveryColor + ';">' + escapeHtml(lp.deliveryCod) + "</span></div>" +
-          "</div>";
+        var deliveryBoxes = [];
+        if (fc.showDeliveryTime !== false) {
+          var lblTime = (fc.deliveryTimeText || "").trim() || lp.deliveryTime;
+          deliveryBoxes.push('<div class="' + deliveryClass + '" style="' + deliveryStyle + '">🚚<span class="lp-delivery-label" style="color:' + boxText + ';">' + escapeHtml(lblTime) + "</span></div>");
+        }
+        if (fc.showDeliveryFree !== false) {
+          var lblFree = (fc.deliveryFreeText || "").trim() || lp.deliveryFree;
+          deliveryBoxes.push('<div class="' + deliveryClass + '" style="' + deliveryStyle + '">🎁<span class="lp-delivery-label" style="color:' + boxText + ';">' + escapeHtml(lblFree) + "</span></div>");
+        }
+        if (fc.showDeliveryCod !== false) {
+          var lblCod = (fc.deliveryCodText || "").trim() || lp.deliveryCod;
+          deliveryBoxes.push('<div class="' + deliveryClass + '" style="' + deliveryStyle + '">💵<span class="lp-delivery-label" style="color:' + boxText + ';">' + escapeHtml(lblCod) + "</span></div>");
+        }
+
+        var deliveryGridHtml = deliveryBoxes.length > 0
+          ? '<div class="lp-delivery-grid cols-' + deliveryBoxes.length + '">' + deliveryBoxes.join("") + "</div>"
+          : "";
+
+        var privacyTitleOut = (fc.privacyTitle || "").trim() || lp.privacyTitle;
+        var privacyTextOut = (fc.privacyText || "").trim() || lp.privacyText;
+        var privacyHtml = fc.showPrivacy !== false
+          ? '<div class="lp-privacy-box" style="background:' + boxBg + ';border:' + boxBorder + ';color:' + boxText + ';">' +
+              '<h3 class="lp-privacy-title" style="color:' + boxHeading + ';">🔒 ' + escapeHtml(privacyTitleOut) + "</h3>" +
+              '<p class="lp-privacy-text" style="color:' + boxText + ';">' + escapeHtml(privacyTextOut).replace(/\n/g, "<br>") + "</p>" +
+            "</div>"
+          : "";
+
+        var bottomPoliciesHtml = (deliveryGridHtml || privacyHtml)
+          ? '<footer class="lp-bottom-policies" style="border-top:1px solid ' + th.footerBorder + ';color:' + th.footerText + ';">' +
+              deliveryGridHtml +
+              privacyHtml +
+            "</footer>"
+          : "";
 
         var mainProductSectionHtml = "";
         if (isGradientTheme) {
@@ -3206,7 +3570,6 @@
             '<div class="lp-product-card" style="background:' + th.cardBg + ';border:' + th.cardBorder + ';text-shadow:' + th.cardTextShadow + ';">' +
               '<h1 class="lp-title" style="font-size:' + titlePx + 'px;color:' + th.productNameColor + ';font-weight:900;">' + escapeHtml(productName) + "</h1>" +
               '<div class="lp-price-text" style="font-size:' + pricePx + 'px;color:' + th.priceColor + ';font-weight:900;">' + escapeHtml(priceText) + "</div>" +
-              deliveryGridHtml +
             "</div>" +
             '<div class="lp-showcase-card" style="background:' + th.showcaseBg + ';border:1px solid ' + th.formBorder + ';color:' + th.descColor + ';">' +
               galleryHtml +
@@ -3218,7 +3581,6 @@
               galleryHtml +
               '<h1 class="lp-title" style="font-size:' + titlePx + 'px;color:' + th.productNameColor + ';font-weight:900;">' + escapeHtml(productName) + "</h1>" +
               '<div class="lp-price-text" style="font-size:' + pricePx + 'px;color:' + th.priceColor + ';font-weight:900;">' + escapeHtml(priceText) + "</div>" +
-              deliveryGridHtml +
             "</div>" +
             '<div class="lp-desc" style="font-size:' + descPx + 'px;color:' + th.descColor + ';">' + descHtmlContent + "</div>";
         }
@@ -3247,6 +3609,7 @@
               "</section>" +
               reviewsHtml +
               contactHtml +
+              bottomPoliciesHtml +
             "</div>" +
           "</div>"
         );
@@ -3261,8 +3624,8 @@
         var exportCss =
           "*{box-sizing:border-box}" +
           "html{scroll-behavior:smooth}" +
-          "body{margin:0;padding:0;background:" + th.pageBg + ";color:" + th.descColor + ";font-family:'Cairo',system-ui,-apple-system,'Segoe UI',Roboto,Tahoma,Arial,sans-serif;font-weight:700;line-height:1.85;-webkit-font-smoothing:antialiased}" +
-          ".lp-doc{min-height:100vh}" +
+          "body{margin:0;padding:0;overflow-x:hidden;background:" + th.pageBg + ";color:" + th.descColor + ";font-family:'Cairo',system-ui,-apple-system,'Segoe UI',Roboto,Tahoma,Arial,sans-serif;font-weight:700;line-height:1.85;-webkit-font-smoothing:antialiased}" +
+          ".lp-doc{min-height:100vh;overflow-x:hidden}" +
           ".lp-header{padding:14px 18px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:900;font-size:18px}" +
           ".lp-ornament{display:flex;justify-content:center;padding:12px 18px 0}" +
           ".lp-container{max-width:760px;margin:0 auto;padding:22px 18px 42px}" +
@@ -3273,14 +3636,17 @@
           ".lp-center{text-align:center}" +
           ".lp-gallery{display:flex;flex-direction:column;align-items:center;gap:14px;margin:12px 0 16px}" +
           ".lp-gallery img{display:block;height:auto;border-radius:12px;object-fit:cover}" +
-          ".lp-desc{line-height:1.9;margin:0 0 18px 0;font-weight:700;white-space:normal;word-break:break-word;text-align:center}" +
+          ".lp-desc{line-height:1.9;margin:0 0 18px 0;font-weight:700;white-space:normal;word-break:break-word;text-align:start}" +
           ".lp-desc strong,.lp-desc b{font-weight:900}" +
           ".lp-desc p,.lp-desc div{margin:0 0 10px 0}" +
           ".lp-desc ul,.lp-desc ol{margin:8px 0 12px 0;padding:0 18px;list-style-position:inside;text-align:inherit}" +
           ".lp-desc li{margin-bottom:5px;text-align:inherit}" +
           ".lp-desc img,.lp-desc video{display:block;max-width:100%;height:auto;border-radius:12px;margin:12px auto}" +
           ".lp-desc iframe{display:block;max-width:100%;aspect-ratio:16/9;height:auto;border-radius:12px;margin:12px auto}" +
-          ".lp-delivery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}" +
+          ".lp-delivery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 14px 0}" +
+          ".lp-delivery-grid.cols-1{grid-template-columns:1fr}" +
+          ".lp-delivery-grid.cols-2{grid-template-columns:repeat(2,1fr)}" +
+          ".lp-delivery-grid.cols-3{grid-template-columns:repeat(3,1fr)}" +
           ".lp-delivery-box{border-radius:10px;padding:12px 10px;text-align:center}" +
           ".lp-delivery-box.is-pill{border-radius:999px;padding:9px 10px}" +
           ".lp-delivery-label{font-size:14px;font-weight:900;display:block;margin-top:4px}" +
@@ -3300,8 +3666,14 @@
           ".lp-review-author{font-weight:900;font-size:15px}" +
           ".lp-review-body{margin:5px 0 0 0;font-size:16px;font-weight:700;line-height:1.75}" +
           ".lp-contact-footer{padding-top:18px;text-align:center}" +
-          ".lp-contact-items{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;font-size:16px;font-weight:800}" +
-          "@media(max-width:640px){.lp-delivery-grid{grid-template-columns:1fr}}";
+          ".lp-contact-items{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;font-size:15px;font-weight:800}" +
+          ".lp-contact-link{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:999px;border:1px solid #e5e7eb;text-decoration:none;font-weight:800;line-height:1.3;transition:transform 0.15s ease,opacity 0.15s ease}" +
+          ".lp-contact-link:hover{opacity:0.86;transform:translateY(-1px);text-decoration:none}" +
+          ".lp-bottom-policies{margin-top:22px;padding-top:18px}" +
+          ".lp-privacy-box{border-radius:12px;padding:14px 16px;text-align:center}" +
+          ".lp-privacy-title{margin:0 0 6px 0;font-size:16px;font-weight:900}" +
+          ".lp-privacy-text{margin:0;font-size:13.5px;font-weight:700;line-height:1.75;opacity:0.92}" +
+          "@media(max-width:640px){.lp-delivery-grid,.lp-delivery-grid.cols-2,.lp-delivery-grid.cols-3{grid-template-columns:1fr}}";
 
         var orderHandlerScript =
           "(function(){" +
@@ -3569,7 +3941,8 @@
           website: state.website || "",
           whatsapp: state.whatsapp || "",
           instagram: state.instagram || "",
-          email: state.email || ""
+          email: state.email || "",
+          footerConfig: state.footerConfig
         };
       }
 
@@ -3750,6 +4123,7 @@
 
         builderStatusBadge.textContent = builderStatusBadge.classList.contains("updating") ? t.updating : t.ready;
         syncFreeAdLinkUI();
+        syncFooterConfigUI();
         updateControlActiveStates();
         renderImageManager();
         renderReviewsEditor();
@@ -3940,6 +4314,38 @@
             whatsapp: Boolean(data.enabledContacts.whatsapp),
             instagram: data.enabledContacts.instagram !== false,
             email: data.enabledContacts.email !== false
+          };
+        }
+        if (data.footerConfig && typeof data.footerConfig === "object") {
+          var fc = data.footerConfig;
+          state.footerConfig = {
+            showDeliveryTime: fc.showDeliveryTime !== false,
+            showDeliveryFree: fc.showDeliveryFree !== false,
+            showDeliveryCod: fc.showDeliveryCod !== false,
+            deliveryTimeText: typeof fc.deliveryTimeText === "string" ? fc.deliveryTimeText : "",
+            deliveryFreeText: typeof fc.deliveryFreeText === "string" ? fc.deliveryFreeText : "",
+            deliveryCodText: typeof fc.deliveryCodText === "string" ? fc.deliveryCodText : "",
+            showPrivacy: fc.showPrivacy !== false,
+            privacyTitle: typeof fc.privacyTitle === "string" ? fc.privacyTitle : "",
+            privacyText: typeof fc.privacyText === "string" ? fc.privacyText : "",
+            themeMode: (fc.themeMode === "accent" || fc.themeMode === "custom") ? fc.themeMode : "auto",
+            bgColor: isValidHexColor(fc.bgColor) ? fc.bgColor.toUpperCase() : "#FFFFFF",
+            textColor: isValidHexColor(fc.textColor) ? fc.textColor.toUpperCase() : "#000000"
+          };
+        } else {
+          state.footerConfig = {
+            showDeliveryTime: true,
+            showDeliveryFree: true,
+            showDeliveryCod: true,
+            deliveryTimeText: "",
+            deliveryFreeText: "",
+            deliveryCodText: "",
+            showPrivacy: true,
+            privacyTitle: "",
+            privacyText: "",
+            themeMode: "auto",
+            bgColor: "#FFFFFF",
+            textColor: "#000000"
           };
         }
         state.slug = slug;
@@ -4846,6 +5252,22 @@
           });
       }
 
+      descTemplateBtn.addEventListener("click", function () {
+        var t = BUILDER_I18N[state.lang];
+        var frag = buildRichFragmentFromAiText(t.descTemplateText || "");
+        var existingText = (productDescEditor.textContent || "").trim();
+        var existingMedia = productDescEditor.querySelector("img,video,iframe") !== null;
+        if (!existingText && !existingMedia) {
+          productDescEditor.innerHTML = "";
+        } else {
+          productDescEditor.appendChild(document.createElement("br"));
+          productDescEditor.appendChild(document.createElement("br"));
+        }
+        productDescEditor.appendChild(frag);
+        syncDescriptionFromEditor(false);
+        productDescEditor.focus();
+      });
+
       descAiBtn.addEventListener("click", function () {
         if (descAiBtn.disabled) return;
         var existingImage = findProductImageForAi();
@@ -5063,6 +5485,202 @@
           state.enabledContacts.instagram = true;
           syncContactChannelCards();
         }
+        scheduleRebuild();
+      });
+
+      function syncFooterConfigUI() {
+        var fc = state.footerConfig;
+        var lp = LP_I18N[state.lang];
+
+        fcShowTime.checked = fc.showDeliveryTime !== false;
+        fcShowFree.checked = fc.showDeliveryFree !== false;
+        fcShowCod.checked = fc.showDeliveryCod !== false;
+        fcShowPrivacy.checked = fc.showPrivacy !== false;
+
+        fcCardTime.classList.toggle("active", fcShowTime.checked);
+        fcCardFree.classList.toggle("active", fcShowFree.checked);
+        fcCardCod.classList.toggle("active", fcShowCod.checked);
+        fcCardPrivacy.classList.toggle("active", fcShowPrivacy.checked);
+
+        fcTimeText.value = fc.deliveryTimeText || "";
+        fcFreeText.value = fc.deliveryFreeText || "";
+        fcCodText.value = fc.deliveryCodText || "";
+        fcPrivacyTitle.value = fc.privacyTitle || "";
+        fcPrivacyText.value = fc.privacyText || "";
+
+        fcTimeText.placeholder = lp.deliveryTime;
+        fcFreeText.placeholder = lp.deliveryFree;
+        fcCodText.placeholder = lp.deliveryCod;
+        fcPrivacyTitle.placeholder = lp.privacyTitle;
+        fcPrivacyText.placeholder = lp.privacyText;
+
+        var modeBtns = footerThemeModeGroup.querySelectorAll("button[data-footer-theme]");
+        for (var i = 0; i < modeBtns.length; i++) {
+          var mb = modeBtns[i];
+          if (mb.getAttribute("data-footer-theme") === fc.themeMode) {
+            mb.classList.add("btn-active");
+          } else {
+            mb.classList.remove("btn-active");
+          }
+        }
+
+        footerCustomColorRow.classList.toggle("open", fc.themeMode === "custom");
+        var bgHex = isValidHexColor(fc.bgColor) ? fc.bgColor.toUpperCase() : "#FFFFFF";
+        var txtHex = isValidHexColor(fc.textColor) ? fc.textColor.toUpperCase() : "#000000";
+        footerBgColorInput.value = bgHex;
+        footerBgColorHex.textContent = bgHex;
+        footerTextColorInput.value = txtHex;
+        footerTextColorHex.textContent = txtHex;
+      }
+
+      fcShowTime.addEventListener("change", function () {
+        state.footerConfig.showDeliveryTime = fcShowTime.checked;
+        syncFooterConfigUI();
+        scheduleRebuild();
+      });
+
+      fcShowFree.addEventListener("change", function () {
+        state.footerConfig.showDeliveryFree = fcShowFree.checked;
+        syncFooterConfigUI();
+        scheduleRebuild();
+      });
+
+      fcShowCod.addEventListener("change", function () {
+        state.footerConfig.showDeliveryCod = fcShowCod.checked;
+        syncFooterConfigUI();
+        scheduleRebuild();
+      });
+
+      fcShowPrivacy.addEventListener("change", function () {
+        state.footerConfig.showPrivacy = fcShowPrivacy.checked;
+        syncFooterConfigUI();
+        scheduleRebuild();
+      });
+
+      fcTimeText.addEventListener("input", function () {
+        state.footerConfig.deliveryTimeText = fcTimeText.value;
+        if (fcTimeText.value.trim() && state.footerConfig.showDeliveryTime === false) {
+          state.footerConfig.showDeliveryTime = true;
+          syncFooterConfigUI();
+        }
+        scheduleRebuild();
+      });
+
+      fcFreeText.addEventListener("input", function () {
+        state.footerConfig.deliveryFreeText = fcFreeText.value;
+        if (fcFreeText.value.trim() && state.footerConfig.showDeliveryFree === false) {
+          state.footerConfig.showDeliveryFree = true;
+          syncFooterConfigUI();
+        }
+        scheduleRebuild();
+      });
+
+      fcCodText.addEventListener("input", function () {
+        state.footerConfig.deliveryCodText = fcCodText.value;
+        if (fcCodText.value.trim() && state.footerConfig.showDeliveryCod === false) {
+          state.footerConfig.showDeliveryCod = true;
+          syncFooterConfigUI();
+        }
+        scheduleRebuild();
+      });
+
+      fcPrivacyTitle.addEventListener("input", function () {
+        state.footerConfig.privacyTitle = fcPrivacyTitle.value;
+        if (fcPrivacyTitle.value.trim() && state.footerConfig.showPrivacy === false) {
+          state.footerConfig.showPrivacy = true;
+          syncFooterConfigUI();
+        }
+        scheduleRebuild();
+      });
+
+      fcPrivacyText.addEventListener("input", function () {
+        state.footerConfig.privacyText = fcPrivacyText.value;
+        if (fcPrivacyText.value.trim() && state.footerConfig.showPrivacy === false) {
+          state.footerConfig.showPrivacy = true;
+          syncFooterConfigUI();
+        }
+        scheduleRebuild();
+      });
+
+      fcDelTimeBtn.addEventListener("click", function () {
+        state.footerConfig.showDeliveryTime = false;
+        state.footerConfig.deliveryTimeText = "";
+        syncFooterConfigUI();
+        scheduleRebuild();
+      });
+
+      fcDelFreeBtn.addEventListener("click", function () {
+        state.footerConfig.showDeliveryFree = false;
+        state.footerConfig.deliveryFreeText = "";
+        syncFooterConfigUI();
+        scheduleRebuild();
+      });
+
+      fcDelCodBtn.addEventListener("click", function () {
+        state.footerConfig.showDeliveryCod = false;
+        state.footerConfig.deliveryCodText = "";
+        syncFooterConfigUI();
+        scheduleRebuild();
+      });
+
+      fcDelPrivacyBtn.addEventListener("click", function () {
+        state.footerConfig.showPrivacy = false;
+        state.footerConfig.privacyTitle = "";
+        state.footerConfig.privacyText = "";
+        syncFooterConfigUI();
+        scheduleRebuild();
+      });
+
+      footerThemeModeGroup.addEventListener("click", function (e) {
+        var target = e.target;
+        if (!(target instanceof HTMLElement)) return;
+        var mode = target.getAttribute("data-footer-theme");
+        if (mode === "auto" || mode === "accent" || mode === "custom") {
+          state.footerConfig.themeMode = mode;
+          syncFooterConfigUI();
+          scheduleRebuild();
+        }
+      });
+
+      footerBgColorInput.addEventListener("input", function () {
+        state.footerConfig.themeMode = "custom";
+        state.footerConfig.bgColor = footerBgColorInput.value.toUpperCase();
+        syncFooterConfigUI();
+        scheduleRebuild();
+      });
+
+      footerTextColorInput.addEventListener("input", function () {
+        state.footerConfig.themeMode = "custom";
+        state.footerConfig.textColor = footerTextColorInput.value.toUpperCase();
+        syncFooterConfigUI();
+        scheduleRebuild();
+      });
+
+      footerDeleteAllBtn.addEventListener("click", function () {
+        state.footerConfig.showDeliveryTime = false;
+        state.footerConfig.showDeliveryFree = false;
+        state.footerConfig.showDeliveryCod = false;
+        state.footerConfig.showPrivacy = false;
+        syncFooterConfigUI();
+        scheduleRebuild();
+      });
+
+      footerResetBtn.addEventListener("click", function () {
+        state.footerConfig = {
+          showDeliveryTime: true,
+          showDeliveryFree: true,
+          showDeliveryCod: true,
+          deliveryTimeText: "",
+          deliveryFreeText: "",
+          deliveryCodText: "",
+          showPrivacy: true,
+          privacyTitle: "",
+          privacyText: "",
+          themeMode: "auto",
+          bgColor: "#FFFFFF",
+          textColor: "#000000"
+        };
+        syncFooterConfigUI();
         scheduleRebuild();
       });
 
@@ -5334,6 +5952,23 @@
                   whatsapp: Boolean(parsed.enabledContacts.whatsapp),
                   instagram: parsed.enabledContacts.instagram !== false,
                   email: parsed.enabledContacts.email !== false
+                };
+              }
+              if (parsed.footerConfig && typeof parsed.footerConfig === "object") {
+                var pfc = parsed.footerConfig;
+                state.footerConfig = {
+                  showDeliveryTime: pfc.showDeliveryTime !== false,
+                  showDeliveryFree: pfc.showDeliveryFree !== false,
+                  showDeliveryCod: pfc.showDeliveryCod !== false,
+                  deliveryTimeText: typeof pfc.deliveryTimeText === "string" ? pfc.deliveryTimeText : "",
+                  deliveryFreeText: typeof pfc.deliveryFreeText === "string" ? pfc.deliveryFreeText : "",
+                  deliveryCodText: typeof pfc.deliveryCodText === "string" ? pfc.deliveryCodText : "",
+                  showPrivacy: pfc.showPrivacy !== false,
+                  privacyTitle: typeof pfc.privacyTitle === "string" ? pfc.privacyTitle : "",
+                  privacyText: typeof pfc.privacyText === "string" ? pfc.privacyText : "",
+                  themeMode: (pfc.themeMode === "accent" || pfc.themeMode === "custom") ? pfc.themeMode : "auto",
+                  bgColor: isValidHexColor(pfc.bgColor) ? pfc.bgColor.toUpperCase() : "#FFFFFF",
+                  textColor: isValidHexColor(pfc.textColor) ? pfc.textColor.toUpperCase() : "#000000"
                 };
               }
               if (typeof parsed.domain === "string") state.domain = parsed.domain;

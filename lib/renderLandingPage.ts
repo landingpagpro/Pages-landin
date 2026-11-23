@@ -41,6 +41,20 @@ export interface PublishedPageData {
   whatsapp: string;
   instagram: string;
   email: string;
+  footerConfig?: {
+    showDeliveryTime: boolean;
+    showDeliveryFree: boolean;
+    showDeliveryCod: boolean;
+    deliveryTimeText: string;
+    deliveryFreeText: string;
+    deliveryCodText: string;
+    showPrivacy: boolean;
+    privacyTitle: string;
+    privacyText: string;
+    themeMode: "auto" | "accent" | "custom";
+    bgColor: string;
+    textColor: string;
+  };
 }
 
 interface FirebaseAppletConfig {
@@ -176,6 +190,12 @@ export async function fetchPublishedPageBySlug(slug: string): Promise<PublishedP
       ? decoded.fontSize
       : "28";
 
+  const fcRaw = (decoded.footerConfig && typeof decoded.footerConfig === "object"
+    ? decoded.footerConfig
+    : {}) as Record<string, unknown>;
+  const fcMode =
+    fcRaw.themeMode === "accent" || fcRaw.themeMode === "custom" ? fcRaw.themeMode : "auto";
+
   return {
     slug: typeof decoded.slug === "string" ? decoded.slug : slug,
     lang,
@@ -207,6 +227,20 @@ export async function fetchPublishedPageBySlug(slug: string): Promise<PublishedP
     whatsapp: typeof decoded.whatsapp === "string" ? decoded.whatsapp : "",
     instagram: typeof decoded.instagram === "string" ? decoded.instagram : "",
     email: typeof decoded.email === "string" ? decoded.email : "",
+    footerConfig: {
+      showDeliveryTime: fcRaw.showDeliveryTime !== false,
+      showDeliveryFree: fcRaw.showDeliveryFree !== false,
+      showDeliveryCod: fcRaw.showDeliveryCod !== false,
+      deliveryTimeText: typeof fcRaw.deliveryTimeText === "string" ? fcRaw.deliveryTimeText : "",
+      deliveryFreeText: typeof fcRaw.deliveryFreeText === "string" ? fcRaw.deliveryFreeText : "",
+      deliveryCodText: typeof fcRaw.deliveryCodText === "string" ? fcRaw.deliveryCodText : "",
+      showPrivacy: fcRaw.showPrivacy !== false,
+      privacyTitle: typeof fcRaw.privacyTitle === "string" ? fcRaw.privacyTitle : "",
+      privacyText: typeof fcRaw.privacyText === "string" ? fcRaw.privacyText : "",
+      themeMode: fcMode,
+      bgColor: typeof fcRaw.bgColor === "string" ? fcRaw.bgColor : "",
+      textColor: typeof fcRaw.textColor === "string" ? fcRaw.textColor : "",
+    },
   };
 }
 
@@ -648,6 +682,8 @@ const LP_I18N: Record<
     deliveryTime: string;
     deliveryFree: string;
     deliveryCod: string;
+    privacyTitle: string;
+    privacyText: string;
     orderTitle: string;
     orderBtn: string;
     fieldFullName: string;
@@ -674,6 +710,8 @@ const LP_I18N: Record<
     deliveryTime: "Delivery within 24-48 Hours",
     deliveryFree: "Free Shipping",
     deliveryCod: "Cash on Delivery",
+    privacyTitle: "Privacy Policy",
+    privacyText: "We respect your privacy. Your contact details (name, phone number, city, and address) are used strictly to confirm and deliver your order with Cash on Delivery and are never shared with third parties.",
     orderTitle: "Order the Product Now",
     orderBtn: "Order the Product Now",
     fieldFullName: "Full Name",
@@ -683,7 +721,7 @@ const LP_I18N: Record<
     fieldQty: "Quantity",
     reviewsTitle: "Our Customers' Reviews",
     contactTitle: "Contact Us",
-    websiteLabel: "Website",
+    websiteLabel: "Store",
     whatsappLabel: "WhatsApp",
     emailLabel: "Email",
     instagramLabel: "Instagram",
@@ -699,6 +737,8 @@ const LP_I18N: Record<
     deliveryTime: "التوصيل خلال 24-48 ساعة",
     deliveryFree: "التوصيل مجاني",
     deliveryCod: "الدفع عند الاستلام",
+    privacyTitle: "سياسة الخصوصية",
+    privacyText: "نحترم خصوصيتك بالكامل؛ يتم استخدام بياناتك (الاسم، رقم الهاتف، المدينة والعنوان) فقط لتأكيد طلبك وتوصيله عبر خدمة الدفع عند الاستلام، ولا تتم مشاركتها مع أي طرف ثالث.",
     orderTitle: "اطلب المنتج الآن",
     orderBtn: "اطلب المنتج الآن",
     fieldFullName: "الاسم الكامل",
@@ -708,9 +748,9 @@ const LP_I18N: Record<
     fieldQty: "الكمية",
     reviewsTitle: "آراء عملائنا",
     contactTitle: "تواصل معنا",
-    websiteLabel: "الموقع الإلكتروني",
-    whatsappLabel: "واتساب",
-    emailLabel: "البريد الإلكتروني",
+    websiteLabel: "المتجر",
+    whatsappLabel: "الواتساب",
+    emailLabel: "الإيميل",
     instagramLabel: "إنستغرام",
     orderSuccessPrefix: "شكراً لك! تم تسجيل طلبك بنجاح:",
     orderSuccessCod: "طريقة الدفع: الدفع عند الاستلام",
@@ -724,6 +764,8 @@ const LP_I18N: Record<
     deliveryTime: "Livraison sous 24 à 48 heures",
     deliveryFree: "Livraison Gratuite",
     deliveryCod: "Paiement à la livraison",
+    privacyTitle: "Politique de confidentialité",
+    privacyText: "Nous respectons votre vie privée. Vos coordonnées (nom, téléphone, ville et adresse) sont utilisées uniquement pour confirmer et livrer votre commande avec paiement à la livraison, et ne sont jamais partagées avec des tiers.",
     orderTitle: "Commander le produit maintenant",
     orderBtn: "Commander le produit maintenant",
     fieldFullName: "Nom complet",
@@ -733,7 +775,7 @@ const LP_I18N: Record<
     fieldQty: "Quantité",
     reviewsTitle: "Avis de nos clients",
     contactTitle: "Contactez-nous",
-    websiteLabel: "Site web",
+    websiteLabel: "Boutique",
     whatsappLabel: "WhatsApp",
     emailLabel: "E-mail",
     instagramLabel: "Instagram",
@@ -943,7 +985,9 @@ export function renderPublishedLandingHtml(page: PublishedPageData, origin: stri
 
   const descHtml = page.descriptionHtml.trim()
     ? sanitizeDescriptionHtmlForSsr(page.descriptionHtml, imgWidth, imgBorder)
-    : escapeHtml(page.description).replace(/\n/g, "<br>");
+    : escapeHtml(page.description)
+        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+        .replace(/\n/g, "<br>");
 
   const galleryHtml =
     page.images.length > 0
@@ -955,13 +999,87 @@ export function renderPublishedLandingHtml(page: PublishedPageData, origin: stri
           .join("")}</div>`
       : "";
 
+  const fc = page.footerConfig || {
+    showDeliveryTime: true,
+    showDeliveryFree: true,
+    showDeliveryCod: true,
+    deliveryTimeText: "",
+    deliveryFreeText: "",
+    deliveryCodText: "",
+    showPrivacy: true,
+    privacyTitle: "",
+    privacyText: "",
+    themeMode: "auto" as const,
+    bgColor: "",
+    textColor: "",
+  };
+
+  let boxBg = th.formBg;
+  let boxBorder = `1px solid ${th.formBorder}`;
+  let boxText = th.formText;
+  let boxHeading = th.footerHeadingColor;
+
+  if (fc.themeMode === "accent") {
+    boxBg = th.cardBg;
+    boxBorder = th.cardBorder !== "none" ? th.cardBorder : "none";
+    boxText = th.productNameColor;
+    boxHeading = th.productNameColor;
+  } else if (fc.themeMode === "custom") {
+    if (isValidHexColor(fc.bgColor)) {
+      boxBg = fc.bgColor.toUpperCase();
+    }
+    if (isValidHexColor(fc.textColor)) {
+      boxText = fc.textColor.toUpperCase();
+      boxHeading = boxText;
+    } else if (isValidHexColor(fc.bgColor)) {
+      boxText = getContrastTextColor(boxBg);
+      boxHeading = boxText;
+    }
+  }
+
   const deliveryClass = isMinimal ? "lp-delivery-box is-pill" : "lp-delivery-box";
-  const deliveryStyle = `background:${th.deliveryBg};border:${th.deliveryBorder};color:${th.deliveryColor};`;
-  const deliveryGridHtml = `<div class="lp-delivery-grid">
-    <div class="${deliveryClass}" style="${deliveryStyle}">🚚<span class="lp-delivery-label" style="color:${th.deliveryColor};">${escapeHtml(lp.deliveryTime)}</span></div>
-    <div class="${deliveryClass}" style="${deliveryStyle}">🎁<span class="lp-delivery-label" style="color:${th.deliveryColor};">${escapeHtml(lp.deliveryFree)}</span></div>
-    <div class="${deliveryClass}" style="${deliveryStyle}">💵<span class="lp-delivery-label" style="color:${th.deliveryColor};">${escapeHtml(lp.deliveryCod)}</span></div>
-  </div>`;
+  const deliveryStyle = `background:${boxBg};border:${boxBorder};color:${boxText};`;
+  const deliveryBoxes: string[] = [];
+  if (fc.showDeliveryTime) {
+    const label = fc.deliveryTimeText.trim() || lp.deliveryTime;
+    deliveryBoxes.push(
+      `<div class="${deliveryClass}" style="${deliveryStyle}">🚚<span class="lp-delivery-label" style="color:${boxText};">${escapeHtml(label)}</span></div>`,
+    );
+  }
+  if (fc.showDeliveryFree) {
+    const label = fc.deliveryFreeText.trim() || lp.deliveryFree;
+    deliveryBoxes.push(
+      `<div class="${deliveryClass}" style="${deliveryStyle}">🎁<span class="lp-delivery-label" style="color:${boxText};">${escapeHtml(label)}</span></div>`,
+    );
+  }
+  if (fc.showDeliveryCod) {
+    const label = fc.deliveryCodText.trim() || lp.deliveryCod;
+    deliveryBoxes.push(
+      `<div class="${deliveryClass}" style="${deliveryStyle}">💵<span class="lp-delivery-label" style="color:${boxText};">${escapeHtml(label)}</span></div>`,
+    );
+  }
+
+  const deliveryGridHtml =
+    deliveryBoxes.length > 0
+      ? `<div class="lp-delivery-grid cols-${deliveryBoxes.length}">${deliveryBoxes.join("")}</div>`
+      : "";
+
+  const privacyTitleOut = fc.privacyTitle.trim() || lp.privacyTitle;
+  const privacyTextOut = fc.privacyText.trim() || lp.privacyText;
+  const privacyHtml = fc.showPrivacy
+    ? `<div class="lp-privacy-box" style="background:${boxBg};border:${boxBorder};color:${boxText};">
+        <h3 class="lp-privacy-title" style="color:${boxHeading};">🔒 ${escapeHtml(privacyTitleOut)}</h3>
+        <p class="lp-privacy-text" style="color:${boxText};">${escapeHtml(privacyTextOut).replace(/\n/g, "<br>")}</p>
+      </div>`
+    : "";
+
+  const bottomPoliciesHtml =
+    deliveryGridHtml || privacyHtml
+      ? `<footer class="lp-bottom-policies" style="border-top:1px solid ${th.footerBorder};color:${th.footerText};">
+          ${deliveryGridHtml}
+          ${privacyHtml}
+        </footer>`
+      : "";
 
   const priceText = formatPriceText(page);
   const cardExtraStyle = isBlackGold
@@ -972,7 +1090,6 @@ export function renderPublishedLandingHtml(page: PublishedPageData, origin: stri
     ? `<div class="lp-product-card" style="background:${th.cardBg};border:${th.cardBorder};text-shadow:${th.cardTextShadow};">
         <h1 class="lp-title" style="font-size:${titlePx}px;color:${th.productNameColor};">${escapeHtml(page.productName)}</h1>
         <div class="lp-price-text" style="font-size:${pricePx}px;color:${th.priceColor};">${escapeHtml(priceText)}</div>
-        ${deliveryGridHtml}
       </div>
       <div class="lp-showcase-card" style="background:${th.showcaseBg};border:1px solid ${th.formBorder};color:${th.descColor};">
         ${galleryHtml}
@@ -982,7 +1099,6 @@ export function renderPublishedLandingHtml(page: PublishedPageData, origin: stri
         ${galleryHtml}
         <h1 class="lp-title" style="font-size:${titlePx}px;color:${th.productNameColor};">${escapeHtml(page.productName)}</h1>
         <div class="lp-price-text" style="font-size:${pricePx}px;color:${th.priceColor};">${escapeHtml(priceText)}</div>
-        ${deliveryGridHtml}
       </div>
       <div class="lp-desc" style="font-size:${descPx}px;color:${th.descColor};">${descHtml}</div>`;
 
@@ -1021,26 +1137,31 @@ export function renderPublishedLandingHtml(page: PublishedPageData, origin: stri
   const instagramHref = instagramHandle ? `https://instagram.com/${encodeURIComponent(instagramHandle)}` : "";
   const email = page.enabledContacts.email ? page.email.trim() : "";
 
+  const contactBtnStyle = `color:${th.footerLink};border-color:${th.footerBorder};background:${th.formBg};`;
+  const waIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>`;
+  const mailIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>`;
+  const igIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>`;
+  const storeIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`;
+
   const contactItems: string[] = [];
-  if (websiteHref) {
-    const disp = page.website.trim().replace(/^https?:\/\//i, "").replace(/\/+$/, "");
-    contactItems.push(
-      `<span>${escapeHtml(lp.websiteLabel)}: <a style="color:${th.footerLink};text-decoration:none;" href="${escapeHtml(websiteHref)}" target="_blank" rel="noopener noreferrer">${escapeHtml(disp)}</a></span>`,
-    );
-  }
   if (whatsappHref) {
     contactItems.push(
-      `<span>${escapeHtml(lp.whatsappLabel)}: <a style="color:${th.footerLink};text-decoration:none;" href="${escapeHtml(whatsappHref)}" target="_blank" rel="noopener noreferrer">${escapeHtml(page.whatsapp.trim())}</a></span>`,
-    );
-  }
-  if (instagramHandle) {
-    contactItems.push(
-      `<span>${escapeHtml(lp.instagramLabel)}: <a style="color:${th.footerLink};text-decoration:none;" href="${escapeHtml(instagramHref)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(instagramHandle)}</a></span>`,
+      `<a class="lp-contact-link" style="${contactBtnStyle}" href="${escapeHtml(whatsappHref)}" target="_blank" rel="noopener noreferrer">${waIcon}<span>${escapeHtml(lp.whatsappLabel)}</span></a>`,
     );
   }
   if (email) {
     contactItems.push(
-      `<span>${escapeHtml(lp.emailLabel)}: <a style="color:${th.footerLink};text-decoration:none;" href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></span>`,
+      `<a class="lp-contact-link" style="${contactBtnStyle}" href="mailto:${escapeHtml(email)}">${mailIcon}<span>${escapeHtml(lp.emailLabel)}</span></a>`,
+    );
+  }
+  if (instagramHandle) {
+    contactItems.push(
+      `<a class="lp-contact-link" style="${contactBtnStyle}" href="${escapeHtml(instagramHref)}" target="_blank" rel="noopener noreferrer">${igIcon}<span>${escapeHtml(lp.instagramLabel)}</span></a>`,
+    );
+  }
+  if (websiteHref) {
+    contactItems.push(
+      `<a class="lp-contact-link" style="${contactBtnStyle}" href="${escapeHtml(websiteHref)}" target="_blank" rel="noopener noreferrer">${storeIcon}<span>${escapeHtml(lp.websiteLabel)}</span></a>`,
     );
   }
 
@@ -1067,8 +1188,8 @@ export function renderPublishedLandingHtml(page: PublishedPageData, origin: stri
 
   const css = `*{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;padding:0;background:${th.pageBg};color:${th.descColor};font-family:'Cairo','Tajawal',system-ui,-apple-system,'Segoe UI',Roboto,Tahoma,Arial,sans-serif;font-weight:700;line-height:1.85;-webkit-font-smoothing:antialiased}
-.lp-doc{min-height:100vh}
+body{margin:0;padding:0;overflow-x:hidden;background:${th.pageBg};color:${th.descColor};font-family:'Cairo','Tajawal',system-ui,-apple-system,'Segoe UI',Roboto,Tahoma,Arial,sans-serif;font-weight:700;line-height:1.85;-webkit-font-smoothing:antialiased}
+.lp-doc{min-height:100vh;overflow-x:hidden}
 .lp-header{padding:14px 18px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:900;font-size:18px}
 .lp-container{max-width:760px;margin:0 auto;padding:22px 18px 42px}
 .lp-product-card{border-radius:16px;padding:24px 18px;margin-bottom:18px;text-align:center}
@@ -1077,14 +1198,17 @@ body{margin:0;padding:0;background:${th.pageBg};color:${th.descColor};font-famil
 .lp-price-text{margin:0 0 16px 0;font-weight:900;line-height:1.25;text-align:center}
 .lp-gallery{display:flex;flex-direction:column;align-items:center;gap:14px;margin:12px 0 16px}
 .lp-gallery img{display:block;height:auto;border-radius:12px;object-fit:cover}
-.lp-desc{line-height:1.9;margin:0 0 18px 0;font-weight:700;white-space:normal;word-break:break-word;text-align:center}
+.lp-desc{line-height:1.9;margin:0 0 18px 0;font-weight:700;white-space:normal;word-break:break-word;text-align:start}
 .lp-desc strong,.lp-desc b{font-weight:900}
 .lp-desc p,.lp-desc div{margin:0 0 10px 0}
 .lp-desc ul,.lp-desc ol{margin:8px 0 12px 0;padding:0 18px;list-style-position:inside;text-align:inherit}
 .lp-desc li{margin-bottom:5px;text-align:inherit}
 .lp-desc img,.lp-desc video{display:block;max-width:100%;height:auto;border-radius:12px;margin:12px auto}
 .lp-desc iframe{display:block;max-width:100%;aspect-ratio:16/9;height:auto;border-radius:12px;margin:12px auto}
-.lp-delivery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.lp-delivery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 14px 0}
+.lp-delivery-grid.cols-1{grid-template-columns:1fr}
+.lp-delivery-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.lp-delivery-grid.cols-3{grid-template-columns:repeat(3,1fr)}
 .lp-delivery-box{border-radius:10px;padding:12px 10px;text-align:center}
 .lp-delivery-box.is-pill{border-radius:999px;padding:9px 10px}
 .lp-delivery-label{font-size:14px;font-weight:900;display:block;margin-top:4px}
@@ -1105,7 +1229,13 @@ body{margin:0;padding:0;background:${th.pageBg};color:${th.descColor};font-famil
 .lp-review-author{font-weight:900;font-size:15px}
 .lp-review-body{margin:5px 0 0 0;font-size:16px;font-weight:700;line-height:1.75}
 .lp-contact-footer{padding-top:18px;text-align:center}
-.lp-contact-items{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;font-size:16px;font-weight:800}
+.lp-contact-items{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;font-size:15px;font-weight:800}
+.lp-contact-link{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:999px;border:1px solid #e5e7eb;text-decoration:none;font-weight:800;line-height:1.3;transition:transform 0.15s ease,opacity 0.15s ease}
+.lp-contact-link:hover{opacity:0.86;transform:translateY(-1px);text-decoration:none}
+.lp-bottom-policies{margin-top:22px;padding-top:18px}
+.lp-privacy-box{border-radius:12px;padding:14px 16px;text-align:center}
+.lp-privacy-title{margin:0 0 6px 0;font-size:16px;font-weight:900}
+.lp-privacy-text{margin:0;font-size:13.5px;font-weight:700;line-height:1.75;opacity:0.92}
 @media(max-width:640px){.lp-delivery-grid{grid-template-columns:1fr}}`;
 
   const orderScript = `(function(){
@@ -1190,6 +1320,7 @@ body{margin:0;padding:0;background:${th.pageBg};color:${th.descColor};font-famil
       </section>
       ${reviewsHtml}
       ${contactHtml}
+      ${bottomPoliciesHtml}
     </div>
   </div>
   <script>${orderScript}</script>

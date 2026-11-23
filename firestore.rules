@@ -63,6 +63,34 @@ service cloud.firestore {
         ec.email is bool;
     }
 
+    function isValidFooterConfig(fc) {
+      return fc is map &&
+        fc.keys().hasAll([
+          'showDeliveryTime', 'showDeliveryFree', 'showDeliveryCod',
+          'deliveryTimeText', 'deliveryFreeText', 'deliveryCodText',
+          'showPrivacy', 'privacyTitle', 'privacyText',
+          'themeMode', 'bgColor', 'textColor'
+        ]) &&
+        fc.keys().hasOnly([
+          'showDeliveryTime', 'showDeliveryFree', 'showDeliveryCod',
+          'deliveryTimeText', 'deliveryFreeText', 'deliveryCodText',
+          'showPrivacy', 'privacyTitle', 'privacyText',
+          'themeMode', 'bgColor', 'textColor'
+        ]) &&
+        fc.showDeliveryTime is bool &&
+        fc.showDeliveryFree is bool &&
+        fc.showDeliveryCod is bool &&
+        fc.deliveryTimeText is string && fc.deliveryTimeText.size() <= 120 &&
+        fc.deliveryFreeText is string && fc.deliveryFreeText.size() <= 120 &&
+        fc.deliveryCodText is string && fc.deliveryCodText.size() <= 120 &&
+        fc.showPrivacy is bool &&
+        fc.privacyTitle is string && fc.privacyTitle.size() <= 120 &&
+        fc.privacyText is string && fc.privacyText.size() <= 2000 &&
+        fc.themeMode in ['auto', 'accent', 'custom'] &&
+        isOptionalHex(fc.bgColor) &&
+        isOptionalHex(fc.textColor);
+    }
+
     function isValidImagesList(imgs) {
       return imgs is list &&
         imgs.size() <= 6 &&
@@ -88,14 +116,14 @@ service cloud.firestore {
           'description', 'descriptionHtml', 'price', 'currency',
           'images', 'imageSize', 'fontSize', 'scale', 'reviews',
           'customColors', 'enabledContacts', 'website', 'whatsapp',
-          'instagram', 'email', 'createdAt', 'updatedAt'
+          'instagram', 'email', 'footerConfig', 'createdAt', 'updatedAt'
         ]) &&
         data.keys().hasOnly([
           'slug', 'lang', 'theme', 'productName',
           'description', 'descriptionHtml', 'price', 'currency',
           'images', 'imageSize', 'fontSize', 'scale', 'reviews',
           'customColors', 'enabledContacts', 'website', 'whatsapp',
-          'instagram', 'email', 'createdAt', 'updatedAt'
+          'instagram', 'email', 'footerConfig', 'createdAt', 'updatedAt'
         ]) &&
         isValidSlugId(data.slug) &&
         data.slug == slug &&
@@ -117,6 +145,7 @@ service cloud.firestore {
         data.whatsapp is string && data.whatsapp.size() <= 60 &&
         data.instagram is string && data.instagram.size() <= 120 &&
         data.email is string && data.email.size() <= 160 &&
+        isValidFooterConfig(data.footerConfig) &&
         data.createdAt is timestamp &&
         data.updatedAt is timestamp;
     }
@@ -161,7 +190,7 @@ service cloud.firestore {
           'lang', 'theme', 'productName', 'description', 'descriptionHtml',
           'price', 'currency', 'images', 'imageSize', 'fontSize', 'scale',
           'reviews', 'customColors', 'enabledContacts', 'website', 'whatsapp',
-          'instagram', 'email', 'updatedAt'
+          'instagram', 'email', 'footerConfig', 'updatedAt'
         ]);
     }
   }

@@ -123,9 +123,103 @@ function parseStructuredAiText(rawText: string): { productName: string; descript
   };
 }
 
+function buildStructuredDescFormatInstructions(lang: SupportedLang): string {
+  if (lang === "ar") {
+    return [
+      "اكتب كامل المخرجات باللغة العربية الفصحى التسويقية الغنية والواضحة باستخدام هذا القالب المنظم تماماً (اجعل الوصف غنياً ومفصلاً ومقنعاً للمشتري بطول إجمالي يقارب 220 إلى 350 كلمة عبر الأقسام الخمسة كلها بالترتيب):",
+      "PRODUCT_NAME: <اسم تجاري مختصر ودقيق للمنتج>",
+      "DESCRIPTION:",
+      "**📌 تعريف بالمنتج:**",
+      "<فقرة تسويقية غنية من 2 إلى 4 جمل تشرح بوضوح ماهية المنتج، جودته وتصميمه، لمن يناسب، ولماذا يعد خياراً مثالياً للاستخدام اليومي>",
+      "",
+      "**✨ المميزات:**",
+      "• <ميزة 1: عنوان فرعي قصير مع شرح وافٍ للخاصية أو التقنية>",
+      "• <ميزة 2: عنوان فرعي قصير مع شرح وافٍ للتصميم أو الأداء>",
+      "• <ميزة 3: عنوان فرعي قصير مع شرح وافٍ للمتانة أو الجودة>",
+      "• <ميزة 4: ميزة إضافية مهمة مستخلصة من المواصفات أو الصورة>",
+      "",
+      "**💡 الفوائد:**",
+      "• <فائدة 1: النتيجة الفعلية والقيمة التي يحصل عليها الزبون في حياته اليومية>",
+      "• <فائدة 2: كيف يحل المنتج مشكلة حقيقية أو يوفر الوقت والجهد>",
+      "• <فائدة 3: راحة وأمان ونتائج ملموسة تدوم طويلاً>",
+      "• <فائدة 4: قيمة إضافية تعزز ثقة الزبون عند الشراء>",
+      "",
+      "**📋 طريقة الاستعمال:**",
+      "• <الخطوة 1: شرح واضح ومفصل لبداية الاستخدام أو التحضير>",
+      "• <الخطوة 2: طريقة الاستخدام أو التشغيل الصحيحة خطوة بخطوة>",
+      "• <الخطوة 3: نصيحة عملية أو عناية إضافية لتحقيق أفضل نتيجة ممكنة>",
+      "",
+      "**🧪 المكونات:**",
+      "• <المكون/العنصر 1: ذكر المكونات والتركيبة الفعلية ودورها إذا كان منتجاً تجميلياً أو صحياً أو غذائياً أو عطراً، أو المواد المصنّعة عالية الجودة ومحتويات العلبة والمواصفات الفنية إذا كان جهازاً أو إكسسواراً>",
+      "• <المكون/العنصر 2: تفاصيل إضافية دقيقة دون اختراع أي مواد كيميائية غير حقيقية>",
+      "• <المكون/العنصر 3: بقية المحتويات المرفقة في العلبة أو الخصائص المادية للمنتج>",
+    ].join("\n");
+  }
+  if (lang === "fr") {
+    return [
+      "Rédigez tout strictement en français riche, détaillé et persuasif en suivant exactement cette structure (visez environ 220 à 350 mots au total répartis sur les 5 sections dans l'ordre) :",
+      "PRODUCT_NAME: <nom commercial concis et précis du produit>",
+      "DESCRIPTION:",
+      "**📌 Présentation du produit :**",
+      "<Paragraphe complet de 2 à 4 phrases présentant clairement le produit, sa conception, à qui il s'adresse et sa valeur ajoutée>",
+      "",
+      "**✨ Caractéristiques :**",
+      "• <Caractéristique 1 : titre court + explication détaillée technique ou de fabrication>",
+      "• <Caractéristique 2 : titre court + détail sur la performance ou le design>",
+      "• <Caractéristique 3 : titre court + détail sur la qualité ou la praticité>",
+      "• <Caractéristique 4 : atout supplémentaire tiré des spécifications ou de l'image>",
+      "",
+      "**💡 Avantages :**",
+      "• <Avantage 1 : résultat concret et valeur réelle au quotidien>",
+      "• <Avantage 2 : problème résolu ou gain de temps et de confort>",
+      "• <Avantage 3 : durabilité, fiabilité et satisfaction à long terme>",
+      "• <Avantage 4 : argument convaincant supplémentaire pour l'acheteur>",
+      "",
+      "**📋 Mode d'emploi :**",
+      "• <Étape 1 : préparation ou mise en route détaillée>",
+      "• <Étape 2 : utilisation étape par étape simple et précise>",
+      "• <Étape 3 : conseil pratique ou d'entretien pour un résultat optimal>",
+      "",
+      "**🧪 Ingrédients et composition :**",
+      "• <Élément 1 : ingrédients/formule réels et leur rôle pour cosmétiques, soins, parfums ou alimentation, OU matériaux, spécifications et contenu complet du coffret pour appareils/accessoires>",
+      "• <Élément 2 : précisions complémentaires sans inventer de composants fictifs>",
+      "• <Élément 3 : éléments inclus dans la boîte ou finitions matérielles>",
+    ].join("\n");
+  }
+  return [
+    "Write everything strictly in rich, detailed, high-converting English using this exact structured format (aim for a thorough 220–350 words across ALL 5 sections in order):",
+    "PRODUCT_NAME: <concise, accurate commercial product name>",
+    "DESCRIPTION:",
+    "**📌 Product Overview:**",
+    "<A rich 2–4 sentence introduction clearly explaining what the product is, its build quality, who it is designed for, and why buyers love it>",
+    "",
+    "**✨ Key Features:**",
+    "• <Feature 1: short bold-style label and thorough explanation of spec or design>",
+    "• <Feature 2: detailed performance or craftsmanship highlight>",
+    "• <Feature 3: practical engineering or usability detail>",
+    "• <Feature 4: additional standout specification visible or verified>",
+    "",
+    "**💡 Benefits:**",
+    "• <Benefit 1: tangible everyday result and customer value>",
+    "• <Benefit 2: how it saves time, effort, or solves a real pain point>",
+    "• <Benefit 3: long-lasting comfort, reliability, and peace of mind>",
+    "• <Benefit 4: strong conversion point highlighting overall value>",
+    "",
+    "**📋 How to Use:**",
+    "• <Step 1: clear preparation or setup instruction>",
+    "• <Step 2: detailed step-by-step usage guidance>",
+    "• <Step 3: best-practice care or usage tip for optimal results>",
+    "",
+    "**🧪 Ingredients & Contents:**",
+    "• <Item 1: real active ingredients/formula and role if skincare, cosmetics, food, health, or fragrance — OR real materials, technical specs, and full box contents if electronics, accessories, or homeware>",
+    "• <Item 2: verified additional components or materials without fabricating fake chemicals>",
+    "• <Item 3: included accessories or finish details>",
+  ].join("\n");
+}
+
 function buildDirectSearchPrompts(lang: SupportedLang, hintName: string): { systemInstruction: string; userPrompt: string } {
   const languageLabel =
-    lang === "ar" ? "Arabic (العربية الفصحى التسويقية الواضحة)" : lang === "fr" ? "French (Français)" : "English";
+    lang === "ar" ? "Arabic (العربية الفصحى التسويقية الغنية والواضحة)" : lang === "fr" ? "French (Français)" : "English";
 
   const productHint = hintName
     ? `\nUser's optional product title hint: "${hintName}". Always verify directly against the uploaded image first.`
@@ -133,24 +227,17 @@ function buildDirectSearchPrompts(lang: SupportedLang, hintName: string): { syst
 
   const systemInstruction = [
     "You are an expert e-commerce product researcher and conversion copywriter.",
-    "The uploaded photo is the primary source of truth. Carefully inspect the product in the photo, then use Google Search to search across e-commerce platforms and the web (Google, AliExpress, Alibaba, Pinterest, Amazon, and official brand stores) to find matching product listings and real descriptions.",
-    "If the exact product or brand cannot be found online (for example, unbranded, local, custom, or rare products), immediately search for closely similar products in the same category, style, material, and function, and synthesize a persuasive description from those similar products combined with the visual details in the photo.",
+    "The uploaded photo is the primary source of truth. Carefully inspect the product in the photo, then use Google Search to search across e-commerce platforms and the web (Google, AliExpress, Alibaba, Pinterest, Amazon, and official brand stores) to find matching product listings, real ingredients/materials, how-to-use instructions, features, and benefits.",
+    "If the exact product or brand cannot be found online (for example, unbranded, local, custom, or rare products), immediately search for closely similar products in the same category, style, material, and function, and synthesize a structured persuasive description from those similar products combined with the visual details in the photo.",
     "Never refuse or apologize that the exact product was not found.",
     `Write the entire output strictly in ${languageLabel}. Never mix languages (only keep exact brand/model names if standard).`,
-    "Synthesize a compelling, accurate landing page description based on the real product descriptions found on the web. Do not include markdown URLs, citation brackets like [1], or HTML tags.",
+    "Write a thorough, rich, high-converting landing page description (around 220 to 350 words) organized into the 5 required sections: Product Overview, Features, Benefits, How to Use, and Ingredients/Contents. Avoid overly brief or superficial one-line answers. Do not include markdown URLs, citation brackets like [1], or HTML tags.",
   ].join(" ");
 
   const userPrompt = [
-    `Identify the product visible in this image and search the web (Google, AliExpress, Alibaba, Pinterest, Amazon, and retail stores) for matching product descriptions and real specifications. If the exact product is not found, search for closely similar products in the same category and generate a professional commercial description inspired by them and what is visible in the photo.${productHint}`,
-    `Write everything strictly in ${languageLabel} using this exact format:`,
-    "PRODUCT_NAME: <concise, accurate commercial product name>",
-    "DESCRIPTION:",
-    "<1-2 compelling opening lines explaining what the product is and its main benefit>",
-    "",
-    "<4-6 concise bullet points starting with • where each bullet has a **bold label** and real specs/benefits from the web listings or similar category products>",
-    "",
-    "<1 short persuasive closing line highlighting quality and readiness to order>",
-  ].join("\n");
+    `Identify the product visible in this image and search the web (Google, AliExpress, Alibaba, Pinterest, Amazon, and retail stores) for its full product definition, detailed features, customer benefits, step-by-step usage instructions, and ingredients/materials/contents. If the exact product is not found, search for closely similar products in the same category and generate a complete, rich 5-section commercial description modeled after them and what is visible in the photo.${productHint}`,
+    buildStructuredDescFormatInstructions(lang),
+  ].join("\n\n");
 
   return { systemInstruction, userPrompt };
 }
@@ -283,7 +370,7 @@ async function searchWebForProduct(
     const exactKeywords = extractSearchKeywords(exactTrimmed);
     const exactQueries = [
       exactTrimmed,
-      `${exactTrimmed} product features description`,
+      `${exactTrimmed} features benefits ingredients how to use`,
       `${exactTrimmed} amazon aliexpress alibaba pinterest`,
     ];
     const exactBatches = await Promise.all(exactQueries.map((q) => fetchBingRssResults(q, exactKeywords)));
@@ -299,7 +386,7 @@ async function searchWebForProduct(
     const similarQueries = [
       fallbackQuery,
       `${fallbackQuery} aliexpress alibaba amazon`,
-      `${fallbackQuery} features benefits description`,
+      `${fallbackQuery} features benefits ingredients how to use`,
     ];
     const similarBatches = await Promise.all(
       similarQueries.map((q) => fetchBingRssResults(q, similarKeywords, 1))
@@ -463,20 +550,15 @@ export async function generateDescriptionFromImage(input: GenerateDescInput): Pr
     const synthesisPrompt = [
       `Analyze this product photo${identified.productName ? ` (identified as: ${identified.productName})` : ""}.`,
       contextInstruction,
-      `Write everything strictly in ${languageLabel} using this exact format:`,
-      "PRODUCT_NAME: <concise, accurate commercial product name>",
-      "DESCRIPTION:",
-      "<1-2 compelling opening lines explaining what the product is and its main benefit>",
-      "",
-      "<4-6 concise bullet points starting with • where each bullet has a **bold label** and real specs/benefits>",
-      "",
-      "<1 short persuasive closing line highlighting quality and readiness to order>",
+      buildStructuredDescFormatInstructions(lang),
     ].join("\n\n");
 
     const synthSystem = [
       "You are an expert e-commerce product researcher and conversion copywriter.",
       `Write the entire output strictly in ${languageLabel}. Never mix languages (except standard brand/model names).`,
-      "Never apologize or say the product could not be found; always produce a strong commercial description from exact matches or similar category products.",
+      "Write a rich, thorough, persuasive landing page description (around 220 to 350 words) including all 5 sections in order: Product Overview, Key Features, Benefits, How to Use, and Ingredients/Contents.",
+      "Avoid overly short or generic one-line bullets; provide clear, helpful, detailed commercial copy.",
+      "Never apologize or say the product could not be found; always produce a strong structured commercial description from exact matches or similar category products.",
       "Do not include markdown links, URLs, bracketed citations like [1], or HTML tags.",
     ].join(" ");
 

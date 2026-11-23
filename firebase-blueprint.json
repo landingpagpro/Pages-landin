@@ -130,6 +130,10 @@
           "description": "Public storefront support email (only stored if enabled).",
           "maxLength": 160
         },
+        "footerConfig": {
+          "type": "object",
+          "description": "Customizable footer delivery, cash on delivery, privacy policy, and theme styling settings."
+        },
         "createdAt": {
           "type": "string",
           "format": "date-time",
@@ -161,6 +165,7 @@
         "whatsapp",
         "instagram",
         "email",
+        "footerConfig",
         "createdAt",
         "updatedAt"
       ]

@@ -8,6 +8,7 @@
 5. Every create and update on `/published_pages/{slug}` MUST happen inside the same atomic `writeBatch` as `/page_locks/{slug}` (`getAfter(/databases/$(database)/documents/page_locks/$(slug)).data.updatedAt == request.time`), preventing unowned hijacking without requiring Google sign-in.
 6. Public visitors may fetch a single known page (`allow get` by exact `slug`), while `allow list` and `allow delete` are denied to prevent scraping or unauthorized deletion.
 7. Every string, list, and map field enforces strict key allowlists and explicit size/type/range bounds.
+8. Optional footer customization (`footerConfig`) enforces exact 12-key allowlists, boolean visibility toggles, bounded text fields (`<= 120` / `<= 2000`), `themeMode in ['auto', 'accent', 'custom']`, and strict hex color patterns.
 
 ## 2. Adversarial Payloads (Expected: PERMISSION_DENIED)
 1. **Direct Page Create Without Atomic Lock**: Writing `/published_pages/{slug}` outside the `page_locks/{slug}` batch (`getAfter` mismatch).

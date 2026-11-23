@@ -104,6 +104,20 @@ export interface FreeLinkPayloadInput {
   whatsapp: string;
   instagram: string;
   email: string;
+  footerConfig?: {
+    showDeliveryTime?: boolean;
+    showDeliveryFree?: boolean;
+    showDeliveryCod?: boolean;
+    deliveryTimeText?: string;
+    deliveryFreeText?: string;
+    deliveryCodText?: string;
+    showPrivacy?: boolean;
+    privacyTitle?: string;
+    privacyText?: string;
+    themeMode?: "auto" | "accent" | "custom";
+    bgColor?: string | null;
+    textColor?: string | null;
+  };
 }
 
 const SECRETS_STORAGE_KEY = "lp_page_lock_secrets";
@@ -268,6 +282,24 @@ async function syncFreeLink(
     email: input.enabledContacts?.email !== false,
   };
 
+  const fcRaw = input.footerConfig;
+  const fcThemeMode =
+    fcRaw?.themeMode === "accent" || fcRaw?.themeMode === "custom" ? fcRaw.themeMode : "auto";
+  const safeFooterConfig = {
+    showDeliveryTime: fcRaw?.showDeliveryTime !== false,
+    showDeliveryFree: fcRaw?.showDeliveryFree !== false,
+    showDeliveryCod: fcRaw?.showDeliveryCod !== false,
+    deliveryTimeText: String(fcRaw?.deliveryTimeText || "").trim().slice(0, 120),
+    deliveryFreeText: String(fcRaw?.deliveryFreeText || "").trim().slice(0, 120),
+    deliveryCodText: String(fcRaw?.deliveryCodText || "").trim().slice(0, 120),
+    showPrivacy: fcRaw?.showPrivacy !== false,
+    privacyTitle: String(fcRaw?.privacyTitle || "").trim().slice(0, 120),
+    privacyText: String(fcRaw?.privacyText || "").trim().slice(0, 2000),
+    themeMode: fcThemeMode,
+    bgColor: clampHex(fcRaw?.bgColor),
+    textColor: clampHex(fcRaw?.textColor),
+  };
+
   let workingImages = safeImages.slice();
   const buildMutableFields = (imgs: string[], htmlStr: string) => ({
     lang: (input.lang === "ar" || input.lang === "fr" ? input.lang : "en") as "en" | "ar" | "fr",
@@ -294,6 +326,7 @@ async function syncFreeLink(
     whatsapp: en.whatsapp ? String(input.whatsapp || "").trim().slice(0, 60) : "",
     instagram: en.instagram ? String(input.instagram || "").trim().slice(0, 120) : "",
     email: en.email ? String(input.email || "").trim().slice(0, 160) : "",
+    footerConfig: safeFooterConfig,
   });
 
   let mutableFields = buildMutableFields(workingImages, safeHtml);

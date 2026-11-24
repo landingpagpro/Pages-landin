@@ -2287,6 +2287,7 @@
           freeDone: "Description generated from open web & catalog research!",
           freeAutoFallbackDone: "Gemini quota reached — automatically generated from open web & catalog research instead!",
           freeNeedName: "Enter your product name above so we can generate the description automatically.",
+          aiNewImageNeedName: "New product image detected while Gemini quota is reached. Enter the new product name above and click AI Description.",
           aiSourcesLabel: "Web sources:",
           aiErrorGeneric: "Could not generate AI description. Please try again.",
           aiErrorQuota: "API quota reached (429). Check Settings > Secrets or enter a product name above to auto-generate.",
@@ -2408,6 +2409,7 @@
           freeDone: "تم توليد الوصف تلقائياً من بحث الويب المفتوح وقواعد المنتجات!",
           freeAutoFallbackDone: "انتهت حصة مفتاح Gemini — تم التبديل تلقائياً إلى البحث المفتوح وتوليد الوصف!",
           freeNeedName: "اكتب اسم المنتج في الخانة بالأعلى وسيتم توليد الوصف تلقائياً بدون مفتاح.",
+          aiNewImageNeedName: "تم تغيير صورة المنتج مع انتهاء حصة Gemini. اكتب اسم المنتج الجديد بالأعلى ثم اضغط «توليد بالذكاء الاصطناعي» لتوليد وصفه.",
           aiSourcesLabel: "مصادر الويب:",
           aiErrorGeneric: "تعذر توليد الوصف، يرجى المحاولة مرة أخرى.",
           aiErrorQuota: "تم تجاوز حصة مفتاح Gemini API الحالية (Settings > Secrets). اكتب اسم المنتج بالأعلى ليتم التوليد تلقائياً من البحث المفتوح.",
@@ -2529,6 +2531,7 @@
           freeDone: "Description générée depuis la recherche web et les catalogues !",
           freeAutoFallbackDone: "Quota Gemini atteint — bascule automatique vers la recherche web ouverte effectuée !",
           freeNeedName: "Saisissez le nom du produit ci-dessus pour générer automatiquement.",
+          aiNewImageNeedName: "Nouvelle image détectée alors que le quota Gemini est atteint. Saisissez le nom du nouveau produit ci-dessus puis cliquez sur Générer.",
           aiSourcesLabel: "Sources web :",
           aiErrorGeneric: "Impossible de générer la description. Veuillez réessayer.",
           aiErrorQuota: "Quota API atteint (429). Vérifiez Settings > Secrets ou saisissez le nom du produit ci-dessus.",
@@ -3069,8 +3072,12 @@
       var savedDescRange = null;
       var latestUploadedAiImage = "";
       var lastAiAnalyzedImage = "";
+      var lastAttemptedAiImage = "";
       var lastAiProductName = "";
+      var lastGeneratedForName = "";
       var userTypedProductName = false;
+      var userEditedNameAfterImage = false;
+      var descAiRequestSeq = 0;
 
       /* DOM Elements */
       var themePicker = document.getElementById("themePicker");
@@ -4752,6 +4759,14 @@
 
         productNameInput.value = state.productName;
         productDescEditor.innerHTML = state.descriptionHtml || escapeHtml(state.description).replace(/\n/g, "<br>");
+        latestUploadedAiImage = "";
+        lastAiAnalyzedImage = "";
+        lastAttemptedAiImage = "";
+        lastAiProductName = state.productName.trim();
+        lastGeneratedForName = state.productName.trim();
+        userTypedProductName = Boolean(state.productName.trim());
+        userEditedNameAfterImage = false;
+        descAiStatusBox.classList.remove("open", "is-error");
         productPriceInput.value = state.price;
         productCurrencySelect.value = state.currency;
         contactWebsiteInput.value = state.website;
@@ -4818,6 +4833,11 @@
           state.slug = base ? (base + "-" + generateRandomSlugSuffix(5)) : ("product-" + generateRandomSlugSuffix(5));
         }
         cloudSyncedOnce = false;
+        lastAiAnalyzedImage = "";
+        lastAttemptedAiImage = "";
+        lastGeneratedForName = "";
+        userEditedNameAfterImage = false;
+        descAiStatusBox.classList.remove("open", "is-error");
         saveDraftAndSyncLinks();
         syncFreeLinkNow({ showCreatingMsg: true });
       });
@@ -4892,7 +4912,12 @@
 
       productNameInput.addEventListener("input", function () {
         state.productName = productNameInput.value;
-        userTypedProductName = productNameInput.value.trim().length > 0;
+        var trimmedTitle = productNameInput.value.trim();
+        userTypedProductName = trimmedTitle.length > 0;
+        userEditedNameAfterImage = trimmedTitle.length > 0;
+        if (lastGeneratedForName && trimmedTitle !== lastGeneratedForName) {
+          descAiStatusBox.classList.remove("open", "is-error");
+        }
         if (syncSlugFromProductName()) {
           syncFreeAdLinkUI();
         }
@@ -5423,6 +5448,7 @@
           }
           if (dataUrls.length > 0) {
             latestUploadedAiImage = dataUrls[dataUrls.length - 1];
+            userEditedNameAfterImage = false;
           }
           insertMediaNodesIntoDesc(imgNodes);
         }).catch(function () {
@@ -5649,13 +5675,6 @@
         if (latestUploadedAiImage && isImageStillPresent(latestUploadedAiImage)) {
           return latestUploadedAiImage;
         }
-        var inlineImgs = productDescEditor.querySelectorAll("img");
-        for (var i = inlineImgs.length - 1; i >= 0; i--) {
-          var src = inlineImgs[i].getAttribute("src") || "";
-          if (/^data:image\//i.test(src)) {
-            return src;
-          }
-        }
         if (state.images && state.images.length > 0) {
           for (var j = state.images.length - 1; j >= 0; j--) {
             if (/^data:image\//i.test(state.images[j])) {
@@ -5663,19 +5682,44 @@
             }
           }
         }
+        var inlineImgs = productDescEditor.querySelectorAll("img");
+        for (var i = inlineImgs.length - 1; i >= 0; i--) {
+          var src = inlineImgs[i].getAttribute("src") || "";
+          if (/^data:image\//i.test(src)) {
+            return src;
+          }
+        }
         return "";
       }
 
       function runAiDescriptionForImage(imageDataUrl) {
         var t = BUILDER_I18N[state.lang];
+        var reqSeq = ++descAiRequestSeq;
         descAiBtn.disabled = true;
         showAiStatus("⏳ " + t.aiSearching, false, []);
 
-        var isNewImage = imageDataUrl !== lastAiAnalyzedImage;
+        var prevAttemptedImage = lastAttemptedAiImage;
+        lastAttemptedAiImage = imageDataUrl;
+        var isNewImage = imageDataUrl !== lastAiAnalyzedImage && imageDataUrl !== prevAttemptedImage;
         var currentTitle = (productNameInput.value || "").trim();
         var defaultSampleTitle = (LP_I18N[state.lang] && LP_I18N[state.lang].defaultProduct) || "";
-        var titleHint = (currentTitle && currentTitle !== defaultSampleTitle && (userTypedProductName || !isNewImage || currentTitle !== lastAiProductName)) ? currentTitle : "";
-        var effectiveTitleForAutoFallback = (currentTitle && currentTitle !== defaultSampleTitle) ? currentTitle : "";
+        var isStaleOldName = Boolean(
+          lastGeneratedForName &&
+          currentTitle === lastGeneratedForName &&
+          imageDataUrl !== lastAiAnalyzedImage &&
+          !userEditedNameAfterImage
+        );
+        var titleHint = (
+          !isStaleOldName &&
+          currentTitle &&
+          currentTitle !== defaultSampleTitle &&
+          (userTypedProductName || !isNewImage || currentTitle !== lastAiProductName)
+        ) ? currentTitle : "";
+        var effectiveTitleForAutoFallback = (
+          !isStaleOldName &&
+          currentTitle &&
+          currentTitle !== defaultSampleTitle
+        ) ? currentTitle : "";
 
         prepareImageForAi(imageDataUrl).then(function (optimizedImageDataUrl) {
           return fetch("/api/generate-description", {
@@ -5696,15 +5740,21 @@
             });
           })
           .then(function (result) {
+            if (reqSeq !== descAiRequestSeq) return;
             if (!result.ok || !result.data || !result.data.description) {
               var code = result.data && result.data.error ? result.data.error : "";
               if (effectiveTitleForAutoFallback.length >= 2) {
-                return runFreeDescriptionFromProductName(true, (result.data && result.data.sources) || []);
+                return runFreeDescriptionFromProductName(true, (result.data && result.data.sources) || [], reqSeq);
               }
-              var errMsg = t.aiErrorGeneric;
-              if (code === "QUOTA_EXCEEDED") errMsg = t.aiErrorQuota;
-              else if (code === "MISSING_API_KEY" || code === "INVALID_API_KEY") errMsg = t.aiErrorKey;
-              else if (result.data && result.data.message) errMsg = result.data.message;
+              var errMsg = isStaleOldName ? (t.aiNewImageNeedName || t.aiErrorQuota) : t.aiErrorGeneric;
+              if (!isStaleOldName) {
+                if (code === "QUOTA_EXCEEDED") errMsg = t.aiErrorQuota;
+                else if (code === "MISSING_API_KEY" || code === "INVALID_API_KEY") errMsg = t.aiErrorKey;
+                else if (result.data && result.data.message) errMsg = result.data.message;
+              } else {
+                productNameInput.focus();
+                productNameInput.select();
+              }
               showAiStatus("⚠️ " + errMsg, true, (result.data && result.data.sources) || [], {
                 retryImage: imageDataUrl,
                 allowTemplate: true
@@ -5716,6 +5766,7 @@
               var shouldOverwriteTitle =
                 !productNameInput.value.trim() ||
                 !userTypedProductName ||
+                isStaleOldName ||
                 (isNewImage && productNameInput.value.trim() === lastAiProductName);
               if (shouldOverwriteTitle) {
                 productNameInput.value = result.data.productName;
@@ -5728,6 +5779,8 @@
               lastAiProductName = result.data.productName;
             }
             lastAiAnalyzedImage = imageDataUrl;
+            lastGeneratedForName = (productNameInput.value || "").trim();
+            userEditedNameAfterImage = false;
 
             applyGeneratedDescriptionToEditor(result.data.description);
             var doneMsg = result.data.usedSimilarProducts
@@ -5736,16 +5789,24 @@
             showAiStatus("✅ " + doneMsg, false, result.data.sources || []);
           })
           .catch(function () {
+            if (reqSeq !== descAiRequestSeq) return;
             if (effectiveTitleForAutoFallback.length >= 2) {
-              return runFreeDescriptionFromProductName(true, []);
+              return runFreeDescriptionFromProductName(true, [], reqSeq);
             }
-            showAiStatus("⚠️ " + t.aiErrorGeneric, true, [], {
+            var errMsg = isStaleOldName ? (t.aiNewImageNeedName || t.aiErrorGeneric) : t.aiErrorGeneric;
+            if (isStaleOldName) {
+              productNameInput.focus();
+              productNameInput.select();
+            }
+            showAiStatus("⚠️ " + errMsg, true, [], {
               retryImage: imageDataUrl,
               allowTemplate: true
             });
           })
           .finally(function () {
-            descAiBtn.disabled = false;
+            if (reqSeq === descAiRequestSeq) {
+              descAiBtn.disabled = false;
+            }
           });
       }
 
@@ -5771,8 +5832,9 @@
         syncDescriptionFromEditor(false);
       }
 
-      function runFreeDescriptionFromProductName(isAutoFallback, extraSources) {
+      function runFreeDescriptionFromProductName(isAutoFallback, extraSources, existingReqSeq) {
         var t = BUILDER_I18N[state.lang];
+        var reqSeq = typeof existingReqSeq === "number" ? existingReqSeq : ++descAiRequestSeq;
         var nameVal = (productNameInput.value || "").trim();
         if (nameVal.length < 2) {
           showAiStatus("⚠️ " + (t.freeNeedName || "Enter your product name first."), true, [], {
@@ -5801,12 +5863,15 @@
             });
           })
           .then(function (result) {
+            if (reqSeq !== descAiRequestSeq) return;
             if (!result.ok || !result.data || !result.data.description) {
               showAiStatus("⚠️ " + ((result.data && result.data.message) || t.aiErrorGeneric), true, [], {
                 allowTemplate: true
               });
               return;
             }
+            lastGeneratedForName = nameVal;
+            userEditedNameAfterImage = false;
             applyGeneratedDescriptionToEditor(result.data.description);
             var combinedSources = (result.data.sources && result.data.sources.length > 0)
               ? result.data.sources
@@ -5817,12 +5882,15 @@
             showAiStatus(statusMsg, false, combinedSources);
           })
           .catch(function () {
+            if (reqSeq !== descAiRequestSeq) return;
             showAiStatus("⚠️ " + t.aiErrorGeneric, true, [], {
               allowTemplate: true
             });
           })
           .finally(function () {
-            descAiBtn.disabled = false;
+            if (reqSeq === descAiRequestSeq) {
+              descAiBtn.disabled = false;
+            }
           });
       }
 
@@ -5833,13 +5901,23 @@
       descAiBtn.addEventListener("click", function () {
         if (descAiBtn.disabled) return;
         var existingImage = findProductImageForAi();
+        var currentTitle = (productNameInput.value || "").trim();
+        var defaultSampleTitle = (LP_I18N[state.lang] && LP_I18N[state.lang].defaultProduct) || "";
+        var hasCustomTitle = currentTitle.length >= 2 && currentTitle !== defaultSampleTitle;
+        var isImageAlreadyUsedForPrevProduct = Boolean(
+          existingImage &&
+          (existingImage === lastAiAnalyzedImage || existingImage === lastAttemptedAiImage)
+        );
+
+        if (isImageAlreadyUsedForPrevProduct && hasCustomTitle && currentTitle !== lastGeneratedForName) {
+          runFreeDescriptionFromProductName(false, []);
+          return;
+        }
         if (existingImage) {
           runAiDescriptionForImage(existingImage);
           return;
         }
-        var currentTitle = (productNameInput.value || "").trim();
-        var defaultSampleTitle = (LP_I18N[state.lang] && LP_I18N[state.lang].defaultProduct) || "";
-        if (currentTitle.length >= 2 && currentTitle !== defaultSampleTitle) {
+        if (hasCustomTitle) {
           runFreeDescriptionFromProductName(false, []);
         } else {
           descAiImageInput.click();
@@ -5851,6 +5929,7 @@
         if (!files || files.length === 0) return;
         compressImageFile(files[0]).then(function (dataUrl) {
           latestUploadedAiImage = dataUrl;
+          userEditedNameAfterImage = false;
           state.images = (state.images || []).concat([dataUrl]);
           renderImageManager();
           scheduleRebuild();
@@ -5885,6 +5964,7 @@
         Promise.all(promises).then(function (dataUrls) {
           if (dataUrls.length > 0) {
             latestUploadedAiImage = dataUrls[dataUrls.length - 1];
+            userEditedNameAfterImage = false;
           }
           state.images = state.images.concat(dataUrls);
           renderImageManager();
@@ -5921,7 +6001,10 @@
             scheduleRebuild();
           }
         } else if (remIdx !== null) {
-          state.images.splice(Number(remIdx), 1);
+          var removedImg = state.images.splice(Number(remIdx), 1)[0];
+          if (removedImg && removedImg === latestUploadedAiImage) latestUploadedAiImage = "";
+          if (removedImg && removedImg === lastAiAnalyzedImage) lastAiAnalyzedImage = "";
+          if (removedImg && removedImg === lastAttemptedAiImage) lastAttemptedAiImage = "";
           renderImageManager();
           scheduleRebuild();
         }

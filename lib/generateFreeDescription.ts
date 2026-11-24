@@ -137,8 +137,47 @@ function cleanWikiExtract(rawExtract: string): string {
     .map((s) => s.trim())
     .filter((s) => s.length >= 25 && !/^(لا تنصح|تنويه|انظر أيضاً|See also)/i.test(s));
 
-  const picked = sentences.slice(0, 2).join(" ").trim();
-  return picked.slice(0, 340);
+  let picked = sentences.slice(0, 2).join(" ").trim().slice(0, 320);
+  // Remove trailing dangling open parenthesis if sliced mid-parenthesis
+  picked = picked.replace(/\s*\([^)]*$/, "").trim();
+  if (picked && !/[.!?؟]$/.test(picked)) {
+    const lastEnd = Math.max(picked.lastIndexOf("."), picked.lastIndexOf("؟"), picked.lastIndexOf("!"));
+    if (lastEnd > 80) {
+      picked = picked.slice(0, lastEnd + 1).trim();
+    }
+  }
+  return picked;
+}
+
+function normalizeTokenForMatch(token: string): string {
+  return token
+    .toLowerCase()
+    .replace(/[\u064b-\u065f]/g, "")
+    .replace(/^ال/, "")
+    .replace(/[أإآ]/g, "ا")
+    .replace(/ة$/g, "ه");
+}
+
+function isWikiTitleRelevant(wikiTitle: string, productQuery: string): boolean {
+  const ignoreWords = new Set([
+    "فاخر", "ملكي", "اصلي", "جديد", "مطور", "سائل", "طبيعي", "نقي", "للجنسين", "مقاوم", "للماء",
+    "pro", "ultra", "max", "new", "original", "pure", "liquid", "royal", "luxury", "waterproof",
+  ]);
+  const queryTokens = productQuery
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .split(/\s+/)
+    .map(normalizeTokenForMatch)
+    .filter((t) => t.length >= 3 && !ignoreWords.has(t));
+
+  if (queryTokens.length === 0) return false;
+
+  const titleNorm = wikiTitle
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .split(/\s+/)
+    .map(normalizeTokenForMatch)
+    .join(" ");
+
+  return queryTokens.some((qt) => titleNorm.includes(qt));
 }
 
 async function fetchWikipediaSummary(
@@ -153,9 +192,11 @@ async function fetchWikipediaSummary(
   for (const query of wikiQueries) {
     const searchUrl =
       `https://${hostLang}.wikipedia.org/w/api.php?action=query&list=search` +
-      `&srsearch=${encodeURIComponent(query)}&format=json&srlimit=2`;
+      `&srsearch=${encodeURIComponent(query)}&format=json&srlimit=3`;
     const searchData = await fetchJsonWithTimeout<WikiSearchResp>(searchUrl, 3000);
-    const title = searchData?.query?.search?.[0]?.title?.trim();
+    const hits = Array.isArray(searchData?.query?.search) ? searchData.query.search : [];
+    const matchedHit = hits.find((h) => h.title && isWikiTitleRelevant(h.title, candidates[0] || query));
+    const title = matchedHit?.title?.trim();
     if (!title) continue;
 
     const extractUrl =

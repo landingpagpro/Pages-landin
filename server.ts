@@ -9,6 +9,11 @@ import {
   type GenerateDescInput,
 } from "./lib/generateDescription.ts";
 import {
+  FreeDescError,
+  generateFreeDescription,
+  type GenerateFreeDescInput,
+} from "./lib/generateFreeDescription.ts";
+import {
   extractFirstImageData,
   fetchPublishedPageBySlug,
   isValidSlug,
@@ -110,6 +115,24 @@ async function startServer(): Promise<void> {
       res.status(status >= 400 && status < 600 ? status : 500).json({
         error: "GENERATION_FAILED",
         message: msg || "Failed to analyze the product image and search the web. Please try again.",
+      });
+    }
+  });
+
+  app.post("/api/generate-free-description", async (req: Request, res: Response) => {
+    try {
+      const result = await generateFreeDescription((req.body || {}) as GenerateFreeDescInput);
+      res.json(result);
+    } catch (err: unknown) {
+      if (err instanceof FreeDescError) {
+        res.status(err.statusCode).json({ error: err.code, message: err.message });
+        return;
+      }
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error("Free description generation error:", msg);
+      res.status(500).json({
+        error: "FREE_GENERATION_FAILED",
+        message: "Could not generate free description right now. Please try again.",
       });
     }
   });

@@ -381,9 +381,10 @@ function sleep(ms: number): Promise<void> {
 
 async function callGenerateContentWithRetry(
   ai: GoogleGenAI,
-  params: Parameters<GoogleGenAI["models"]["generateContent"]>[0]
+  params: Parameters<GoogleGenAI["models"]["generateContent"]>[0],
+  allowBackoffRetry = true
 ) {
-  const maxAttempts = 2; // Initial attempt + 1 exponential backoff retry for transient 429/503 bursts
+  const maxAttempts = allowBackoffRetry ? 2 : 1;
   let lastErr: unknown = null;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
@@ -579,6 +580,8 @@ async function generateWithSingleKey(
 ): Promise<{ result?: GenerateDescResult; lastError?: unknown; keyInvalidError?: ErrorDetails }> {
   let lastError: unknown = null;
 
+  let sawStep1Quota = false;
+
   // Step 1 (Single-Call Quota-Optimal Path):
   // Call primary multimodal model with Google Search grounding and LOW thinking to minimize tokens & API calls.
   // Accept any complete structured description even if groundingChunks is empty (avoids wasting 2-4 extra calls).
@@ -594,7 +597,7 @@ async function generateWithSingleKey(
           thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
           tools: [{ googleSearch: {} }],
         },
-      });
+      }, !sawStep1Quota);
 
       const parsed = parseStructuredAiText(response.text || "");
       if (parsed.description && parsed.description.trim().length >= 80) {
@@ -622,6 +625,9 @@ async function generateWithSingleKey(
     } catch (err: unknown) {
       lastError = err;
       const info = getUpstreamErrorDetails(err);
+      if (info.status === 429 || info.code === "RESOURCE_EXHAUSTED") {
+        sawStep1Quota = true;
+      }
       if (info.status === 403 || info.code === "PERMISSION_DENIED" || info.code === "API_KEY_INVALID") {
         return { lastError, keyInvalidError: info };
       }
@@ -677,7 +683,7 @@ async function generateWithSingleKey(
             systemInstruction: synthSystem,
             thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
           },
-        });
+        }, !sawStep1Quota);
         const parsed = parseStructuredAiText(resp.text || "");
         if (parsed.description) {
           return {
@@ -767,18 +773,10 @@ export async function generateDescriptionFromImage(input: GenerateDescInput): Pr
 
     const finalInfo = getUpstreamErrorDetails(lastError);
     if (sawQuotaError || finalInfo.status === 429 || finalInfo.code === "RESOURCE_EXHAUSTED") {
-      let realWebSources: GroundingSource[] | undefined;
-      if (hintName) {
-        const freeWeb = await searchWebForProduct(hintName, hintName).catch(() => ({ items: [], usedSimilarProducts: false }));
-        if (freeWeb.items.length > 0) {
-          realWebSources = freeWeb.items.map((w) => ({ title: w.title, url: w.url }));
-        }
-      }
       throw new GenerateDescError(
         429,
         "QUOTA_EXCEEDED",
-        "Gemini API quota exceeded for the current key. Please check your plan or select a billing-enabled API key in Settings > Secrets.",
-        realWebSources
+        "Gemini API quota exceeded for the current key. Please check your plan or select a billing-enabled API key in Settings > Secrets."
       );
     }
 

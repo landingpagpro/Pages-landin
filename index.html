@@ -2283,10 +2283,14 @@
           aiDone: "Description generated from web research!",
           aiDoneSimilar: "Exact product not found — description generated from similar products!",
           aiDoneVision: "Description generated from product photo analysis!",
+          freeSearching: "Searching open web & product catalogs for your product...",
+          freeDone: "Description generated from open web & catalog research!",
+          freeAutoFallbackDone: "Gemini quota reached — automatically generated from open web & catalog research instead!",
+          freeNeedName: "Enter your product name above so we can generate the description automatically.",
           aiSourcesLabel: "Web sources:",
           aiErrorGeneric: "Could not generate AI description. Please try again.",
-          aiErrorQuota: "API quota reached (429). Check Settings > Secrets or try again shortly.",
-          aiErrorKey: "Gemini API key is missing or invalid in Settings > Secrets.",
+          aiErrorQuota: "API quota reached (429). Check Settings > Secrets or enter a product name above to auto-generate.",
+          aiErrorKey: "Gemini API key is missing or invalid in Settings > Secrets. Enter a product name above to auto-generate.",
           aiBtnRetry: "Retry AI",
           aiBtnUseTemplate: "Insert 5-Part Editable Template",
           aiTemplateInsertedNote: "5-part editable template inserted below — customize it freely.",
@@ -2400,12 +2404,16 @@
           aiDone: "تم توليد الوصف الاحترافي بناءً على بحث الويب!",
           aiDoneSimilar: "لم يُعثر على نفس المنتج بالضبط — تم توليد الوصف من منتجات مشابهة له!",
           aiDoneVision: "تم توليد الوصف الاحترافي من تحليل صورة المنتج!",
+          freeSearching: "جاري البحث في الويب وقواعد المنتجات لتوليد الوصف...",
+          freeDone: "تم توليد الوصف تلقائياً من بحث الويب المفتوح وقواعد المنتجات!",
+          freeAutoFallbackDone: "انتهت حصة مفتاح Gemini — تم التبديل تلقائياً إلى البحث المفتوح وتوليد الوصف!",
+          freeNeedName: "اكتب اسم المنتج في الخانة بالأعلى وسيتم توليد الوصف تلقائياً بدون مفتاح.",
           aiSourcesLabel: "مصادر الويب:",
           aiErrorGeneric: "تعذر توليد الوصف، يرجى المحاولة مرة أخرى.",
-          aiErrorQuota: "تم تجاوز حصة مفتاح Gemini API الحالية. تأكد من الحصة أو اختر مفتاحاً مفعلاً في Settings > Secrets.",
-          aiErrorKey: "مفتاح Gemini API غير موجود أو غير صالح في Settings > Secrets.",
+          aiErrorQuota: "تم تجاوز حصة مفتاح Gemini API الحالية (Settings > Secrets). اكتب اسم المنتج بالأعلى ليتم التوليد تلقائياً من البحث المفتوح.",
+          aiErrorKey: "مفتاح Gemini API غير موجود أو غير صالح (Settings > Secrets). اكتب اسم المنتج بالأعلى ليتم التوليد تلقائياً من البحث المفتوح.",
           aiBtnRetry: "إعادة المحاولة",
-          aiBtnUseTemplate: "تعبئة القالب الجاهز (5 أقسام) للمتابعة",
+          aiBtnUseTemplate: "تعبئة القالب الجاهز (5 أقسام)",
           aiTemplateInsertedNote: "تم إدراج القالب المنظم من 5 أقسام بالأسفل لتعديله مباشرة.",
           sectionFooterPolicies: "التوصيل والدفع والسياسة (أسفل الصفحة)",
           btnFooterReset: "↺ استعادة الافتراضي",
@@ -2517,10 +2525,14 @@
           aiDone: "Description professionnelle générée depuis le web !",
           aiDoneSimilar: "Produit exact introuvable — description générée à partir de produits similaires !",
           aiDoneVision: "Description professionnelle générée depuis l'image !",
+          freeSearching: "Recherche web ouverte et catalogues produits en cours...",
+          freeDone: "Description générée depuis la recherche web et les catalogues !",
+          freeAutoFallbackDone: "Quota Gemini atteint — bascule automatique vers la recherche web ouverte effectuée !",
+          freeNeedName: "Saisissez le nom du produit ci-dessus pour générer automatiquement.",
           aiSourcesLabel: "Sources web :",
           aiErrorGeneric: "Impossible de générer la description. Veuillez réessayer.",
-          aiErrorQuota: "Quota API atteint (429). Vérifiez Settings > Secrets ou réessayez plus tard.",
-          aiErrorKey: "Clé Gemini API manquante ou invalide dans Settings > Secrets.",
+          aiErrorQuota: "Quota API atteint (429). Vérifiez Settings > Secrets ou saisissez le nom du produit ci-dessus.",
+          aiErrorKey: "Clé Gemini API manquante ou invalide (Settings > Secrets). Saisissez le nom du produit ci-dessus.",
           aiBtnRetry: "Réessayer",
           aiBtnUseTemplate: "Insérer le modèle (5 sections)",
           aiTemplateInsertedNote: "Modèle structuré en 5 sections inséré ci-dessous pour modification.",
@@ -5663,6 +5675,7 @@
         var currentTitle = (productNameInput.value || "").trim();
         var defaultSampleTitle = (LP_I18N[state.lang] && LP_I18N[state.lang].defaultProduct) || "";
         var titleHint = (currentTitle && currentTitle !== defaultSampleTitle && (userTypedProductName || !isNewImage || currentTitle !== lastAiProductName)) ? currentTitle : "";
+        var effectiveTitleForAutoFallback = (currentTitle && currentTitle !== defaultSampleTitle) ? currentTitle : "";
 
         prepareImageForAi(imageDataUrl).then(function (optimizedImageDataUrl) {
           return fetch("/api/generate-description", {
@@ -5685,6 +5698,9 @@
           .then(function (result) {
             if (!result.ok || !result.data || !result.data.description) {
               var code = result.data && result.data.error ? result.data.error : "";
+              if (effectiveTitleForAutoFallback.length >= 2) {
+                return runFreeDescriptionFromProductName(true, (result.data && result.data.sources) || []);
+              }
               var errMsg = t.aiErrorGeneric;
               if (code === "QUOTA_EXCEEDED") errMsg = t.aiErrorQuota;
               else if (code === "MISSING_API_KEY" || code === "INVALID_API_KEY") errMsg = t.aiErrorKey;
@@ -5713,33 +5729,95 @@
             }
             lastAiAnalyzedImage = imageDataUrl;
 
-            var existingMedia = [];
-            var mediaEls = productDescEditor.querySelectorAll("img,video,iframe");
-            for (var i = 0; i < mediaEls.length; i++) {
-              existingMedia.push(mediaEls[i].cloneNode(true));
-            }
-
-            productDescEditor.innerHTML = "";
-            productDescEditor.appendChild(buildRichFragmentFromAiText(result.data.description));
-
-            if (existingMedia.length > 0) {
-              productDescEditor.appendChild(document.createElement("br"));
-              productDescEditor.appendChild(document.createElement("br"));
-              for (var m = 0; m < existingMedia.length; m++) {
-                productDescEditor.appendChild(existingMedia[m]);
-                productDescEditor.appendChild(document.createElement("br"));
-              }
-            }
-
-            syncDescriptionFromEditor(false);
+            applyGeneratedDescriptionToEditor(result.data.description);
             var doneMsg = result.data.usedSimilarProducts
               ? t.aiDoneSimilar
               : (result.data.usedWebSearch === false ? t.aiDoneVision : t.aiDone);
             showAiStatus("✅ " + doneMsg, false, result.data.sources || []);
           })
           .catch(function () {
+            if (effectiveTitleForAutoFallback.length >= 2) {
+              return runFreeDescriptionFromProductName(true, []);
+            }
             showAiStatus("⚠️ " + t.aiErrorGeneric, true, [], {
               retryImage: imageDataUrl,
+              allowTemplate: true
+            });
+          })
+          .finally(function () {
+            descAiBtn.disabled = false;
+          });
+      }
+
+      function applyGeneratedDescriptionToEditor(descText) {
+        var existingMedia = [];
+        var mediaEls = productDescEditor.querySelectorAll("img,video,iframe");
+        for (var i = 0; i < mediaEls.length; i++) {
+          existingMedia.push(mediaEls[i].cloneNode(true));
+        }
+
+        productDescEditor.innerHTML = "";
+        productDescEditor.appendChild(buildRichFragmentFromAiText(descText));
+
+        if (existingMedia.length > 0) {
+          productDescEditor.appendChild(document.createElement("br"));
+          productDescEditor.appendChild(document.createElement("br"));
+          for (var m = 0; m < existingMedia.length; m++) {
+            productDescEditor.appendChild(existingMedia[m]);
+            productDescEditor.appendChild(document.createElement("br"));
+          }
+        }
+
+        syncDescriptionFromEditor(false);
+      }
+
+      function runFreeDescriptionFromProductName(isAutoFallback, extraSources) {
+        var t = BUILDER_I18N[state.lang];
+        var nameVal = (productNameInput.value || "").trim();
+        if (nameVal.length < 2) {
+          showAiStatus("⚠️ " + (t.freeNeedName || "Enter your product name first."), true, [], {
+            allowTemplate: true
+          });
+          productNameInput.focus();
+          return Promise.resolve();
+        }
+
+        descAiBtn.disabled = true;
+        showAiStatus("⏳ " + (t.freeSearching || t.aiSearching), false, []);
+
+        return fetch("/api/generate-free-description", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            productName: nameVal,
+            lang: state.lang
+          })
+        })
+          .then(function (res) {
+            return res.json().catch(function () {
+              return {};
+            }).then(function (data) {
+              return { ok: res.ok, data: data };
+            });
+          })
+          .then(function (result) {
+            if (!result.ok || !result.data || !result.data.description) {
+              showAiStatus("⚠️ " + ((result.data && result.data.message) || t.aiErrorGeneric), true, [], {
+                allowTemplate: true
+              });
+              return;
+            }
+            applyGeneratedDescriptionToEditor(result.data.description);
+            var combinedSources = (result.data.sources && result.data.sources.length > 0)
+              ? result.data.sources
+              : (extraSources || []);
+            var statusMsg = isAutoFallback
+              ? ("ℹ️ " + (t.freeAutoFallbackDone || t.freeDone))
+              : ("✅ " + (t.freeDone || t.aiDone));
+            showAiStatus(statusMsg, false, combinedSources);
+          })
+          .catch(function () {
+            showAiStatus("⚠️ " + t.aiErrorGeneric, true, [], {
               allowTemplate: true
             });
           })
@@ -5757,6 +5835,12 @@
         var existingImage = findProductImageForAi();
         if (existingImage) {
           runAiDescriptionForImage(existingImage);
+          return;
+        }
+        var currentTitle = (productNameInput.value || "").trim();
+        var defaultSampleTitle = (LP_I18N[state.lang] && LP_I18N[state.lang].defaultProduct) || "";
+        if (currentTitle.length >= 2 && currentTitle !== defaultSampleTitle) {
+          runFreeDescriptionFromProductName(false, []);
         } else {
           descAiImageInput.click();
         }
